@@ -2,9 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 
 async function api(path, options = {}) {
   const res = await fetch(path, {
-    headers: {
-      'Content-Type': 'application/json'
-    },
+    headers: { 'Content-Type': 'application/json' },
     ...options
   });
 
@@ -38,15 +36,124 @@ function formatDateTime(value) {
   });
 }
 
+const CRITERIA_GUIDE = {
+  'Production Number': {
+    segmentWeight: '10% of Top 3 score',
+    note: 'Opening production number. Judges evaluate stage energy, performance, projection, and overall impact.',
+    items: [
+      'Stage Presence and Projection — 40%',
+      'Execution of Choreography — 30%',
+      'Confidence and Poise — 20%',
+      'Overall Impact — 10%'
+    ]
+  },
+  'Fun Wear': {
+    segmentWeight: '15% of Top 3 score',
+    note: 'Showcases creativity, personality, confidence, and expressive style through fun wear attire.',
+    items: [
+      'Creativity and Style — 30%',
+      'Confidence and Carriage — 30%',
+      'Stage Presence — 20%',
+      'Overall Appeal — 20%'
+    ]
+  },
+  'Preliminary Interview': {
+    segmentWeight: '20% of Top 3 score',
+    note: 'Live interview during coronation night. Each candidate has a maximum of one minute to answer.',
+    items: [
+      'Communication Skills and Clarity of Thought — 30%',
+      'Confidence and Stage Presence — 25%',
+      'Intelligence and Substance of Answer — 25%',
+      'Overall Impression — 20%'
+    ]
+  },
+  'Advocacy Interview': {
+    segmentWeight: '25% of Top 3 score',
+    note: 'Closed-door advocacy interview conducted one day before coronation night.',
+    items: [
+      'Depth and Relevance of Advocacy — 30%',
+      'Knowledge and Understanding — 25%',
+      'Communication Skills and Clarity — 25%',
+      'Sincerity and Impact — 20%'
+    ]
+  },
+  'Long Gown': {
+    segmentWeight: '30% of Top 3 score',
+    note: 'Highlights elegance, grace, confidence, sophistication, and gown suitability.',
+    items: [
+      'Elegance and Poise — 35%',
+      'Stage Presence and Confidence — 35%',
+      'Gown Selection and Suitability — 20%',
+      'Overall Impact — 10%'
+    ]
+  }
+};
+
+function getCriteriaGuide(name) {
+  return CRITERIA_GUIDE[name] || {
+    segmentWeight: 'Official judging criterion',
+    note: 'Use the approved scoring standard set by the pageant committee.',
+    items: ['Score fairly based on the candidate performance for this criterion.']
+  };
+}
+
+function CriteriaNote({ name }) {
+  const guide = getCriteriaGuide(name);
+
+  return (
+    <details className="criteria-note-box">
+      <summary>View notes</summary>
+      <div className="criteria-note-content">
+        <strong>{name}</strong>
+        <em>{guide.segmentWeight}</em>
+        <p>{guide.note}</p>
+        <ul>
+          {guide.items.map((item) => (
+            <li key={item}>{item}</li>
+          ))}
+        </ul>
+      </div>
+    </details>
+  );
+}
+
+function CriteriaOverview() {
+  return (
+    <details className="criteria-overview">
+      <summary>View Judging Criteria / Notes</summary>
+
+      <div className="criteria-overview-grid">
+        {Object.entries(CRITERIA_GUIDE).map(([name, guide]) => (
+          <article key={name}>
+            <div>
+              <h4>{name}</h4>
+              <span>{guide.segmentWeight}</span>
+            </div>
+            <p>{guide.note}</p>
+            <ul>
+              {guide.items.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </article>
+        ))}
+      </div>
+
+      <div className="final-interview-note">
+        <strong>Final Interview for Top 3:</strong>
+        <span> Beauty and Poise — 60% · Wit, Intelligence, and Quality of Answer — 40%</span>
+      </div>
+    </details>
+  );
+}
+
 export default function App() {
   const [mode, setMode] = useState(localStorage.getItem('mode') || 'home');
   const [judge, setJudge] = useState(getSavedJudge());
   const [admin, setAdmin] = useState(localStorage.getItem('admin') === 'true');
 
   function logout() {
-    localStorage.removeItem('mode');
-    localStorage.removeItem('judge');
-    localStorage.removeItem('admin');
+    localStorage.clear();
     setJudge(null);
     setAdmin(false);
     setMode('home');
@@ -54,12 +161,13 @@ export default function App() {
 
   return (
     <div className="app-shell">
-      <div className="bg-glow bg-glow-one" />
-      <div className="bg-glow bg-glow-two" />
-
       <header className="topbar">
         <div className="brand-block">
-          <img src="/poblacion-logo.png" alt="Sangguniang Kabataan Poblacion Occidental Logo" className="brand-logo" />
+          <img
+            src="/pageant-logo.jpg"
+            alt="Miss Poblacion Occidental 2026 Logo"
+            className="brand-logo"
+          />
           <div>
             <p className="eyebrow">Official Scoring System</p>
             <h1>Miss Poblacion Occidental</h1>
@@ -128,7 +236,12 @@ function Home({ setMode }) {
   return (
     <main className="hero-grid">
       <section className="hero-card">
-        <img src="/poblacion-logo.png" alt="Poblacion Occidental Logo" className="hero-logo" />
+        <img
+          src="/pageant-logo.jpg"
+          alt="Miss Poblacion Occidental 2026 Logo"
+          className="hero-logo"
+        />
+
         <p className="eyebrow">Pageant Night Ready</p>
         <h2>Fast, clean, automatic, and traceable tabulation.</h2>
         <p>
@@ -150,6 +263,7 @@ function Home({ setMode }) {
           </button>
         </div>
 
+        <CriteriaOverview />
         <DeveloperCredits />
       </section>
 
@@ -228,34 +342,38 @@ function JudgePanel({ judge }) {
   const [judgeStatus, setJudgeStatus] = useState(null);
   const [status, setStatus] = useState('');
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
   async function load() {
     const setup = await api('/api/setup');
-
-    setContestants(setup.contestants);
-    setCriteria(setup.criteria);
-
     const saved = await api(`/api/judge/${judge.id}/scores`);
-    const currentStatus = await api(`/api/judge/${judge.id}/status`);
+    const currentStatus = await api(`/api/judge/${judge.id}/status`).catch(() => ({
+      submitted: false,
+      submitted_at: null
+    }));
 
     const map = {};
     saved.forEach((s) => {
       map[`${s.contestant_id}-${s.criteria_id}`] = s.score;
     });
 
+    setContestants(setup.contestants || []);
+    setCriteria(setup.criteria || []);
     setScores(map);
     setJudgeStatus(currentStatus);
   }
 
   useEffect(() => {
     load()
-      .catch((err) => setStatus(err.message))
+      .catch((err) => {
+        setLoadError(err.message);
+        setStatus(err.message);
+      })
       .finally(() => setLoading(false));
   }, [judge.id]);
 
   const isLocked = Boolean(judgeStatus?.submitted);
-
   const totalFields = contestants.length * criteria.length;
   const filledFields = Object.values(scores).filter((value) => value !== '').length;
   const progress = totalFields > 0 ? Math.round((filledFields / totalFields) * 100) : 0;
@@ -264,7 +382,8 @@ function JudgePanel({ judge }) {
   function candidateSubtotal(candidateId) {
     return criteria.reduce((sum, cr) => {
       const value = Number(scores[`${candidateId}-${cr.id}`]);
-      return Number.isNaN(value) ? sum : sum + value;
+      const weight = Number(cr.weight || 1);
+      return Number.isNaN(value) ? sum : sum + value * weight;
     }, 0);
   }
 
@@ -281,9 +400,7 @@ function JudgePanel({ judge }) {
       [key]: score
     }));
 
-    if (score === '') {
-      return;
-    }
+    if (score === '') return;
 
     setStatus('Saving...');
 
@@ -298,7 +415,7 @@ function JudgePanel({ judge }) {
         })
       });
 
-      const currentStatus = await api(`/api/judge/${judge.id}/status`);
+      const currentStatus = await api(`/api/judge/${judge.id}/status`).catch(() => judgeStatus);
       setJudgeStatus(currentStatus);
       setStatus('Saved ✓');
     } catch (err) {
@@ -326,9 +443,12 @@ function JudgePanel({ judge }) {
         method: 'POST'
       });
 
-      const currentStatus = await api(`/api/judge/${judge.id}/status`);
-      setJudgeStatus(currentStatus);
+      const currentStatus = await api(`/api/judge/${judge.id}/status`).catch(() => ({
+        submitted: true,
+        submitted_at: result.submitted_at
+      }));
 
+      setJudgeStatus(currentStatus);
       setStatus(`Final submitted and locked at ${formatDateTime(result.submitted_at)}.`);
     } catch (err) {
       setStatus(err.message);
@@ -337,8 +457,10 @@ function JudgePanel({ judge }) {
     }
   }
 
-  if (loading) {
-    return <LoadingPanel text="Loading judge panel..." />;
+  if (loading) return <LoadingPanel text="Loading judge panel..." />;
+
+  if (loadError) {
+    return <ErrorPanel title="Judge panel failed to load" message={loadError} />;
   }
 
   return (
@@ -374,9 +496,7 @@ function JudgePanel({ judge }) {
               >
                 {submitting ? 'Submitting...' : 'Final Submit & Lock'}
               </button>
-              <p className="warning-note">
-                Final submit locks your scores permanently.
-              </p>
+              <p className="warning-note">Final submit locks your scores permanently.</p>
             </>
           )}
         </div>
@@ -410,7 +530,11 @@ function JudgePanel({ judge }) {
                 return (
                   <label className="score-field" key={cr.id}>
                     <span>{cr.name}</span>
-                    <small>Max {Number(cr.max_score).toFixed(0)}</small>
+                    <small>
+                      Input / {Number(cr.max_score).toFixed(0)} · Counts as {(Number(cr.weight || 0) * 100).toFixed(0)}%
+                    </small>
+                    <CriteriaNote name={cr.name} />
+
                     <input
                       type="number"
                       min="0"
@@ -441,26 +565,40 @@ function AdminPanel() {
   const [showHistory, setShowHistory] = useState(false);
   const [lastUpdated, setLastUpdated] = useState('');
   const [loading, setLoading] = useState(true);
+  const [loadWarning, setLoadWarning] = useState('');
+  const [declaredWinner, setDeclaredWinner] = useState('');
+  const [declaredAt, setDeclaredAt] = useState(null);
+
+  async function safeApi(path, fallback) {
+    try {
+      return await api(path);
+    } catch (err) {
+      console.error(`${path} failed:`, err.message);
+      setLoadWarning(`${path} failed: ${err.message}`);
+      return fallback;
+    }
+  }
 
   async function load() {
-    const [resultData, setupData, judgeData] = await Promise.all([
-      api('/api/results'),
-      api('/api/setup'),
-      api('/api/judges/status').catch(() => [])
+    const [resultData, setupData, judgeData, winnerData] = await Promise.all([
+      safeApi('/api/results', []),
+      safeApi('/api/setup', { criteria: [] }),
+      safeApi('/api/judges/status', []),
+      safeApi('/api/winner', { winner_name: '', declared_at: null })
     ]);
 
-    setResults(resultData);
+    setResults(resultData || []);
     setCriteria(setupData.criteria || []);
     setJudgeStatuses(judgeData || []);
+    setDeclaredWinner(winnerData.winner_name || '');
+    setDeclaredAt(winnerData.declared_at || null);
 
     if (showDetails) {
-      const detailData = await api('/api/results/details');
-      setDetails(detailData);
+      setDetails(await safeApi('/api/results/details', []));
     }
 
     if (showHistory) {
-      const historyData = await api('/api/history');
-      setHistory(historyData);
+      setHistory(await safeApi('/api/history', []));
     }
 
     setLastUpdated(new Date().toLocaleTimeString([], {
@@ -472,11 +610,59 @@ function AdminPanel() {
     setLoading(false);
   }
 
+  async function declareWinner() {
+    const name = window.prompt('Please enter the winner name:');
+    if (!name || !name.trim()) return;
+
+    try {
+      const result = await api('/api/winner', {
+        method: 'POST',
+        body: JSON.stringify({ name: name.trim() })
+      });
+
+      setDeclaredWinner(result.winner_name);
+      setDeclaredAt(result.declared_at);
+    } catch (err) {
+      alert(err.message);
+    }
+  }
+
+  async function clearWinner() {
+    if (!window.confirm('Clear declared winner?')) return;
+
+    try {
+      await api('/api/winner', { method: 'DELETE' });
+      setDeclaredWinner('');
+      setDeclaredAt(null);
+    } catch (err) {
+      alert(err.message);
+    }
+  }
+
+  async function printOfficialReport() {
+    try {
+      const [detailData, historyData] = await Promise.all([
+        api('/api/results/details').catch(() => []),
+        api('/api/history').catch(() => [])
+      ]);
+
+      setDetails(detailData || []);
+      setHistory(historyData || []);
+      setShowDetails(true);
+      setShowHistory(true);
+
+      setTimeout(() => {
+        window.print();
+      }, 500);
+    } catch (err) {
+      alert(err.message);
+    }
+  }
+
   useEffect(() => {
     load();
 
     const timer = setInterval(load, 3000);
-
     return () => clearInterval(timer);
   }, [showDetails, showHistory]);
 
@@ -490,7 +676,7 @@ function AdminPanel() {
   const leader = ranked[0];
   const lockedJudges = judgeStatuses.filter((j) => j.submitted_at).length;
 
-  if (loading) {
+  if (loading && ranked.length === 0) {
     return <LoadingPanel text="Loading live dashboard..." />;
   }
 
@@ -500,15 +686,12 @@ function AdminPanel() {
         <div>
           <p className="eyebrow">Admin Dashboard</p>
           <h2>Live Tabulation</h2>
-          <p>
-            Auto-refreshes every 3 seconds. Criteria totals are shown beside the final total.
-          </p>
+          <p>Auto-refreshes every 3 seconds. Scores are weighted and totaled out of 100.</p>
+          {loadWarning && <p className="warning-note">Warning: {loadWarning}</p>}
         </div>
 
         <div className="dashboard-actions">
-          <button className="btn btn-primary" onClick={load}>
-            Refresh Now
-          </button>
+          <button className="btn btn-primary" onClick={load}>Refresh Now</button>
 
           <button
             className={showDetails ? 'btn btn-active' : 'btn btn-dark'}
@@ -524,9 +707,27 @@ function AdminPanel() {
             {showHistory ? '✓ History Open' : 'Show History'}
           </button>
 
+          <button className="btn btn-winner" onClick={declareWinner}>
+            Declare Winner
+          </button>
+
+          {declaredWinner && (
+            <button className="btn btn-light" onClick={clearWinner}>
+              Clear Winner
+            </button>
+          )}
+
+          <button className="btn btn-print" onClick={printOfficialReport}>
+            Print / Save PDF
+          </button>
+
           <span className="last-updated">Updated {lastUpdated || '—'}</span>
         </div>
       </section>
+
+      {declaredWinner && (
+        <WinnerAnnouncement winnerName={declaredWinner} declaredAt={declaredAt} />
+      )}
 
       {leader && (
         <section className="leader-card">
@@ -558,7 +759,6 @@ function AdminPanel() {
                   <th>Submitted Time</th>
                 </tr>
               </thead>
-
               <tbody>
                 {judgeStatuses.map((judge) => (
                   <tr key={judge.id}>
@@ -610,10 +810,7 @@ function AdminPanel() {
                       {r.rank === 1 ? '🥇' : r.rank === 2 ? '🥈' : r.rank === 3 ? '🥉' : r.rank}
                     </span>
                   </td>
-
-                  <td>
-                    <strong>#{r.number} {r.name}</strong>
-                  </td>
+                  <td><strong>#{r.number} {r.name}</strong></td>
 
                   {criteria.map((cr) => (
                     <td key={cr.id} className="score-total">
@@ -621,15 +818,16 @@ function AdminPanel() {
                     </td>
                   ))}
 
-                  <td className="score-total grand-total">
-                    {Number(r.total_score).toFixed(2)}
-                  </td>
-
-                  <td>
-                    <span className="submitted-pill">{r.judges_submitted}</span>
-                  </td>
+                  <td className="score-total grand-total">{Number(r.total_score).toFixed(2)}</td>
+                  <td><span className="submitted-pill">{r.judges_submitted}</span></td>
                 </tr>
               ))}
+
+              {ranked.length === 0 && (
+                <tr>
+                  <td colSpan={criteria.length + 4}>No ranking data yet.</td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
@@ -710,7 +908,7 @@ function AdminPanel() {
                     <td>{h.criteria}</td>
                     <td>{h.old_score === null ? '—' : Number(h.old_score).toFixed(2)}</td>
                     <td className="score-total">{Number(h.new_score).toFixed(2)}</td>
-                    <td>{h.action === 'initial_save' ? 'Initial Save' : 'Edited Score'}</td>
+                    <td>{h.action}</td>
                   </tr>
                 ))}
 
@@ -728,6 +926,31 @@ function AdminPanel() {
   );
 }
 
+function WinnerAnnouncement({ winnerName, declaredAt }) {
+  return (
+    <section className="winner-announcement">
+      <div className="winner-sparkle">👑</div>
+
+      <p className="eyebrow">Official Congratulations</p>
+      <h2>Congratulations, {winnerName}!</h2>
+      <p className="winner-message">
+        Warmest congratulations from <strong>Kirjane Labs</strong> and <strong>Dev Siris</strong>.
+        Your grace, confidence, and excellence shine brightly as part of
+        <strong> Miss Poblacion Occidental 2026</strong>.
+      </p>
+
+      <div className="winner-dev-note">
+        <span>With appreciation from the system developers:</span>
+        <strong>Kirch Ivan A. Balite</strong>
+        <strong>Osiris Kedigadash Palac</strong>
+      </div>
+
+      {declaredAt && (
+        <p className="winner-time">Declared at {formatDateTime(declaredAt)}</p>
+      )}
+    </section>
+  );
+}
 
 function DeveloperCredits() {
   return (
@@ -736,7 +959,7 @@ function DeveloperCredits() {
       <h3>Made for Miss Poblacion Occidental</h3>
       <p className="credit-intro">
         This automated judging and tabulation system is proudly developed as a
-        collaboration between <strong>Kirjane Labs</strong> and <strong>Dev Siris</strong>,
+        collaboration between <strong> Kirjane Labs</strong> and <strong> Dev Siris</strong>,
         built for faster, cleaner, transparent, and traceable pageant scoring.
       </p>
 
@@ -794,6 +1017,29 @@ function SiteFooter() {
         </div>
       </div>
     </footer>
+  );
+}
+
+function ErrorPanel({ title, message }) {
+  return (
+    <main className="login-wrap">
+      <section className="panel login-card error-panel">
+        <h2>{title}</h2>
+        <p>{message || 'Something went wrong while loading this page.'}</p>
+        <button className="btn btn-primary full" onClick={() => window.location.reload()}>
+          Reload
+        </button>
+        <button
+          className="btn btn-light full"
+          onClick={() => {
+            localStorage.clear();
+            window.location.href = '/';
+          }}
+        >
+          Clear Login and Go Home
+        </button>
+      </section>
+    </main>
   );
 }
 

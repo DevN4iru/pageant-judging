@@ -269,31 +269,65 @@ app.get('/api/judges/status', async (req, res) => {
 
 app.get('/api/results', async (req, res) => {
   try {
-    const totals = await pool.query(`
+    const result = await pool.query(`
+      WITH criterion_scores AS (
+        SELECT
+          c.id AS contestant_id,
+          c.number,
+          c.name,
+          cr.id AS criteria_id,
+          cr.name AS criteria_name,
+          cr.sort_order,
+          cr.weight,
+          COALESCE(AVG(s.score), 0)::float AS average_raw_score,
+          (COALESCE(AVG(s.score), 0) * cr.weight)::float AS weighted_score
+        FROM contestants c
+        CROSS JOIN criteria cr
+        LEFT JOIN scores s
+          ON s.contestant_id = c.id
+         AND s.criteria_id = cr.id
+        GROUP BY c.id, c.number, c.name, cr.id, cr.name, cr.sort_order, cr.weight
+      ),
+      totals AS (
+        SELECT
+          contestant_id AS id,
+          number,
+          name,
+          SUM(weighted_score)::float AS total_score
+        FROM criterion_scores
+        GROUP BY contestant_id, number, name
+      ),
+      judge_counts AS (
+        SELECT
+          c.id AS contestant_id,
+          COUNT(DISTINCT s.judge_id)::int AS judges_submitted
+        FROM contestants c
+        LEFT JOIN scores s ON s.contestant_id = c.id
+        GROUP BY c.id
+      )
       SELECT
-        c.id,
-        c.number,
-        c.name,
-        COALESCE(SUM(s.score * cr.weight), 0)::float AS total_score,
-        COUNT(DISTINCT s.judge_id)::int AS judges_submitted
-      FROM contestants c
-      LEFT JOIN scores s ON s.contestant_id = c.id
-      LEFT JOIN criteria cr ON cr.id = s.criteria_id
-      GROUP BY c.id, c.number, c.name
-      ORDER BY total_score DESC, c.number ASC
+        t.id,
+        t.number,
+        t.name,
+        t.total_score,
+        jc.judges_submitted
+      FROM totals t
+      JOIN judge_counts jc ON jc.contestant_id = t.id
+      ORDER BY t.total_score DESC, t.number ASC
     `);
 
     const breakdown = await pool.query(`
       SELECT
         c.id AS contestant_id,
         cr.name AS criteria_name,
-        COALESCE(SUM(s.score * cr.weight), 0)::float AS criteria_total
+        COALESCE(AVG(s.score), 0)::float AS average_raw_score,
+        (COALESCE(AVG(s.score), 0) * cr.weight)::float AS criteria_total
       FROM contestants c
       CROSS JOIN criteria cr
       LEFT JOIN scores s
         ON s.contestant_id = c.id
        AND s.criteria_id = cr.id
-      GROUP BY c.id, c.number, cr.id, cr.name, cr.sort_order
+      GROUP BY c.id, c.number, cr.id, cr.name, cr.weight, cr.sort_order
       ORDER BY c.number ASC, cr.sort_order ASC, cr.id ASC
     `);
 
@@ -307,7 +341,7 @@ app.get('/api/results', async (req, res) => {
       breakdownMap[row.contestant_id][row.criteria_name] = Number(row.criteria_total);
     });
 
-    const rows = totals.rows.map((row) => ({
+    const rows = result.rows.map((row) => ({
       ...row,
       criteria_breakdown: breakdownMap[row.id] || {}
     }));
@@ -367,6 +401,62 @@ app.get('/api/history', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+
+app.get('/api/winner', async (req, res) => {
+  try {
+    const result = await pool.query(
+      "SELECT value, updated_at FROM app_settings WHERE key = 'declared_winner'"
+    );
+
+    res.json({
+      winner_name: result.rows[0]?.value || '',
+      declared_at: result.rows[0]?.updated_at || null
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/winner', async (req, res) => {
+  try {
+    const { name } = req.body;
+    const cleanName = String(name || '').trim();
+
+    if (!cleanName) {
+      return res.status(400).json({ error: 'Winner name is required.' });
+    }
+
+    const result = await pool.query(
+      `
+      INSERT INTO app_settings (key, value, updated_at)
+      VALUES ('declared_winner', $1, NOW())
+      ON CONFLICT (key)
+      DO UPDATE SET value = EXCLUDED.value, updated_at = NOW()
+      RETURNING value, updated_at
+      `,
+      [cleanName]
+    );
+
+    res.json({
+      ok: true,
+      winner_name: result.rows[0].value,
+      declared_at: result.rows[0].updated_at
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.delete('/api/winner', async (req, res) => {
+  try {
+    await pool.query("DELETE FROM app_settings WHERE key = 'declared_winner'");
+    res.json({ ok: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 
 module.exports = app;
 
