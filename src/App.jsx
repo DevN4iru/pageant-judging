@@ -58,10 +58,13 @@ export default function App() {
       <div className="bg-glow bg-glow-two" />
 
       <header className="topbar">
-        <div>
-          <p className="eyebrow">Official Scoring System</p>
-          <h1>Miss Poblacion Occidental</h1>
-          <p className="subtitle">Automated judging, tabulation, locking, and audit history</p>
+        <div className="brand-block">
+          <img src="/poblacion-logo.png" alt="Sangguniang Kabataan Poblacion Occidental Logo" className="brand-logo" />
+          <div>
+            <p className="eyebrow">Official Scoring System</p>
+            <h1>Miss Poblacion Occidental</h1>
+            <p className="subtitle">Automated judging, tabulation, locking, and audit history</p>
+          </div>
         </div>
 
         {(judge || admin) && (
@@ -123,7 +126,7 @@ function Home({ setMode }) {
   return (
     <main className="hero-grid">
       <section className="hero-card">
-        <div className="crown">♛</div>
+        <img src="/poblacion-logo.png" alt="Poblacion Occidental Logo" className="hero-logo" />
         <p className="eyebrow">Pageant Night Ready</p>
         <h2>Fast, clean, automatic, and traceable tabulation.</h2>
         <p>
