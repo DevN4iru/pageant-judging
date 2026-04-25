@@ -118,6 +118,8 @@ export default function App() {
 
       {judge && <JudgePanel judge={judge} />}
       {admin && <AdminPanel />}
+
+      <SiteFooter />
     </div>
   );
 }
@@ -147,6 +149,8 @@ function Home({ setMode }) {
             <small>Live ranking, lock status, and audit logs</small>
           </button>
         </div>
+
+        <DeveloperCredits />
       </section>
 
       <section className="info-panel">
@@ -721,6 +725,75 @@ function AdminPanel() {
         </section>
       )}
     </main>
+  );
+}
+
+
+function DeveloperCredits() {
+  return (
+    <section className="developer-feature balanced-credits">
+      <p className="eyebrow">Happy Fiesta from us!</p>
+      <h3>Made for Miss Poblacion Occidental</h3>
+      <p className="credit-intro">
+        This automated judging and tabulation system is proudly developed as a
+        collaboration between <strong>Kirjane Labs</strong> and <strong>Dev Siris</strong>,
+        built for faster, cleaner, transparent, and traceable pageant scoring.
+      </p>
+
+      <div className="collab-banner">
+        <div>
+          <span>Project Collaboration</span>
+          <strong>Kirjane Labs × Dev Siris</strong>
+        </div>
+      </div>
+
+      <div className="developer-grid equal-dev-grid">
+        <article className="developer-card">
+          <span className="developer-label">Full-Stack Developer</span>
+          <strong>Kirch Ivan A. Balite</strong>
+          <p>Kirjane Labs</p>
+          <a href="tel:09486328353">09486328353</a>
+          <a href="mailto:kirchbalite.careers@gmail.com">kirchbalite.careers@gmail.com</a>
+          <span className="facebook-line">Facebook: Kirch Ivan</span>
+        </article>
+
+        <article className="developer-card">
+          <span className="developer-label">Full-Stack Developer</span>
+          <strong>Osiris Kedigadash Palac</strong>
+          <p>Dev Siris</p>
+          <a href="tel:09694213824">09694213824</a>
+          <a href="mailto:palac.osiriskedigadash@gmail.com">palac.osiriskedigadash@gmail.com</a>
+          <span className="facebook-line">Facebook: Siris Palac</span>
+        </article>
+      </div>
+    </section>
+  );
+}
+
+function SiteFooter() {
+  const year = new Date().getFullYear();
+
+  return (
+    <footer className="site-footer compact-footer">
+      <div className="compact-footer-inner">
+        <strong>Miss Poblacion Occidental Automated Judging System</strong>
+        <p>© {year} All rights reserved. Happy Fiesta from Kirjane Labs × Dev Siris.</p>
+
+        <div className="compact-dev-lines">
+          <p>
+            <strong>Kirjane Labs</strong> — Kirch Ivan A. Balite · 09486328353 ·
+            <a href="mailto:kirchbalite.careers@gmail.com"> kirchbalite.careers@gmail.com</a> ·
+            Facebook: Kirch Ivan
+          </p>
+
+          <p>
+            <strong>Dev Siris</strong> — Osiris Kedigadash Palac · 09694213824 ·
+            <a href="mailto:palac.osiriskedigadash@gmail.com"> palac.osiriskedigadash@gmail.com</a> ·
+            Facebook: Siris Palac
+          </p>
+        </div>
+      </div>
+    </footer>
   );
 }
 
