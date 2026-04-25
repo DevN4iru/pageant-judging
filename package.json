@@ -1,0 +1,22 @@
+{
+  "name": "pageant-judging",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"node api/index.js\" \"vite --host 0.0.0.0\"",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "start": "node api/index.js"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "^4.7.0",
+    "concurrently": "^9.2.1",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "pg": "^8.20.0",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "vite": "^5.4.21"
+  }
+}

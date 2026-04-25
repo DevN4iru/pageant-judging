@@ -1,0 +1,16 @@
+CREATE TABLE IF NOT EXISTS judge_submissions (
+  id SERIAL PRIMARY KEY,
+  judge_id INT NOT NULL UNIQUE REFERENCES judges(id) ON DELETE CASCADE,
+  submitted_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS score_history (
+  id SERIAL PRIMARY KEY,
+  judge_id INT NOT NULL REFERENCES judges(id) ON DELETE CASCADE,
+  contestant_id INT NOT NULL REFERENCES contestants(id) ON DELETE CASCADE,
+  criteria_id INT NOT NULL REFERENCES criteria(id) ON DELETE CASCADE,
+  old_score NUMERIC(6,2),
+  new_score NUMERIC(6,2) NOT NULL,
+  action TEXT NOT NULL DEFAULT 'saved',
+  changed_at TIMESTAMPTZ DEFAULT NOW()
+);
