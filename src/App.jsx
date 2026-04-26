@@ -59,7 +59,7 @@ const CRITERIA_GUIDE = {
   },
   'Preliminary Interview': {
     segmentWeight: '20% of Top 3 score',
-    note: 'Live interview during coronation night. Each candidate has a maximum of one minute to answer.',
+    note: 'Live interview during coronation night.',
     items: [
       'Communication Skills and Clarity of Thought — 30%',
       'Confidence and Stage Presence — 25%',
@@ -69,7 +69,7 @@ const CRITERIA_GUIDE = {
   },
   'Advocacy Interview': {
     segmentWeight: '25% of Top 3 score',
-    note: 'Closed-door advocacy interview conducted one day before coronation night.',
+    note: 'Closed-door advocacy interview conducted before coronation night.',
     items: [
       'Depth and Relevance of Advocacy — 30%',
       'Knowledge and Understanding — 25%',
@@ -93,7 +93,7 @@ function getCriteriaGuide(name) {
   return CRITERIA_GUIDE[name] || {
     segmentWeight: 'Official judging criterion',
     note: 'Use the approved scoring standard set by the pageant committee.',
-    items: ['Score fairly based on the candidate performance for this criterion.']
+    items: ['Score fairly based on candidate performance.']
   };
 }
 
@@ -168,6 +168,7 @@ export default function App() {
             alt="Miss Poblacion Occidental 2026 Logo"
             className="brand-logo"
           />
+
           <div>
             <p className="eyebrow">Official Scoring System</p>
             <h1>Miss Poblacion Occidental</h1>
@@ -176,6 +177,529 @@ export default function App() {
         </div>
 
         {(judge || admin) && (
+          <button className="btn btn-light" onClick={logout}>
+            Logout
+          </button>
+        )}
+      </header>
+
+      {mode === 'home' && !judge && !admin && <Home setMode={setMode} />}
+
+      {mode === 'judge-login' && !judge && (
+        <LoginCard
+          title="Judge Login"
+          description="Enter your assigned judge PIN to start scoring."
+          placeholder="Judge PIN"
+          buttonText="Enter Judge Panel"
+          onBack={() => setMode('home')}
+          onSubmit={async (pin) => {
+            const data = await api('/api/judge/login', {
+              method: 'POST',
+              body: JSON.stringify({ pin })
+            });
+
+            localStorage.setItem('judge', JSON.stringify(data.judge));
+            localStorage.setItem('mode', 'judge');
+            setJudge(data.judge);
+          }}
+        />
+      )}
+
+      {mode === 'admin-login' && !admin && (
+        <LoginCard
+          title="Admin Login"
+          description="Use this on the tabulator laptop for live results and audit logs."
+          placeholder="Admin PIN"
+          buttonText="Open Dashboard"
+          onBack={() => setMode('home')}
+          onSubmit={async (pin) => {
+            await api('/api/admin/login', {
+              method: 'POST',
+              body: JSON.stringify({ pin })
+            });
+
+            localStorage.setItem('admin', 'true');
+            localStorage.setItem('mode', 'admin');
+            setAdmin(true);
+          }}
+        />
+      )}
+
+      {judge && <JudgePanel judge={judge} />}
+      {admin && <AdminPanel />}
+
+      <SiteFooter />
+    </div>
+  );
+}
+
+function Home({ setMode }) {
+  return (
+    <main className="hero-grid">
+      <section className="hero-card">
+        <img
+          src="/pageant-logo.jpg"
+          alt="Miss Poblacion Occidental 2026 Logo"
+          className="hero-logo"
+        />
+
+        <p className="eyebrow">Pageant Night Ready</p>
+        <h2>Fast, clean, automatic, and traceable tabulation.</h2>
+        <p>
+          Judges can edit while scoring, then click Final Submit. After that, their
+          scores are locked and the admin can see score history with exact timestamps.
+        </p>
+
+        <div className="role-grid">
+          <button className="role-card" onClick={() => setMode('judge-login')}>
+            <span className="role-icon">📝</span>
+            <strong>Judge Device</strong>
+            <small>Score, review, and final submit</small>
+          </button>
+
+          <button className="role-card dark" onClick={() => setMode('admin-login')}>
+            <span className="role-icon">📊</span>
+            <strong>Admin Dashboard</strong>
+            <small>Live ranking, lock status, and audit logs</small>
+          </button>
+        </div>
+
+        <CriteriaOverview />
+        <DeveloperCredits />
+      </section>
+
+      <section className="info-panel">
+        <div className="mini-stat">
+          <span>Lock</span>
+          <p>Final submit prevents score edits</p>
+        </div>
+
+        <div className="mini-stat">
+          <span>Audit</span>
+          <p>Every score edit has a timestamp</p>
+        </div>
+
+        <div className="mini-stat">
+          <span>Live</span>
+          <p>Admin dashboard auto-refreshes</p>
+        </div>
+      </section>
+    </main>
+  );
+}
+
+function LoginCard({ title, description, placeholder, buttonText, onSubmit, onBack }) {
+  const [pin, setPin] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  async function submit(e) {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+
+    try {
+      await onSubmit(pin.trim());
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <main className="login-wrap">
+      <section className="panel login-card">
+        <div className="lock-icon">🔐</div>
+        <h2>{title}</h2>
+        <p>{description}</p>
+
+        <form onSubmit={submit}>
+          <input
+            value={pin}
+            onChange={(e) => setPin(e.target.value)}
+            placeholder={placeholder}
+            inputMode="numeric"
+            autoFocus
+          />
+
+          <button className="btn btn-primary full" disabled={loading}>
+            {loading ? 'Checking...' : buttonText}
+          </button>
+        </form>
+
+        {error && <p className="alert error">{error}</p>}
+
+        <button className="btn-text" onClick={onBack}>
+          ← Back to role selection
+        </button>
+      </section>
+    </main>
+  );
+}
+
+function JudgePanel({ judge }) {
+  const [contestants, setContestants] = useState([]);
+  const [criteria, setCriteria] = useState([]);
+  const [scores, setScores] = useState({});
+  const [judgeStatus, setJudgeStatus] = useState(null);
+  const [status, setStatus] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+
+  async function load() {
+    const setup = await api('/api/setup');
+    const saved = await api(`/api/judge/${judge.id}/scores`);
+    const currentStatus = await api(`/api/judge/${judge.id}/status`).catch(() => ({
+      submitted: false,
+      submitted_at: null
+    }));
+
+    const map = {};
+    saved.forEach((s) => {
+      map[`${s.contestant_id}-${s.criteria_id}`] = s.score;
+    });
+
+    setContestants(setup.contestants || []);
+    setCriteria(setup.criteria || []);
+    setScores(map);
+    setJudgeStatus(currentStatus);
+  }
+
+  useEffect(() => {
+    load()
+      .catch((err) => {
+        setLoadError(err.message);
+        setStatus(err.message);
+      })
+      .finally(() => setLoading(false));
+  }, [judge.id]);
+
+  const isLocked = Boolean(judgeStatus?.submitted);
+  const totalFields = contestants.length * criteria.length;
+  const filledFields = Object.values(scores).filter((value) => value !== '').length;
+  const progress = totalFields > 0 ? Math.round((filledFields / totalFields) * 100) : 0;
+  const canFinalSubmit = !isLocked && totalFields > 0 && filledFields >= totalFields;
+
+  function candidateSubtotal(candidateId) {
+    return criteria.reduce((sum, cr) => {
+      const value = Number(scores[`${candidateId}-${cr.id}`]);
+      const weight = Number(cr.weight || 1);
+      return Number.isNaN(value) ? sum : sum + value * weight;
+    }, 0);
+  }
+
+  async function saveScore(contestantId, criteriaId, score) {
+    if (isLocked) {
+      setStatus('Scores are already locked.');
+      return;
+    }
+
+    const key = `${contestantId}-${criteriaId}`;
+
+    setScores((old) => ({
+      ...old,
+      [key]: score
+    }));
+
+    if (score === '') return;
+
+    setStatus('Saving...');
+
+    try {
+      await api('/api/scores', {
+        method: 'POST',
+        body: JSON.stringify({
+          judgeId: judge.id,
+          contestantId,
+          criteriaId,
+          score
+        })
+      });
+
+      const currentStatus = await api(`/api/judge/${judge.id}/status`).catch(() => judgeStatus);
+      setJudgeStatus(currentStatus);
+      setStatus('Saved ✓');
+    } catch (err) {
+      setStatus(err.message);
+    }
+  }
+
+  async function finalSubmit() {
+    if (!canFinalSubmit) {
+      setStatus(`Complete all scores first. ${filledFields}/${totalFields} fields filled.`);
+      return;
+    }
+
+    const yes = window.confirm(
+      'Final submit? After this, your scores will be locked and cannot be edited.'
+    );
+
+    if (!yes) return;
+
+    setSubmitting(true);
+    setStatus('Final submitting...');
+
+    try {
+      const result = await api(`/api/judge/${judge.id}/submit`, {
+        method: 'POST'
+      });
+
+      const currentStatus = await api(`/api/judge/${judge.id}/status`).catch(() => ({
+        submitted: true,
+        submitted_at: result.submitted_at
+      }));
+
+      setJudgeStatus(currentStatus);
+      setStatus(`Final submitted and locked at ${formatDateTime(result.submitted_at)}.`);
+    } catch (err) {
+      setStatus(err.message);
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  if (loading) return <LoadingPanel text="Loading judge panel..." />;
+
+  if (loadError) {
+    return <ErrorPanel title="Judge panel failed to load" message={loadError} />;
+  }
+
+  return (
+    <main className="content-grid">
+      <section className="panel judge-hero">
+        <div>
+          <p className="eyebrow">Judge Panel</p>
+          <h2>{judge.name}</h2>
+          <p>
+            {isLocked
+              ? `Final submitted at ${formatDateTime(judgeStatus?.submitted_at)}. Scores are locked.`
+              : 'Input scores per candidate. You may edit until you click Final Submit.'}
+          </p>
+        </div>
+
+        <div className="progress-card">
+          <strong>{progress}%</strong>
+          <span>{filledFields} of {totalFields} fields filled</span>
+          <div className="progress-bar">
+            <div style={{ width: `${progress}%` }} />
+          </div>
+        </div>
+
+        <div className="final-submit-card">
+          {isLocked ? (
+            <div className="locked-badge">🔒 Final Submitted</div>
+          ) : (
+            <>
+              <button
+                className="btn btn-primary full"
+                onClick={finalSubmit}
+                disabled={!canFinalSubmit || submitting}
+              >
+                {submitting ? 'Submitting...' : 'Final Submit & Lock'}
+              </button>
+              <p className="warning-note">Final submit locks your scores permanently.</p>
+            </>
+          )}
+        </div>
+      </section>
+
+      {status && (
+        <div className={status.includes('Saved') || status.includes('locked') ? 'toast success' : 'toast'}>
+          {status}
+        </div>
+      )}
+
+      <section className="candidate-list">
+        {contestants.map((candidate) => (
+          <article className="candidate-card" key={candidate.id}>
+            <div className="candidate-head">
+              <div>
+                <span className="candidate-number">Candidate #{candidate.number}</span>
+                <h3>{candidate.name}</h3>
+              </div>
+
+              <div className="subtotal">
+                <span>Subtotal</span>
+                <strong>{candidateSubtotal(candidate.id).toFixed(2)}</strong>
+              </div>
+            </div>
+
+            <div className="score-grid">
+              {criteria.map((cr) => {
+                const key = `${candidate.id}-${cr.id}`;
+
+                return (
+                  <label className="score-field" key={cr.id}>
+                    <span>{cr.name}</span>
+                    <small>
+                      Input / {Number(cr.max_score).toFixed(0)} · Counts as {(Number(cr.weight || 0) * 100).toFixed(0)}%
+                    </small>
+
+                    <CriteriaNote name={cr.name} />
+
+                    <input
+                      type="number"
+                      min="0"
+                      max={cr.max_score}
+                      step="0.01"
+                      value={scores[key] ?? ''}
+                      disabled={isLocked}
+                      onChange={(e) => saveScore(candidate.id, cr.id, e.target.value)}
+                    />
+                  </label>
+                );
+              })}
+            </div>
+          </article>
+        ))}
+      </section>
+    </main>
+  );
+}
+
+function AdminPanel() {
+  const [results, setResults] = useState([]);
+  const [details, setDetails] = useState([]);
+  const [judgeStatuses, setJudgeStatuses] = useState([]);
+  const [history, setHistory] = useState([]);
+  const [criteria, setCriteria] = useState([]);
+  const [showDetails, setShowDetails] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [loadWarning, setLoadWarning] = useState('');
+  const [declaredWinner, setDeclaredWinner] = useState('');
+  const [declaredAt, setDeclaredAt] = useState(null);
+
+  async function safeApi(path, fallback) {
+    try {
+      return await api(path);
+    } catch (err) {
+      console.error(`${path} failed:`, err.message);
+      setLoadWarning(`${path} failed: ${err.message}`);
+      return fallback;
+    }
+  }
+
+  async function load() {
+    const [resultData, setupData, judgeData, winnerData] = await Promise.all([
+      safeApi('/api/results', []),
+      safeApi('/api/setup', { criteria: [] }),
+      safeApi('/api/judges/status', []),
+      safeApi('/api/winner', { winner_name: '', declared_at: null })
+    ]);
+
+    setResults(resultData || []);
+    setCriteria(setupData.criteria || []);
+    setJudgeStatuses(judgeData || []);
+    setDeclaredWinner(winnerData.winner_name || '');
+    setDeclaredAt(winnerData.declared_at || null);
+
+    if (showDetails) {
+      setDetails(await safeApi('/api/results/details', []));
+    }
+
+    if (showHistory) {
+      setHistory(await safeApi('/api/history', []));
+    }
+
+    setLastUpdated(new Date().toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    }));
+
+    setLoading(false);
+  }
+
+  async function declareWinner() {
+    const name = window.prompt('Please enter the winner name:');
+    if (!name || !name.trim()) return;
+
+    try {
+      const result = await api('/api/winner', {
+        method: 'POST',
+        body: JSON.stringify({ name: name.trim() })
+      });
+
+      setDeclaredWinner(result.winner_name);
+      setDeclaredAt(result.declared_at);
+    } catch (err) {
+      alert(err.message);
+    }
+  }
+
+  async function clearWinner() {
+    if (!window.confirm('Clear declared winner?')) return;
+
+    try {
+      await api('/api/winner', { method: 'DELETE' });
+      setDeclaredWinner('');
+      setDeclaredAt(null);
+    } catch (err) {
+      alert(err.message);
+    }
+  }
+
+  useEffect(() => {
+    load();
+
+    const timer = setInterval(load, 3000);
+    return () => clearInterval(timer);
+  }, [showDetails, showHistory]);
+
+  const ranked = useMemo(() => {
+    return results.map((result, index) => ({
+      ...result,
+      rank: index + 1
+    }));
+  }, [results]);
+
+  const leader = ranked[0];
+  const lockedJudges = judgeStatuses.filter((j) => j.submitted_at).length;
+
+  if (loading && ranked.length === 0) {
+    return <LoadingPanel text="Loading live dashboard..." />;
+  }
+
+  return (
+    <main className="content-grid">
+      <section className="panel dashboard-hero">
+        <div>
+          <p className="eyebrow">Admin Dashboard</p>
+          <h2>Live Tabulation</h2>
+          <p>Auto-refreshes every 3 seconds. Scores are weighted and totaled out of 100.</p>
+          {loadWarning && <p className="warning-note">Warning: {loadWarning}</p>}
+        </div>
+
+        <div className="dashboard-actions">
+          <button className="btn btn-primary" onClick={load}>Refresh Now</button>
+
+          <button
+            className={showDetails ? 'btn btn-active' : 'btn btn-dark'}
+            onClick={() => setShowDetails(!showDetails)}
+          >
+            {showDetails ? '✓ Details Open' : 'Show Details'}
+          </button>
+
+          <button
+            className={showHistory ? 'btn btn-active' : 'btn btn-dark'}
+            onClick={() => setShowHistory(!showHistory)}
+          >
+            {showHistory ? '✓ History Open' : 'Show History'}
+          </button>
+
+          <button className="btn btn-winner" onClick={declareWinner}>
+            Declare Winner
+          </button>
+
+          {declaredWinner && (
+            <button className="btn btn-light" onClick={clearWinner}>
+              Clear Winner
+            </button>
+          )}
 
           <span className="last-updated">Updated {lastUpdated || '—'}</span>
         </div>
@@ -215,19 +739,20 @@ export default function App() {
                   <th>Submitted Time</th>
                 </tr>
               </thead>
+
               <tbody>
-                {judgeStatuses.map((judge) => (
-                  <tr key={judge.id}>
-                    <td><strong>{judge.name}</strong></td>
+                {judgeStatuses.map((judgeStatusRow) => (
+                  <tr key={judgeStatusRow.id}>
+                    <td><strong>{judgeStatusRow.name}</strong></td>
                     <td>
-                      {judge.submitted_at ? (
+                      {judgeStatusRow.submitted_at ? (
                         <span className="submitted-pill">🔒 Locked</span>
                       ) : (
                         <span className="rank-pill">Editing</span>
                       )}
                     </td>
-                    <td>{judge.score_count}</td>
-                    <td>{formatDateTime(judge.submitted_at)}</td>
+                    <td>{judgeStatusRow.score_count}</td>
+                    <td>{formatDateTime(judgeStatusRow.submitted_at)}</td>
                   </tr>
                 ))}
               </tbody>
