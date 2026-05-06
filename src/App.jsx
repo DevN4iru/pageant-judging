@@ -588,7 +588,6 @@ function FinalInterviewJudgePanel({ judge }) {
     saved.forEach((s) => {
       map[`${s.contestant_id}-${s.criteria_key}`] = s.score;
     });
-
     setFinalReady(Boolean(setup.ready));
     setReadiness(setup);
     setContestants(setup.contestants || []);
