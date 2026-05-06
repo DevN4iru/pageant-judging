@@ -555,9 +555,411 @@ function JudgePanel({ judge }) {
           </article>
         ))}
       </section>
+
+      <FinalInterviewJudgePanel judge={judge} />
     </main>
   );
 }
+
+
+/* ===== KIRCH FINAL INTERVIEW COMPONENTS START ===== */
+
+function FinalInterviewJudgePanel({ judge }) {
+  const [contestants, setContestants] = useState([]);
+  const [criteria, setCriteria] = useState([]);
+  const [scores, setScores] = useState({});
+  const [judgeStatus, setJudgeStatus] = useState(null);
+  const [status, setStatus] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+
+  async function loadFinalInterview() {
+    const setup = await api('/api/final/setup');
+    const saved = await api(`/api/final/judge/${judge.id}/scores`).catch(() => []);
+    const currentStatus = await api(`/api/final/judge/${judge.id}/status`).catch(() => ({
+      submitted: false,
+      submitted_at: null,
+      required_count: 0,
+      score_count: 0
+    }));
+
+    const map = {};
+    saved.forEach((s) => {
+      map[`${s.contestant_id}-${s.criteria_key}`] = s.score;
+    });
+
+    setContestants(setup.contestants || []);
+    setCriteria(setup.criteria || []);
+    setScores(map);
+    setJudgeStatus(currentStatus);
+  }
+
+  useEffect(() => {
+    loadFinalInterview()
+      .catch((err) => setStatus(err.message))
+      .finally(() => setLoading(false));
+  }, [judge.id]);
+
+  const isLocked = Boolean(judgeStatus?.submitted);
+  const totalFields = contestants.length * criteria.length;
+  const filledFields = Object.values(scores).filter((value) => value !== '').length;
+  const progress = totalFields > 0 ? Math.round((filledFields / totalFields) * 100) : 0;
+  const canSubmit = !isLocked && totalFields > 0 && filledFields >= totalFields;
+
+  function candidateFinalSubtotal(candidateId) {
+    return criteria.reduce((sum, cr) => {
+      const value = Number(scores[`${candidateId}-${cr.key}`]);
+      const weight = Number(cr.weight || 0);
+      return Number.isNaN(value) ? sum : sum + value * weight;
+    }, 0);
+  }
+
+  async function saveFinalScore(contestantId, criteriaKey, score) {
+    if (isLocked) {
+      setStatus('Final Interview scores are already locked.');
+      return;
+    }
+
+    const key = `${contestantId}-${criteriaKey}`;
+
+    setScores((old) => ({
+      ...old,
+      [key]: score
+    }));
+
+    if (score === '') return;
+
+    setStatus('Saving Final Interview score...');
+
+    try {
+      await api('/api/final/scores', {
+        method: 'POST',
+        body: JSON.stringify({
+          judgeId: judge.id,
+          contestantId,
+          criteriaKey,
+          score
+        })
+      });
+
+      const currentStatus = await api(`/api/final/judge/${judge.id}/status`).catch(() => judgeStatus);
+      setJudgeStatus(currentStatus);
+      setStatus('Final Interview score saved ✓');
+    } catch (err) {
+      setStatus(err.message);
+    }
+  }
+
+  async function finalInterviewSubmit() {
+    if (!canSubmit) {
+      setStatus(`Complete all Final Interview scores first. ${filledFields}/${totalFields} fields filled.`);
+      return;
+    }
+
+    const yes = window.confirm(
+      'Submit Final Interview scores? After this, your Final Interview scores will be locked.'
+    );
+
+    if (!yes) return;
+
+    setSubmitting(true);
+    setStatus('Submitting Final Interview scores...');
+
+    try {
+      const result = await api(`/api/final/judge/${judge.id}/submit`, {
+        method: 'POST'
+      });
+
+      const currentStatus = await api(`/api/final/judge/${judge.id}/status`).catch(() => ({
+        submitted: true,
+        submitted_at: result.submitted_at
+      }));
+
+      setJudgeStatus(currentStatus);
+      setStatus(`Final Interview submitted and locked at ${formatDateTime(result.submitted_at)}.`);
+    } catch (err) {
+      setStatus(err.message);
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  if (loading) {
+    return (
+      <section className="panel final-round-panel">
+        <p className="eyebrow">Final Interview</p>
+        <p>Loading Top 3 final round...</p>
+      </section>
+    );
+  }
+
+  return (
+    <section className="panel final-round-panel">
+      <div className="final-round-head">
+        <div>
+          <p className="eyebrow">Final Interview · Top 3 Only</p>
+          <h2>Decisive Final Round</h2>
+          <p>
+            Final ranking is based on Beauty and Poise 60% plus Wit, Intelligence,
+            and Quality of Answer 40%.
+          </p>
+        </div>
+
+        <div className="progress-card final-progress-card">
+          <strong>{progress}%</strong>
+          <span>{filledFields} of {totalFields} fields filled</span>
+          <div className="progress-bar">
+            <div style={{ width: `${progress}%` }} />
+          </div>
+        </div>
+
+        <div className="final-submit-card">
+          {isLocked ? (
+            <div className="locked-badge">🔒 Final Interview Locked</div>
+          ) : (
+            <>
+              <button
+                className="btn btn-primary full"
+                onClick={finalInterviewSubmit}
+                disabled={!canSubmit || submitting}
+              >
+                {submitting ? 'Submitting...' : 'Submit Final Interview'}
+              </button>
+              <p className="warning-note">Locks Final Interview scores only.</p>
+            </>
+          )}
+        </div>
+      </div>
+
+      {status && (
+        <div className={status.includes('saved') || status.includes('locked') ? 'toast success' : 'toast'}>
+          {status}
+        </div>
+      )}
+
+      <div className="final-candidate-grid">
+        {contestants.map((candidate) => (
+          <article className="candidate-card final-candidate-card" key={candidate.id}>
+            <div className="candidate-head">
+              <div>
+                <span className="candidate-number">Top 3 · Candidate #{candidate.number}</span>
+                <h3>{candidate.name}</h3>
+                <p className="prefinal-note">
+                  Pre-final score: {Number(candidate.pre_final_score || 0).toFixed(2)}
+                </p>
+              </div>
+
+              <div className="subtotal">
+                <span>Final</span>
+                <strong>{candidateFinalSubtotal(candidate.id).toFixed(2)}</strong>
+              </div>
+            </div>
+
+            <div className="score-grid final-score-grid">
+              {criteria.map((cr) => {
+                const key = `${candidate.id}-${cr.key}`;
+
+                return (
+                  <label className="score-field" key={cr.key}>
+                    <span>{cr.name}</span>
+                    <small>
+                      Input / {Number(cr.max_score).toFixed(0)} · Counts as {(Number(cr.weight || 0) * 100).toFixed(0)}%
+                    </small>
+
+                    <input
+                      type="number"
+                      min="0"
+                      max={cr.max_score}
+                      step="0.01"
+                      value={scores[key] ?? ''}
+                      disabled={isLocked}
+                      onChange={(e) => saveFinalScore(candidate.id, cr.key, e.target.value)}
+                    />
+                  </label>
+                );
+              })}
+            </div>
+          </article>
+        ))}
+
+        {contestants.length === 0 && (
+          <article className="candidate-card">
+            <h3>No Top 3 data yet</h3>
+            <p>Complete pre-final scoring first.</p>
+          </article>
+        )}
+      </div>
+    </section>
+  );
+}
+
+function FinalInterviewAdminPanel() {
+  const [results, setResults] = useState([]);
+  const [judgeStatuses, setJudgeStatuses] = useState([]);
+  const [details, setDetails] = useState([]);
+  const [showDetails, setShowDetails] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [loadWarning, setLoadWarning] = useState('');
+
+  async function safeApi(path, fallback) {
+    try {
+      return await api(path);
+    } catch (err) {
+      setLoadWarning(`${path} failed: ${err.message}`);
+      return fallback;
+    }
+  }
+
+  async function loadFinalAdmin() {
+    const [resultData, judgeData] = await Promise.all([
+      safeApi('/api/final/results', []),
+      safeApi('/api/final/judges/status', [])
+    ]);
+
+    setResults(resultData || []);
+    setJudgeStatuses(judgeData || []);
+
+    if (showDetails) {
+      setDetails(await safeApi('/api/final/details', []));
+    }
+
+    setLastUpdated(new Date().toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    }));
+
+    setLoading(false);
+  }
+
+  useEffect(() => {
+    loadFinalAdmin();
+
+    const timer = setInterval(loadFinalAdmin, 3000);
+    return () => clearInterval(timer);
+  }, [showDetails]);
+
+  const ranked = results.map((result, index) => ({
+    ...result,
+    rank: index + 1
+  }));
+
+  const winner = ranked[0];
+  const lockedJudges = judgeStatuses.filter((j) => j.submitted_at).length;
+
+  return (
+    <section className="panel table-panel final-results-panel">
+      <div className="table-title">
+        <div>
+          <p className="eyebrow">Final Interview Results</p>
+          <h3>Final Ranking · Top 3</h3>
+          <p>
+            {loading ? 'Loading final round...' : `${lockedJudges} of ${judgeStatuses.length} judges submitted final scores`}
+            {lastUpdated ? ` · Updated ${lastUpdated}` : ''}
+          </p>
+          {loadWarning && <p className="warning-note">Warning: {loadWarning}</p>}
+        </div>
+
+        <button
+          className={showDetails ? 'btn btn-active' : 'btn btn-dark'}
+          onClick={() => setShowDetails(!showDetails)}
+        >
+          {showDetails ? '✓ Final Details Open' : 'Show Final Details'}
+        </button>
+      </div>
+
+      {winner && (
+        <div className="final-winner-strip">
+          <span>👑 Final Leader</span>
+          <strong>#{winner.number} {winner.name}</strong>
+          <em>{Number(winner.final_score || 0).toFixed(2)}</em>
+        </div>
+      )}
+
+      <div className="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Final Rank</th>
+              <th>Candidate</th>
+              <th>Beauty / Poise</th>
+              <th>Wit / Intelligence / Answer</th>
+              <th>Final Score</th>
+              <th>Pre-final Score</th>
+              <th>Judges Submitted</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {ranked.map((r) => (
+              <tr key={r.id} className={r.rank === 1 ? 'top-rank' : ''}>
+                <td>
+                  <span className="rank-pill">
+                    {r.rank === 1 ? '👑' : r.rank === 2 ? '🥈' : r.rank === 3 ? '🥉' : r.rank}
+                  </span>
+                </td>
+                <td><strong>#{r.number} {r.name}</strong></td>
+                <td className="score-total">
+                  {Number(r.criteria_breakdown?.['Beauty and Poise'] || 0).toFixed(2)}
+                </td>
+                <td className="score-total">
+                  {Number(r.criteria_breakdown?.['Wit, Intelligence, and Quality of Answer'] || 0).toFixed(2)}
+                </td>
+                <td className="score-total grand-total">{Number(r.final_score || 0).toFixed(2)}</td>
+                <td>{Number(r.pre_final_score || 0).toFixed(2)}</td>
+                <td><span className="submitted-pill">{r.judges_submitted}</span></td>
+              </tr>
+            ))}
+
+            {ranked.length === 0 && (
+              <tr>
+                <td colSpan="7">No Final Interview data yet.</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {showDetails && (
+        <div className="table-wrap final-details-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Contestant</th>
+                <th>Judge</th>
+                <th>Final Criteria</th>
+                <th>Score</th>
+                <th>Last Edited</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {details.map((d, index) => (
+                <tr key={index}>
+                  <td>#{d.contestant_number} {d.contestant}</td>
+                  <td>{d.judge}</td>
+                  <td>{d.criteria}</td>
+                  <td className="score-total">{Number(d.score).toFixed(2)}</td>
+                  <td>{formatDateTime(d.updated_at)}</td>
+                </tr>
+              ))}
+
+              {details.length === 0 && (
+                <tr>
+                  <td colSpan="5">No Final Interview details yet.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </section>
+  );
+}
+
+/* ===== KIRCH FINAL INTERVIEW COMPONENTS END ===== */
+
 
 function AdminPanel() {
   const [results, setResults] = useState([]);
@@ -719,6 +1121,8 @@ function AdminPanel() {
           <strong>{Number(leader.total_score).toFixed(2)}</strong>
         </section>
       )}
+
+      <FinalInterviewAdminPanel />
 
       {judgeStatuses.length > 0 && (
         <section className="panel table-panel">

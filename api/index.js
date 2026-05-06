@@ -458,6 +458,442 @@ app.delete('/api/winner', async (req, res) => {
 });
 
 
+/* ===== KIRCH FINAL INTERVIEW API START ===== */
+
+const FINAL_CRITERIA = [
+  {
+    key: 'beauty_poise',
+    name: 'Beauty and Poise',
+    max_score: 100,
+    weight: 0.60,
+    sort_order: 1
+  },
+  {
+    key: 'wit_intelligence_answer',
+    name: 'Wit, Intelligence, and Quality of Answer',
+    max_score: 100,
+    weight: 0.40,
+    sort_order: 2
+  }
+];
+
+const FINAL_CRITERIA_VALUES_SQL = `
+  VALUES
+    ('beauty_poise', 'Beauty and Poise', 0.60::numeric, 1),
+    ('wit_intelligence_answer', 'Wit, Intelligence, and Quality of Answer', 0.40::numeric, 2)
+`;
+
+function getTopThreeSql(limitClause = '') {
+  return `
+    WITH criterion_scores AS (
+      SELECT
+        c.id AS contestant_id,
+        c.number,
+        c.name,
+        cr.id AS criteria_id,
+        cr.name AS criteria_name,
+        cr.sort_order,
+        cr.weight,
+        COALESCE(AVG(s.score), 0)::float AS average_raw_score,
+        (COALESCE(AVG(s.score), 0) * cr.weight)::float AS weighted_score
+      FROM contestants c
+      CROSS JOIN criteria cr
+      LEFT JOIN scores s
+        ON s.contestant_id = c.id
+       AND s.criteria_id = cr.id
+      GROUP BY c.id, c.number, c.name, cr.id, cr.name, cr.sort_order, cr.weight
+    ),
+    totals AS (
+      SELECT
+        contestant_id AS id,
+        number,
+        name,
+        SUM(weighted_score)::float AS pre_final_score
+      FROM criterion_scores
+      GROUP BY contestant_id, number, name
+    )
+    SELECT id, number, name, pre_final_score
+    FROM totals
+    ORDER BY pre_final_score DESC, number ASC
+    ${limitClause}
+  `;
+}
+
+function getTopThreeContestantFilterSql() {
+  return `
+    SELECT id
+    FROM (${getTopThreeSql('LIMIT 3')}) top_three_filter
+  `;
+}
+
+app.get('/api/final/setup', async (req, res) => {
+  try {
+    const topThree = await pool.query(getTopThreeSql('LIMIT 3'));
+
+    res.json({
+      contestants: topThree.rows,
+      criteria: FINAL_CRITERIA
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/final/judge/:judgeId/scores', async (req, res) => {
+  try {
+    const { judgeId } = req.params;
+
+    const result = await pool.query(
+      `
+      SELECT contestant_id, criteria_key, score
+      FROM final_scores
+      WHERE judge_id = $1
+        AND contestant_id IN (${getTopThreeContestantFilterSql()})
+      `,
+      [judgeId]
+    );
+
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/final/judge/:judgeId/status', async (req, res) => {
+  try {
+    const { judgeId } = req.params;
+
+    const topThree = await pool.query(getTopThreeSql('LIMIT 3'));
+    const requiredCount = topThree.rows.length * FINAL_CRITERIA.length;
+
+    const submission = await pool.query(
+      'SELECT submitted_at FROM final_judge_submissions WHERE judge_id = $1',
+      [judgeId]
+    );
+
+    const scoreCount = await pool.query(
+      `
+      SELECT COUNT(*)::int AS score_count
+      FROM final_scores
+      WHERE judge_id = $1
+        AND contestant_id IN (${getTopThreeContestantFilterSql()})
+      `,
+      [judgeId]
+    );
+
+    res.json({
+      submitted: submission.rows.length > 0,
+      submitted_at: submission.rows[0]?.submitted_at || null,
+      required_count: requiredCount,
+      score_count: scoreCount.rows[0].score_count
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/final/scores', async (req, res) => {
+  const client = await pool.connect();
+
+  try {
+    const { judgeId, contestantId, criteriaKey, score } = req.body;
+    const numericScore = Number(score);
+    const finalCriterion = FINAL_CRITERIA.find((item) => item.key === criteriaKey);
+
+    if (
+      !judgeId ||
+      !contestantId ||
+      !criteriaKey ||
+      !finalCriterion ||
+      Number.isNaN(numericScore)
+    ) {
+      return res.status(400).json({ error: 'Invalid final interview score data' });
+    }
+
+    if (numericScore < 0 || numericScore > finalCriterion.max_score) {
+      return res.status(400).json({
+        error: `Final Interview score must be from 0 to ${finalCriterion.max_score}`
+      });
+    }
+
+    await client.query('BEGIN');
+
+    const submitted = await client.query(
+      'SELECT id FROM final_judge_submissions WHERE judge_id = $1',
+      [judgeId]
+    );
+
+    if (submitted.rows.length > 0) {
+      await client.query('ROLLBACK');
+      return res.status(423).json({
+        error: 'Final Interview scores are already submitted and locked.'
+      });
+    }
+
+    const isTopThree = await client.query(
+      `
+      SELECT EXISTS (
+        SELECT 1
+        FROM (${getTopThreeSql('LIMIT 3')}) top_three
+        WHERE top_three.id = $1
+      ) AS allowed
+      `,
+      [contestantId]
+    );
+
+    if (!isTopThree.rows[0].allowed) {
+      await client.query('ROLLBACK');
+      return res.status(400).json({
+        error: 'Final Interview scoring is only allowed for Top 3 candidates.'
+      });
+    }
+
+    const existing = await client.query(
+      `
+      SELECT score
+      FROM final_scores
+      WHERE judge_id = $1 AND contestant_id = $2 AND criteria_key = $3
+      `,
+      [judgeId, contestantId, criteriaKey]
+    );
+
+    const oldScore = existing.rows[0]?.score ?? null;
+
+    await client.query(
+      `
+      INSERT INTO final_scores (judge_id, contestant_id, criteria_key, score, updated_at)
+      VALUES ($1, $2, $3, $4, NOW())
+      ON CONFLICT (judge_id, contestant_id, criteria_key)
+      DO UPDATE SET score = EXCLUDED.score, updated_at = NOW()
+      `,
+      [judgeId, contestantId, criteriaKey, numericScore]
+    );
+
+    await client.query(
+      `
+      INSERT INTO final_score_history
+      (judge_id, contestant_id, criteria_key, old_score, new_score, action, changed_at)
+      VALUES ($1, $2, $3, $4, $5, $6, NOW())
+      `,
+      [
+        judgeId,
+        contestantId,
+        criteriaKey,
+        oldScore,
+        numericScore,
+        oldScore === null ? 'initial_final_save' : 'edited_final_score'
+      ]
+    );
+
+    await client.query('COMMIT');
+
+    res.json({ ok: true });
+  } catch (err) {
+    await client.query('ROLLBACK').catch(() => {});
+    res.status(500).json({ error: err.message });
+  } finally {
+    client.release();
+  }
+});
+
+app.post('/api/final/judge/:judgeId/submit', async (req, res) => {
+  try {
+    const { judgeId } = req.params;
+
+    const topThree = await pool.query(getTopThreeSql('LIMIT 3'));
+    const requiredCount = topThree.rows.length * FINAL_CRITERIA.length;
+
+    const scoreCount = await pool.query(
+      `
+      SELECT COUNT(*)::int AS score_count
+      FROM final_scores
+      WHERE judge_id = $1
+        AND contestant_id IN (${getTopThreeContestantFilterSql()})
+      `,
+      [judgeId]
+    );
+
+    if (scoreCount.rows[0].score_count < requiredCount) {
+      return res.status(400).json({
+        error: `Incomplete Final Interview scores. ${scoreCount.rows[0].score_count}/${requiredCount} fields filled.`
+      });
+    }
+
+    const result = await pool.query(
+      `
+      INSERT INTO final_judge_submissions (judge_id, submitted_at)
+      VALUES ($1, NOW())
+      ON CONFLICT (judge_id)
+      DO UPDATE SET submitted_at = final_judge_submissions.submitted_at
+      RETURNING submitted_at
+      `,
+      [judgeId]
+    );
+
+    res.json({
+      ok: true,
+      submitted_at: result.rows[0].submitted_at
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/final/judges/status', async (req, res) => {
+  try {
+    const result = await pool.query(
+      `
+      SELECT
+        j.id,
+        j.name,
+        fjs.submitted_at,
+        COUNT(fs.id)::int AS score_count
+      FROM judges j
+      LEFT JOIN final_judge_submissions fjs ON fjs.judge_id = j.id
+      LEFT JOIN final_scores fs
+        ON fs.judge_id = j.id
+       AND fs.contestant_id IN (${getTopThreeContestantFilterSql()})
+      GROUP BY j.id, j.name, fjs.submitted_at
+      ORDER BY j.id ASC
+      `
+    );
+
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/final/results', async (req, res) => {
+  try {
+    const result = await pool.query(
+      `
+      WITH top_three AS (
+        ${getTopThreeSql('LIMIT 3')}
+      ),
+      final_criterion_scores AS (
+        SELECT
+          t.id AS contestant_id,
+          t.number,
+          t.name,
+          t.pre_final_score,
+          fc.criteria_key,
+          fc.criteria_name,
+          fc.weight,
+          fc.sort_order,
+          COALESCE(AVG(fs.score), 0)::float AS average_raw_score,
+          (COALESCE(AVG(fs.score), 0) * fc.weight)::float AS weighted_score
+        FROM top_three t
+        CROSS JOIN (${FINAL_CRITERIA_VALUES_SQL}) AS fc(criteria_key, criteria_name, weight, sort_order)
+        LEFT JOIN final_scores fs
+          ON fs.contestant_id = t.id
+         AND fs.criteria_key = fc.criteria_key
+        GROUP BY t.id, t.number, t.name, t.pre_final_score, fc.criteria_key, fc.criteria_name, fc.weight, fc.sort_order
+      ),
+      totals AS (
+        SELECT
+          contestant_id AS id,
+          number,
+          name,
+          pre_final_score,
+          SUM(weighted_score)::float AS final_score
+        FROM final_criterion_scores
+        GROUP BY contestant_id, number, name, pre_final_score
+      ),
+      judge_counts AS (
+        SELECT
+          t.id AS contestant_id,
+          COUNT(DISTINCT fs.judge_id)::int AS judges_submitted
+        FROM top_three t
+        LEFT JOIN final_scores fs ON fs.contestant_id = t.id
+        GROUP BY t.id
+      )
+      SELECT
+        t.id,
+        t.number,
+        t.name,
+        t.pre_final_score,
+        t.final_score,
+        jc.judges_submitted
+      FROM totals t
+      JOIN judge_counts jc ON jc.contestant_id = t.id
+      ORDER BY t.final_score DESC, t.pre_final_score DESC, t.number ASC
+      `
+    );
+
+    const breakdown = await pool.query(
+      `
+      WITH top_three AS (
+        ${getTopThreeSql('LIMIT 3')}
+      )
+      SELECT
+        t.id AS contestant_id,
+        fc.criteria_key,
+        fc.criteria_name,
+        COALESCE(AVG(fs.score), 0)::float AS average_raw_score,
+        (COALESCE(AVG(fs.score), 0) * fc.weight)::float AS criteria_total
+      FROM top_three t
+      CROSS JOIN (${FINAL_CRITERIA_VALUES_SQL}) AS fc(criteria_key, criteria_name, weight, sort_order)
+      LEFT JOIN final_scores fs
+        ON fs.contestant_id = t.id
+       AND fs.criteria_key = fc.criteria_key
+      GROUP BY t.id, fc.criteria_key, fc.criteria_name, fc.weight, fc.sort_order
+      ORDER BY t.id ASC, fc.sort_order ASC
+      `
+    );
+
+    const breakdownMap = {};
+
+    breakdown.rows.forEach((row) => {
+      if (!breakdownMap[row.contestant_id]) {
+        breakdownMap[row.contestant_id] = {};
+      }
+
+      breakdownMap[row.contestant_id][row.criteria_name] = Number(row.criteria_total);
+    });
+
+    res.json(result.rows.map((row) => ({
+      ...row,
+      criteria_breakdown: breakdownMap[row.id] || {}
+    })));
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/final/details', async (req, res) => {
+  try {
+    const result = await pool.query(
+      `
+      SELECT
+        j.name AS judge,
+        c.number AS contestant_number,
+        c.name AS contestant,
+        fs.criteria_key,
+        CASE
+          WHEN fs.criteria_key = 'beauty_poise' THEN 'Beauty and Poise'
+          WHEN fs.criteria_key = 'wit_intelligence_answer' THEN 'Wit, Intelligence, and Quality of Answer'
+          ELSE fs.criteria_key
+        END AS criteria,
+        fs.score,
+        fs.updated_at
+      FROM final_scores fs
+      JOIN judges j ON j.id = fs.judge_id
+      JOIN contestants c ON c.id = fs.contestant_id
+      WHERE fs.contestant_id IN (${getTopThreeContestantFilterSql()})
+      ORDER BY c.number ASC, j.id ASC, fs.criteria_key ASC
+      `
+    );
+
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/* ===== KIRCH FINAL INTERVIEW API END ===== */
+
+
 module.exports = app;
 
 if (require.main === module) {

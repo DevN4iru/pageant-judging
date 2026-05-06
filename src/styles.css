@@ -1763,3 +1763,103 @@ input {
 }
 /* ===== KIRCH GLASS BORDER FIX END ===== */
 
+/* ===== KIRCH FINAL INTERVIEW UI START ===== */
+
+.final-round-panel,
+.final-results-panel {
+  display: grid;
+  gap: 14px;
+  border-color: rgba(76, 29, 149, 0.32) !important;
+}
+
+.final-round-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 14px;
+}
+
+.final-round-head h2 {
+  margin-bottom: 6px;
+}
+
+.final-progress-card {
+  min-width: 190px;
+}
+
+.final-candidate-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.final-candidate-card {
+  border-left: 5px solid var(--gold);
+}
+
+.final-score-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.prefinal-note {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.final-winner-strip {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  color: white;
+  background:
+    linear-gradient(135deg, rgba(76, 29, 149, 0.95), rgba(219, 39, 119, 0.82)),
+    radial-gradient(circle at 100% 0%, rgba(245, 158, 11, 0.24), transparent 35%);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: 0 16px 38px rgba(76, 29, 149, 0.22);
+}
+
+.final-winner-strip span {
+  color: #fbbf24;
+  font-size: 12px;
+  font-weight: 950;
+  text-transform: uppercase;
+  letter-spacing: 0.10em;
+}
+
+.final-winner-strip strong {
+  color: white;
+  font-size: 18px;
+}
+
+.final-winner-strip em {
+  color: #fbbf24;
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 950;
+}
+
+.final-details-wrap {
+  margin-top: 12px;
+}
+
+@media (max-width: 920px) {
+  .final-round-head,
+  .final-winner-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .final-score-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .final-progress-card {
+    min-width: 0;
+  }
+}
+
+/* ===== KIRCH FINAL INTERVIEW UI END ===== */
+
