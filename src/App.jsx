@@ -176,11 +176,19 @@ export default function App() {
           </div>
         </div>
 
-        {(judge || admin) && (
-          <button className="btn btn-light" onClick={logout}>
-            Logout
-          </button>
-        )}
+        <div className="topbar-actions">
+          <div className="system-badges" aria-label="System highlights">
+            <span>Live scores</span>
+            <span>Audit locked</span>
+            <span>Fiesta ready</span>
+          </div>
+
+          {(judge || admin) && (
+            <button className="btn btn-light" onClick={logout}>
+              Logout
+            </button>
+          )}
+        </div>
       </header>
 
       {mode === 'home' && !judge && !admin && <Home setMode={setMode} />}
@@ -268,20 +276,29 @@ function Home({ setMode }) {
         <DeveloperCredits />
       </section>
 
-      <section className="info-panel">
-        <div className="mini-stat">
-          <span>Lock</span>
-          <p>Final submit prevents score edits</p>
+      <section className="info-panel stage-panel" aria-label="System preview">
+        <div className="stage-card crown-card">
+          <span className="stage-kicker">Coronation Flow</span>
+          <strong>Judge → Save → Final Lock → Admin Rank</strong>
+          <p>No spreadsheet switching during the event.</p>
         </div>
 
-        <div className="mini-stat">
-          <span>Audit</span>
-          <p>Every score edit has a timestamp</p>
+        <div className="stage-card">
+          <span>01</span>
+          <strong>Lock</strong>
+          <p>Final submit prevents score edits.</p>
         </div>
 
-        <div className="mini-stat">
-          <span>Live</span>
-          <p>Admin dashboard auto-refreshes</p>
+        <div className="stage-card">
+          <span>02</span>
+          <strong>Audit</strong>
+          <p>Every score edit keeps a timestamp.</p>
+        </div>
+
+        <div className="stage-card">
+          <span>03</span>
+          <strong>Live</strong>
+          <p>Admin dashboard refreshes automatically.</p>
         </div>
       </section>
     </main>
@@ -505,6 +522,26 @@ function JudgePanel({ judge }) {
         </div>
       </section>
 
+      <section className="judge-quick-grid" aria-label="Judge scoring summary">
+        <article>
+          <span>Progress</span>
+          <strong>{progress}%</strong>
+          <small>{filledFields}/{totalFields} score fields</small>
+        </article>
+
+        <article>
+          <span>Status</span>
+          <strong>{isLocked ? 'Locked' : 'Editing'}</strong>
+          <small>{isLocked ? 'Final submitted' : 'Autosave while scoring'}</small>
+        </article>
+
+        <article>
+          <span>Submit</span>
+          <strong>{canFinalSubmit ? 'Ready' : 'Pending'}</strong>
+          <small>{canFinalSubmit ? 'All scores complete' : 'Complete all fields first'}</small>
+        </article>
+      </section>
+
       {status && (
         <div className={status.includes('Saved') || status.includes('locked') ? 'toast success' : 'toast'}>
           {status}
@@ -695,7 +732,33 @@ function AdminPanel() {
             Declare Winner
           </button>
 
-          {declaredWinner && (
+          <section className="admin-metrics" aria-label="Live dashboard metrics">
+        <article>
+          <span>Candidates</span>
+          <strong>{ranked.length}</strong>
+          <small>ranked live</small>
+        </article>
+
+        <article>
+          <span>Judges Locked</span>
+          <strong>{lockedJudges}/{judgeStatuses.length || 0}</strong>
+          <small>final submissions</small>
+        </article>
+
+        <article>
+          <span>Leader</span>
+          <strong>{leader ? `#${leader.number}` : '—'}</strong>
+          <small>{leader ? leader.name : 'waiting for scores'}</small>
+        </article>
+
+        <article>
+          <span>Refresh</span>
+          <strong>3s</strong>
+          <small>automatic dashboard update</small>
+        </article>
+      </section>
+
+      {declaredWinner && (
             <button className="btn btn-light" onClick={clearWinner}>
               Clear Winner
             </button>
