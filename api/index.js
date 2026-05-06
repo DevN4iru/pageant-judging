@@ -1,6 +1,7 @@
 require('dotenv').config();
 
 const express = require('express');
+const path = require('path');
 const cors = require('cors');
 const pool = require('./db');
 
@@ -939,6 +940,23 @@ app.get('/api/final/details', async (req, res) => {
 });
 
 /* ===== KIRCH FINAL INTERVIEW API END ===== */
+
+
+/* ===== KIRCH PRODUCTION STATIC FRONTEND START ===== */
+const distPath = path.join(__dirname, '..', 'dist');
+
+app.use(express.static(distPath));
+
+app.use((req, res, next) => {
+  if (req.method === 'GET' && !req.path.startsWith('/api')) {
+    res.sendFile(path.join(distPath, 'index.html'));
+    return;
+  }
+
+  next();
+});
+/* ===== KIRCH PRODUCTION STATIC FRONTEND END ===== */
+
 
 
 module.exports = app;

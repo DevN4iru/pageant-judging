@@ -44,7 +44,10 @@ INSERT INTO contestants (number, name, category) VALUES
 (2, 'Candidate 2', 'Main'),
 (3, 'Candidate 3', 'Main'),
 (4, 'Candidate 4', 'Main'),
-(5, 'Candidate 5', 'Main')
+(5, 'Candidate 5', 'Main'),
+(6, 'Candidate 6', 'Main'),
+(7, 'Candidate 7', 'Main'),
+(8, 'Candidate 8', 'Main')
 ON CONFLICT (number) DO NOTHING;
 
 INSERT INTO criteria (name, max_score, weight, sort_order) VALUES

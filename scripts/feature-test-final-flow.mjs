@@ -101,7 +101,7 @@ async function main() {
     console.log('✓ Bad admin PIN rejected');
 
     const setup = await request('/api/setup');
-    assert(setup.contestants.length === 5, 'Expected 5 contestants');
+    assert(setup.contestants.length === 8, 'Expected 8 contestants');
     assert(setup.criteria.length === 5, 'Expected 5 official pre-final criteria');
 
     const weightTotal = setup.criteria.reduce((sum, cr) => sum + Number(cr.weight), 0);
@@ -145,10 +145,13 @@ async function main() {
 
     const rawScoreByCandidateNumber = new Map([
       [1, 70],
-      [2, 76],
-      [3, 86],
-      [4, 93],
-      [5, 98]
+      [2, 74],
+      [3, 78],
+      [4, 82],
+      [5, 86],
+      [6, 91],
+      [7, 95],
+      [8, 99]
     ]);
 
     for (const judgeId of judgeIds) {
@@ -174,15 +177,15 @@ async function main() {
     console.log('✓ Pre-final scores saved and all judges submitted');
 
     const preFinalResults = await request('/api/results');
-    assert(preFinalResults[0].number === 5, `Expected Candidate 5 as pre-final rank 1, got Candidate ${preFinalResults[0]?.number}`);
-    assert(preFinalResults[1].number === 4, `Expected Candidate 4 as pre-final rank 2, got Candidate ${preFinalResults[1]?.number}`);
-    assert(preFinalResults[2].number === 3, `Expected Candidate 3 as pre-final rank 3, got Candidate ${preFinalResults[2]?.number}`);
+    assert(preFinalResults[0].number === 8, `Expected Candidate 8 as pre-final rank 1, got Candidate ${preFinalResults[0]?.number}`);
+    assert(preFinalResults[1].number === 7, `Expected Candidate 7 as pre-final rank 2, got Candidate ${preFinalResults[1]?.number}`);
+    assert(preFinalResults[2].number === 6, `Expected Candidate 6 as pre-final rank 3, got Candidate ${preFinalResults[2]?.number}`);
     console.log('✓ Pre-final Top 3 ranking correct');
 
     const afterReady = await request('/api/final/readiness');
     assert(afterReady.ready === true, 'Final Interview should open after all pre-final judges submit');
     assert(afterReady.submitted_judges === 5, 'Expected 5 submitted pre-final judges');
-    assert(afterReady.top_three.map((c) => c.number).join(',') === '5,4,3', 'Expected Top 3 numbers 5,4,3');
+    assert(afterReady.top_three.map((c) => c.number).join(',') === '8,7,6', 'Expected Top 3 numbers 8,7,6');
     console.log('✓ Final Interview opens only after official Top 3');
 
     const finalSetup = await request('/api/final/setup');
@@ -202,9 +205,9 @@ async function main() {
     console.log('✓ Non-Top-3 final scoring rejected');
 
     const finalScoresByCandidateNumber = new Map([
-      [5, { beauty_poise: 88, wit_intelligence_answer: 86 }],
-      [4, { beauty_poise: 92, wit_intelligence_answer: 90 }],
-      [3, { beauty_poise: 100, wit_intelligence_answer: 100 }]
+      [8, { beauty_poise: 88, wit_intelligence_answer: 86 }],
+      [7, { beauty_poise: 92, wit_intelligence_answer: 90 }],
+      [6, { beauty_poise: 100, wit_intelligence_answer: 100 }]
     ]);
 
     for (const judgeId of judgeIds) {
@@ -233,7 +236,7 @@ async function main() {
 
     const finalResults = await request('/api/final/results');
     assert(finalResults.length === 3, 'Expected 3 final result rows');
-    assert(finalResults[0].number === 3, `Expected Candidate 3 final winner, got Candidate ${finalResults[0]?.number}`);
+    assert(finalResults[0].number === 6, `Expected Candidate 6 final winner, got Candidate ${finalResults[0]?.number}`);
     assert(Number(finalResults[0].final_score).toFixed(2) === '100.00', `Expected Candidate 3 final score 100.00, got ${finalResults[0]?.final_score}`);
 
     const finalStatuses = await request('/api/final/judges/status');
