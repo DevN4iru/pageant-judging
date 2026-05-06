@@ -1863,3 +1863,32 @@ input {
 
 /* ===== KIRCH FINAL INTERVIEW UI END ===== */
 
+
+/* ===== KIRCH FINAL INTERVIEW GATE UI START ===== */
+.final-round-locked {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  border-style: dashed !important;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.58), rgba(250, 245, 255, 0.42)),
+    radial-gradient(circle at 100% 0%, rgba(124, 58, 237, 0.10), transparent 34%);
+}
+
+.final-round-locked h2,
+.final-round-locked h3 {
+  margin-bottom: 6px;
+}
+
+.final-round-locked p {
+  margin-bottom: 0;
+  color: var(--muted);
+}
+
+@media (max-width: 720px) {
+  .final-round-locked {
+    grid-template-columns: 1fr;
+  }
+}
+/* ===== KIRCH FINAL INTERVIEW GATE UI END ===== */

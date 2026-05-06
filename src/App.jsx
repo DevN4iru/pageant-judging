@@ -361,6 +361,8 @@ function JudgePanel({ judge }) {
       map[`${s.contestant_id}-${s.criteria_id}`] = s.score;
     });
 
+    setFinalReady(Boolean(setup.ready));
+    setReadiness(setup);
     setContestants(setup.contestants || []);
     setCriteria(setup.criteria || []);
     setScores(map);
@@ -570,6 +572,8 @@ function FinalInterviewJudgePanel({ judge }) {
   const [scores, setScores] = useState({});
   const [judgeStatus, setJudgeStatus] = useState(null);
   const [status, setStatus] = useState('');
+  const [finalReady, setFinalReady] = useState(false);
+  const [readiness, setReadiness] = useState(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
@@ -693,6 +697,22 @@ function FinalInterviewJudgePanel({ judge }) {
     );
   }
 
+  if (!finalReady) {
+    return (
+      <section className="panel final-round-panel final-round-locked">
+        <div>
+          <p className="eyebrow">Final Interview · Locked</p>
+          <h2>Final Round opens after Top 3 is official.</h2>
+          <p>
+            Complete and final-submit all pre-final scores first. Current pre-final
+            submissions: {readiness?.submitted_judges ?? 0}/{readiness?.total_judges ?? 0} judges.
+          </p>
+        </div>
+        <div className="locked-badge">🔒 Waiting for pre-final lock</div>
+      </section>
+    );
+  }
+
   return (
     <section className="panel final-round-panel">
       <div className="final-round-head">
@@ -798,6 +818,7 @@ function FinalInterviewAdminPanel() {
   const [judgeStatuses, setJudgeStatuses] = useState([]);
   const [details, setDetails] = useState([]);
   const [showDetails, setShowDetails] = useState(false);
+  const [finalReadiness, setFinalReadiness] = useState(null);
   const [lastUpdated, setLastUpdated] = useState('');
   const [loading, setLoading] = useState(true);
   const [loadWarning, setLoadWarning] = useState('');
@@ -812,6 +833,27 @@ function FinalInterviewAdminPanel() {
   }
 
   async function loadFinalAdmin() {
+    const readinessData = await safeApi('/api/final/readiness', {
+      ready: false,
+      total_judges: 0,
+      submitted_judges: 0
+    });
+
+    setFinalReadiness(readinessData);
+
+    if (!readinessData.ready) {
+      setResults([]);
+      setJudgeStatuses([]);
+      setDetails([]);
+      setLastUpdated(new Date().toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      }));
+      setLoading(false);
+      return;
+    }
+
     const [resultData, judgeData] = await Promise.all([
       safeApi('/api/final/results', []),
       safeApi('/api/final/judges/status', [])
@@ -847,6 +889,23 @@ function FinalInterviewAdminPanel() {
 
   const winner = ranked[0];
   const lockedJudges = judgeStatuses.filter((j) => j.submitted_at).length;
+
+  if (!loading && finalReadiness && !finalReadiness.ready) {
+    return (
+      <section className="panel table-panel final-results-panel final-round-locked">
+        <div className="table-title">
+          <div>
+            <p className="eyebrow">Final Interview Results</p>
+            <h3>Waiting for official Top 3</h3>
+            <p>
+              Final Interview results are locked until all pre-final judges final-submit.
+              Current pre-final submissions: {finalReadiness.submitted_judges}/{finalReadiness.total_judges} judges.
+            </p>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="panel table-panel final-results-panel">

@@ -526,12 +526,43 @@ function getTopThreeContestantFilterSql() {
   `;
 }
 
+async function getFinalReadiness() {
+  const status = await pool.query(`
+    SELECT
+      (SELECT COUNT(*) FROM judges)::int AS total_judges,
+      (SELECT COUNT(*) FROM judge_submissions)::int AS submitted_judges
+  `);
+
+  const topThree = await pool.query(getTopThreeSql('LIMIT 3'));
+  const totalJudges = status.rows[0].total_judges;
+  const submittedJudges = status.rows[0].submitted_judges;
+
+  return {
+    ready: totalJudges > 0 && submittedJudges === totalJudges && topThree.rows.length === 3,
+    total_judges: totalJudges,
+    submitted_judges: submittedJudges,
+    top_three_count: topThree.rows.length,
+    top_three: topThree.rows
+  };
+}
+
+app.get('/api/final/readiness', async (req, res) => {
+  try {
+    res.json(await getFinalReadiness());
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 app.get('/api/final/setup', async (req, res) => {
   try {
-    const topThree = await pool.query(getTopThreeSql('LIMIT 3'));
+    const readiness = await getFinalReadiness();
 
     res.json({
-      contestants: topThree.rows,
+      ready: readiness.ready,
+      total_judges: readiness.total_judges,
+      submitted_judges: readiness.submitted_judges,
+      contestants: readiness.ready ? readiness.top_three : [],
       criteria: FINAL_CRITERIA
     });
   } catch (err) {
@@ -613,6 +644,14 @@ app.post('/api/final/scores', async (req, res) => {
     if (numericScore < 0 || numericScore > finalCriterion.max_score) {
       return res.status(400).json({
         error: `Final Interview score must be from 0 to ${finalCriterion.max_score}`
+      });
+    }
+
+    const readiness = await getFinalReadiness();
+
+    if (!readiness.ready) {
+      return res.status(423).json({
+        error: `Final Interview is locked until all pre-final judges submit. ${readiness.submitted_judges}/${readiness.total_judges} judges submitted.`
       });
     }
 
@@ -699,6 +738,14 @@ app.post('/api/final/scores', async (req, res) => {
 app.post('/api/final/judge/:judgeId/submit', async (req, res) => {
   try {
     const { judgeId } = req.params;
+
+    const readiness = await getFinalReadiness();
+
+    if (!readiness.ready) {
+      return res.status(423).json({
+        error: `Final Interview is locked until all pre-final judges submit. ${readiness.submitted_judges}/${readiness.total_judges} judges submitted.`
+      });
+    }
 
     const topThree = await pool.query(getTopThreeSql('LIMIT 3'));
     const requiredCount = topThree.rows.length * FINAL_CRITERIA.length;
