@@ -1212,11 +1212,15 @@ function AdminPanel() {
 
 
       {judgeStatuses.length > 0 && (
-        <section className="panel table-panel">
+        <section className="panel table-panel judge-status-panel">
           <div className="table-title">
             <div>
+              <p className="eyebrow">Preliminary Round Completion</p>
               <h3>Judge Submission Status · Preliminary Round</h3>
-              <p>{lockedJudges} of {judgeStatuses.length} judges final submitted</p>
+              <p>{lockedJudges} of {judgeStatuses.length} judges submitted Preliminary Round scores</p>
+              <p className="table-helper">
+                Judge = assigned judge account · Status = editing or locked · Score Entries = saved Preliminary Round scores · Submitted Time = when the judge locked the round
+              </p>
             </div>
           </div>
 
@@ -1252,11 +1256,12 @@ function AdminPanel() {
         </section>
       )}
 
-      <section className="panel table-panel">
+      <section className="panel table-panel prelim-ranking-panel">
         <div className="table-title">
           <div>
+            <p className="eyebrow">Preliminary Round Results</p>
             <h3>Preliminary Round Ranking · Top 3 Finalists</h3>
-            <p>{ranked.length} candidates</p>
+            <p>{ranked.length} candidates · The Top 3 advance to the Final Interview</p>
           </div>
         </div>
 
