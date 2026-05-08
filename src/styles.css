@@ -3478,3 +3478,42 @@ body:has(.admin-shell) {
 }
 
 /* ===== KIRCH ADMIN PREMIUM MOCKUP POLISH END ===== */
+
+/* ===== KIRCH ADMIN SCROLL HEADER QA FIX START ===== */
+
+/*
+  QA fix:
+  The admin brand header must not float/reappear over lower sections.
+  Keep TV footer/header untouched.
+*/
+
+.admin-shell > .topbar {
+  position: static !important;
+  top: auto !important;
+  z-index: auto !important;
+  transform: none !important;
+}
+
+.admin-shell .topbar {
+  position: static !important;
+}
+
+.admin-dashboard-view {
+  position: relative;
+  z-index: 1;
+}
+
+.admin-dashboard-view > .panel {
+  position: relative;
+  z-index: 1;
+}
+
+.admin-shell::after {
+  z-index: 0;
+}
+
+.admin-shell::before {
+  z-index: -1;
+}
+
+/* ===== KIRCH ADMIN SCROLL HEADER QA FIX END ===== */
