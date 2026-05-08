@@ -923,7 +923,7 @@ function FinalInterviewAdminPanel() {
           <div>
             <p className="eyebrow">Final Round Leader</p>
             <h2>#{winner.number} {winner.name}</h2>
-            <p>Leading candidate after the Final Interview</p>
+            <p>Highest score after the Final Interview</p>
           </div>
           <strong>{Number(winner.final_score || 0).toFixed(2)}</strong>
         </section>
@@ -948,16 +948,7 @@ function FinalInterviewAdminPanel() {
           {showDetails ? '✓ Final Details Open' : 'Show Final Details'}
         </button>
       </div>
-
-      {winner && (
-        <div className="final-winner-strip">
-          <span>👑 Miss Poblacion Occidental 2026</span>
-          <strong>#{winner.number} {winner.name}</strong>
-          <em>{Number(winner.final_score || 0).toFixed(2)}</em>
-        </div>
-      )}
-
-      <div className="table-wrap">
+<div className="table-wrap">
         <table>
           <thead>
             <tr>
@@ -1253,26 +1244,13 @@ function AdminPanel() {
       )}
 
       <FinalInterviewAdminPanel />
-
-      {leader && (
-        <section className="leader-card">
-          <div>
-            <span className="medal">🏆</span>
-            <p className="eyebrow">Preliminary Round Leader · Top 3 Finalist</p>
-            <h2>#{leader.number} {leader.name}</h2>
-          </div>
-          <strong>{Number(leader.total_score).toFixed(2)}</strong>
-        </section>
-      )}
-
-
-      {ranked.length >= 3 && (
+{ranked.length >= 3 && (
         <section className="panel top3-finalists-panel">
           <div className="table-title">
             <div>
               <p className="eyebrow">Official Top 3 Finalists</p>
               <h3>Candidates Advancing to Final Interview</h3>
-              <p>Based on the Preliminary Round ranking</p>
+              <p>Color-coded live leaderboard from the Preliminary Round</p>
             </div>
           </div>
 
@@ -1284,10 +1262,10 @@ function AdminPanel() {
               >
                 <span>
                   {index === 0
-                    ? '🥇 Top 3 Finalist'
+                    ? '🥇 Rank 1 Finalist'
                     : index === 1
-                      ? '🥈 Top 3 Finalist'
-                      : '🥉 Top 3 Finalist'}
+                      ? '🥈 Rank 2 Finalist'
+                      : '🥉 Rank 3 Finalist'}
                 </span>
                 <h4>#{candidate.number} {candidate.name}</h4>
                 <p>Preliminary Round Score</p>
