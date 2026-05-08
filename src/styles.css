@@ -2604,3 +2604,281 @@ footer:not(.tv-credit-footer) {
 
 /* ===== KIRCH STATUS PANELS BOTTOM ORDER END ===== */
 
+/* ===== SANDBOX FINAL CLEAN HIERARCHY START ===== */
+
+/* Hide redundant Preliminary Round Leader if any old markup still renders. */
+.admin-dashboard-view > .leader-card,
+.admin-dashboard-view > .current-leader,
+.admin-dashboard-view > .qualifier-card {
+  display: none !important;
+}
+
+/* Intended admin order */
+.admin-dashboard-view {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.admin-dashboard-view > .final-round-leader-card {
+  order: 10;
+}
+
+.admin-dashboard-view > .final-results-panel {
+  order: 20;
+}
+
+.admin-dashboard-view > .top3-finalists-panel {
+  order: 30;
+}
+
+.admin-dashboard-view > .prelim-ranking-panel {
+  order: 40;
+}
+
+.admin-dashboard-view > .final-status-panel {
+  order: 80;
+}
+
+.admin-dashboard-view > .judge-status-panel {
+  order: 90;
+}
+
+/* Finals Night 2 Leader: clean hero */
+.final-round-leader-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+  padding: 18px 22px !important;
+  border: 1px solid rgba(219, 39, 119, 0.24) !important;
+  border-left: 7px solid rgba(219, 39, 119, 0.75) !important;
+  border-radius: 24px !important;
+  background:
+    radial-gradient(circle at 95% 20%, rgba(236, 72, 153, 0.10), transparent 30%),
+    rgba(255, 255, 255, 0.80) !important;
+  box-shadow: 0 18px 44px rgba(219, 39, 119, 0.075) !important;
+}
+
+.final-round-leader-card .eyebrow {
+  color: #be185d !important;
+  font-weight: 1000;
+  letter-spacing: 0.12em;
+}
+
+.final-round-leader-card h2 {
+  margin: 2px 0 0;
+  color: #1f1433;
+  font-size: clamp(24px, 3vw, 38px);
+  letter-spacing: -0.04em;
+}
+
+.final-round-leader-card p:not(.eyebrow) {
+  margin-top: 4px;
+  color: #6b5d77;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.final-round-leader-card > strong {
+  color: #db2777;
+  font-size: clamp(34px, 4vw, 54px);
+  line-height: 1;
+  font-weight: 1000;
+}
+
+/* Finals Night 2 results: table only, no extra hero feel */
+.final-results-panel {
+  border: 1px solid rgba(219, 39, 119, 0.20) !important;
+  border-left: 6px solid rgba(219, 39, 119, 0.58) !important;
+  background:
+    linear-gradient(90deg, rgba(236, 72, 153, 0.035), transparent 42%),
+    rgba(255, 255, 255, 0.78) !important;
+  box-shadow: 0 16px 40px rgba(219, 39, 119, 0.045) !important;
+}
+
+.final-results-panel .eyebrow {
+  color: #be185d !important;
+}
+
+.final-results-panel table thead th {
+  background: rgba(236, 72, 153, 0.050) !important;
+  color: #9d174d !important;
+}
+
+/* Top 3 Live Leaderboard: THIS is the color-coded area. */
+.top3-finalists-panel {
+  border: 1px solid rgba(124, 58, 237, 0.20) !important;
+  border-left: 6px solid rgba(124, 58, 237, 0.70) !important;
+  background:
+    radial-gradient(circle at 95% 20%, rgba(124, 58, 237, 0.075), transparent 32%),
+    rgba(255, 255, 255, 0.80) !important;
+  box-shadow: 0 16px 40px rgba(79, 70, 229, 0.060) !important;
+}
+
+.top3-finalists-panel .eyebrow {
+  color: #6d28d9 !important;
+  font-weight: 1000;
+}
+
+.top3-finalists-panel h3 {
+  color: #1f2937 !important;
+}
+
+.top3-finalists-panel .table-title p:not(.eyebrow) {
+  color: #6b5d77;
+  font-weight: 750;
+}
+
+.top3-finalists-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.top3-finalist-card {
+  min-height: 132px;
+  border-radius: 22px;
+  padding: 16px;
+  box-shadow: 0 12px 28px rgba(76, 29, 149, 0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+.top3-finalist-card::after {
+  content: "";
+  position: absolute;
+  width: 138px;
+  height: 138px;
+  border-radius: 999px;
+  right: -58px;
+  top: -62px;
+  opacity: 0.25;
+}
+
+.top3-finalist-card.rank-1 {
+  border: 2px solid rgba(245, 158, 11, 0.46);
+  background:
+    linear-gradient(135deg, rgba(254, 243, 199, 0.98), rgba(255,255,255,0.76));
+}
+
+.top3-finalist-card.rank-1::after {
+  background: #f59e0b;
+}
+
+.top3-finalist-card.rank-2 {
+  border: 2px solid rgba(100, 116, 139, 0.34);
+  background:
+    linear-gradient(135deg, rgba(241, 245, 249, 0.98), rgba(255,255,255,0.78));
+}
+
+.top3-finalist-card.rank-2::after {
+  background: #94a3b8;
+}
+
+.top3-finalist-card.rank-3 {
+  border: 2px solid rgba(217, 119, 6, 0.38);
+  background:
+    linear-gradient(135deg, rgba(255, 237, 213, 0.98), rgba(255,255,255,0.78));
+}
+
+.top3-finalist-card.rank-3::after {
+  background: #d97706;
+}
+
+.top3-finalist-card span,
+.top3-finalist-card h4,
+.top3-finalist-card p,
+.top3-finalist-card strong {
+  position: relative;
+  z-index: 1;
+}
+
+.top3-finalist-card span {
+  display: inline-flex;
+  margin-bottom: 9px;
+  color: #4c1d95;
+  font-size: 12px;
+  font-weight: 1000;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.top3-finalist-card h4 {
+  font-size: 18px;
+  color: #1f1433;
+  margin: 0;
+}
+
+.top3-finalist-card p {
+  margin-top: 8px;
+  color: #6b5d77;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.top3-finalist-card strong {
+  display: block;
+  margin-top: 4px;
+  color: #6d28d9;
+  font-size: 26px;
+  line-height: 1;
+}
+
+/* Judge status panels: bottom and neutral, not color-coded leaderboard. */
+.final-status-panel,
+.judge-status-panel {
+  border: 1px solid rgba(124, 58, 237, 0.14) !important;
+  border-left: 5px solid rgba(148, 163, 184, 0.68) !important;
+  background: rgba(255, 255, 255, 0.76) !important;
+  box-shadow: 0 14px 34px rgba(76, 29, 149, 0.045) !important;
+}
+
+.final-status-panel .eyebrow,
+.judge-status-panel .eyebrow {
+  color: #6b7280 !important;
+}
+
+.final-status-panel table thead th,
+.judge-status-panel table thead th {
+  background: rgba(148, 163, 184, 0.08) !important;
+  color: #475569 !important;
+}
+
+/* Preliminary ranking: supporting table, only light top 3 row hints. */
+.prelim-ranking-panel {
+  border: 1px solid rgba(124, 58, 237, 0.16) !important;
+  background: rgba(255,255,255,0.76) !important;
+  box-shadow: 0 14px 34px rgba(76, 29, 149, 0.050) !important;
+}
+
+.prelim-ranking-panel table tbody tr:nth-child(1) {
+  background: rgba(254, 243, 199, 0.62) !important;
+}
+
+.prelim-ranking-panel table tbody tr:nth-child(2) {
+  background: rgba(241, 245, 249, 0.70) !important;
+}
+
+.prelim-ranking-panel table tbody tr:nth-child(3) {
+  background: rgba(255, 237, 213, 0.56) !important;
+}
+
+@media (max-width: 900px) {
+  .top3-finalists-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .final-round-leader-card {
+    grid-template-columns: 1fr;
+  }
+
+  .final-round-leader-card > strong {
+    justify-self: start;
+  }
+}
+
+/* ===== SANDBOX FINAL CLEAN HIERARCHY END ===== */
+

@@ -140,7 +140,7 @@ function CriteriaOverview() {
       </div>
 
       <div className="final-interview-note">
-        <strong>Final Interview for Top 3:</strong>
+        <strong>Finals Night 2 for Top 3:</strong>
         <span> Beauty and Poise — 60% · Wit, Intelligence, and Quality of Answer — 40%</span>
       </div>
     </details>
@@ -700,8 +700,8 @@ function FinalInterviewJudgePanel({ judge }) {
   if (loading) {
     return (
       <section className="panel final-round-panel">
-        <p className="eyebrow">Final Interview</p>
-        <p>Loading Top 3 final round...</p>
+        <p className="eyebrow">Finals Night 2</p>
+        <p>Loading Finals Night 2...</p>
       </section>
     );
   }
@@ -710,8 +710,8 @@ function FinalInterviewJudgePanel({ judge }) {
     return (
       <section className="panel final-round-panel final-round-locked">
         <div>
-          <p className="eyebrow">Final Interview · Locked</p>
-          <h2>Final Round opens after Top 3 is official.</h2>
+          <p className="eyebrow">Finals Night 2 · Locked</p>
+          <h2>Finals Night 2 opens after the Top 3 are official.</h2>
           <p>
             Complete and final-submit all Preliminary Round scores first. Current Preliminary Round
             submissions: {readiness?.submitted_judges ?? 0}/{readiness?.total_judges ?? 0} judges.
@@ -726,7 +726,7 @@ function FinalInterviewJudgePanel({ judge }) {
     <section className="panel final-round-panel">
       <div className="final-round-head">
         <div>
-          <p className="eyebrow">Final Interview · Top 3 Only</p>
+          <p className="eyebrow">Finals Night 2 · Top 3 Only</p>
           <h2>Decisive Final Round</h2>
           <p>
             Final ranking is based on Beauty and Poise 60% plus Wit, Intelligence,
@@ -744,7 +744,7 @@ function FinalInterviewJudgePanel({ judge }) {
 
         <div className="final-submit-card">
           {isLocked ? (
-            <div className="locked-badge">🔒 Final Interview Locked</div>
+            <div className="locked-badge">🔒 Finals Night 2 Locked</div>
           ) : (
             <>
               <button
@@ -752,7 +752,7 @@ function FinalInterviewJudgePanel({ judge }) {
                 onClick={finalInterviewSubmit}
                 disabled={!canSubmit || submitting}
               >
-                {submitting ? 'Submitting...' : 'Submit Final Interview'}
+                {submitting ? 'Submitting...' : 'Submit Finals Night 2'}
               </button>
               <p className="warning-note">Locks Finals Night 2 scores only.</p>
             </>
@@ -907,7 +907,7 @@ function FinalInterviewAdminPanel() {
             <p className="eyebrow">Finals Night 2 Results</p>
             <h3>Waiting for official Top 3</h3>
             <p>
-              Final Interview results are locked until all Preliminary Round judges final-submit.
+              Finals Night 2 results are locked until all Preliminary Round judges final-submit.
               Current Preliminary Round submissions: {finalReadiness.submitted_judges}/{finalReadiness.total_judges} judges.
             </p>
           </div>
@@ -1196,7 +1196,7 @@ function AdminPanel() {
         <div>
           <p className="eyebrow">Admin Dashboard</p>
           <h2>Admin Control · Live Tabulation</h2>
-          <p>Admin control screen. Use the TV buttons for public display. Preliminary Round scores choose the Top 3 Finalists; Finals Night 2 decides the winners.</p>
+          <p>Admin control screen. Preliminary Round chooses the Top 3 Finalists. Finals Night 2 decides the winners.</p>
           {loadWarning && <p className="warning-note">Warning: {loadWarning}</p>}
         </div>
 
@@ -1226,7 +1226,7 @@ function AdminPanel() {
           </button>
 
           <button className="btn btn-dark" onClick={() => openTvMode('final')}>
-            TV Coronation Results
+            TV Finals Night 2
           </button>
 
           {declaredWinner && (
@@ -1249,8 +1249,8 @@ function AdminPanel() {
           <div className="table-title">
             <div>
               <p className="eyebrow">Official Top 3 Finalists</p>
-              <h3>Candidates Advancing to Finals Night 2</h3>
-              <p>Color-coded live leaderboard from the Preliminary Round</p>
+              <h3>Top 3 Live Leaderboard</h3>
+              <p>Gold, silver, and bronze ranking from the Preliminary Round</p>
             </div>
           </div>
 
@@ -1631,7 +1631,7 @@ function TVWinnersDisplay() {
       </section>
 
       <section className="tv-note-strip">
-        <strong>TV Display · Coronation Results</strong>
+        <strong>TV Display · Finals Night 2 Coronation</strong>
         <span>Official display for the coronation results.</span>
       </section>
 
@@ -1717,7 +1717,7 @@ function TVTop3Display() {
           <div>
             <p className="eyebrow">Official Top 3 Finalists</p>
             <h1>Miss Poblacion Occidental 2026</h1>
-            <p>Official display for the candidates advancing to the Final Interview.</p>
+            <p>Official display for the candidates advancing to Finals Night 2.</p>
           </div>
         </section>
 
@@ -1741,13 +1741,13 @@ function TVTop3Display() {
         <div>
           <p className="eyebrow">Official Top 3 Finalists</p>
           <h1>Miss Poblacion Occidental 2026</h1>
-          <p>These candidates advance to the Final Interview.</p>
+          <p>These candidates advance to Finals Night 2.</p>
         </div>
       </section>
 
       <section className="tv-note-strip">
         <strong>TV Display · Top 3 Finalists</strong>
-        <span>These candidates advance to the Final Interview.</span>
+        <span>These candidates advance to Finals Night 2.</span>
       </section>
 
       <section className="tv-winner-card tv-top3-card">
