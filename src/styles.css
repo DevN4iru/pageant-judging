@@ -3951,3 +3951,226 @@ body:has(.tv-stage) {
 }
 
 /* ===== KIRCH TV PREMIUM BANNER POLISH END ===== */
+
+/* ===== KIRCH DEV CREDIT BANNER POLISH START ===== */
+
+/*
+  Dev-credit banner polish.
+  Content is intentionally unchanged.
+  Admin/main footer and TV footer remain separate contexts.
+*/
+
+.compact-footer,
+.site-footer.compact-footer {
+  position: relative;
+  isolation: isolate;
+  margin-top: 18px;
+  padding: 20px 22px;
+  overflow: hidden;
+  border-radius: 16px;
+  color: #fff7ed;
+  background:
+    radial-gradient(circle at 88% 22%, rgba(251, 191, 36, 0.18), transparent 28%),
+    radial-gradient(circle at 10% 8%, rgba(236, 72, 153, 0.16), transparent 30%),
+    linear-gradient(135deg, #251448 0%, #4b2a73 48%, #865ab1 100%);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow:
+    0 22px 54px rgba(24, 16, 39, 0.20),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16);
+}
+
+.compact-footer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.08), transparent 32%, rgba(255, 255, 255, 0.06)),
+    radial-gradient(circle at 94% 50%, rgba(255, 255, 255, 0.12), transparent 22%);
+  pointer-events: none;
+  z-index: -2;
+}
+
+.compact-footer::after {
+  content: "♕";
+  position: absolute;
+  right: 26px;
+  top: 50%;
+  color: rgba(255, 255, 255, 0.075);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 118px;
+  line-height: 1;
+  transform: translateY(-50%) rotate(-8deg);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.compact-footer-inner {
+  position: relative;
+  z-index: 1;
+  max-width: none;
+}
+
+.compact-footer strong {
+  color: #fff7ed;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+}
+
+.compact-footer p {
+  margin: 5px 0 0;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 11px;
+  font-weight: 650;
+  line-height: 1.45;
+}
+
+.compact-dev-lines {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  margin-top: 8px;
+}
+
+.compact-dev-lines p {
+  margin: 0;
+  width: 100%;
+}
+
+.compact-dev-lines strong {
+  color: #fbbf24;
+  font-size: 11px;
+  font-weight: 950;
+}
+
+.compact-footer a {
+  color: #fbbf24;
+  font-weight: 950;
+  text-decoration: none;
+}
+
+.compact-footer a:hover {
+  color: #fde68a;
+  text-decoration: underline;
+}
+
+/* TV credit banner: same family, still separate from admin footer */
+.tv-credit-footer {
+  position: relative;
+  isolation: isolate;
+  min-height: 98px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 24px;
+  padding: 22px 26px;
+  overflow: hidden;
+  border-radius: 16px;
+  color: #fff7ed;
+  background:
+    radial-gradient(circle at 88% 22%, rgba(251, 191, 36, 0.18), transparent 28%),
+    radial-gradient(circle at 10% 8%, rgba(236, 72, 153, 0.16), transparent 30%),
+    linear-gradient(135deg, #251448 0%, #4b2a73 48%, #865ab1 100%);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow:
+    0 22px 54px rgba(24, 16, 39, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16);
+}
+
+.tv-credit-footer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.08), transparent 32%, rgba(255, 255, 255, 0.06)),
+    radial-gradient(circle at 94% 50%, rgba(255, 255, 255, 0.12), transparent 22%);
+  pointer-events: none;
+  z-index: -2;
+}
+
+.tv-credit-footer::after {
+  content: "♕";
+  position: absolute;
+  right: 28px;
+  top: 50%;
+  color: rgba(255, 255, 255, 0.075);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 126px;
+  line-height: 1;
+  transform: translateY(-50%) rotate(-8deg);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.tv-credit-footer > * {
+  position: relative;
+  z-index: 1;
+}
+
+.tv-credit-main strong {
+  display: block;
+  margin-bottom: 5px;
+  color: #fff7ed;
+  font-size: 18px;
+  font-weight: 950;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.tv-credit-main span,
+.tv-credit-main small {
+  color: rgba(255, 255, 255, 0.80);
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.tv-credit-main b,
+.tv-credit-main a,
+.tv-credit-meta b,
+.tv-credit-meta a {
+  color: #fbbf24;
+  font-weight: 950;
+}
+
+.tv-credit-meta {
+  text-align: right;
+}
+
+.tv-credit-meta span {
+  display: block;
+  color: #fff7ed;
+  font-size: 13px;
+  font-weight: 950;
+}
+
+.tv-credit-meta small {
+  display: block;
+  margin-top: 4px;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 12px;
+  font-weight: 850;
+}
+
+@media (max-width: 720px) {
+  .compact-footer,
+  .site-footer.compact-footer,
+  .tv-credit-footer {
+    padding: 18px;
+  }
+
+  .compact-footer::after,
+  .tv-credit-footer::after {
+    right: 12px;
+    font-size: 92px;
+  }
+
+  .tv-credit-footer {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .tv-credit-meta {
+    text-align: left;
+  }
+}
+
+/* ===== KIRCH DEV CREDIT BANNER POLISH END ===== */
