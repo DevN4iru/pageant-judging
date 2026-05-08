@@ -2524,234 +2524,171 @@ footer:not(.tv-credit-footer) {
 }
 /* ===== KIRCH COLOR CODING PASS END ===== */
 
-/* ===== PRELIM STATUS RANK COLOR TUNE START ===== */
+/* ===== KIRCH SUBTLE PRELIM STATUS UI START ===== */
 
-/* 1) Judge Submission Status - make clearly green / success */
-.judge-status-panel,
-.judge-submission-panel,
-.submission-status-card,
-.status-panel {
-  border: 2px solid rgba(34, 197, 94, 0.28) !important;
-  background: linear-gradient(135deg, rgba(240, 253, 244, 0.86), rgba(236, 253, 245, 0.76)) !important;
-  box-shadow:
-    0 18px 42px rgba(22, 163, 74, 0.08),
-    0 0 0 1px rgba(255,255,255,0.86) inset !important;
+/* Subtle meaning:
+   Green line = judge submissions are locked / done
+   Blue line = Preliminary Round ranking / Top 3 selection
+   Gold rows = Top 3 finalists
+*/
+
+/* clean helper chips */
+.table-helper.helper-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+  max-width: 100%;
 }
 
-.judge-status-panel h2,
-.judge-submission-panel h2,
-.submission-status-card h2,
-.status-panel h2,
-.judge-status-panel h3,
-.judge-submission-panel h3,
-.submission-status-card h3,
-.status-panel h3 {
-  color: #166534 !important;
+.table-helper.helper-chips span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 9px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.70);
+  border: 1px solid rgba(124, 58, 237, 0.12);
+  color: #5b5168;
+  font-size: 11px;
+  font-weight: 750;
+  line-height: 1.2;
 }
 
-.judge-status-panel .eyebrow,
-.judge-submission-panel .eyebrow,
-.submission-status-card .eyebrow,
-.status-panel .eyebrow {
-  color: #15803d !important;
-  letter-spacing: 0.10em;
+.table-helper.helper-chips strong {
+  color: #2f1a47;
   font-weight: 1000;
 }
 
-.judge-status-panel table,
-.judge-submission-panel table,
-.submission-status-card table,
-.status-panel table {
-  border-radius: 18px;
-  overflow: hidden;
+/* Judge submission status: subtle green accent, not full green card */
+.judge-status-panel {
+  border: 1px solid rgba(34, 197, 94, 0.22) !important;
+  border-left: 6px solid rgba(34, 197, 94, 0.75) !important;
+  background:
+    linear-gradient(90deg, rgba(34, 197, 94, 0.055), transparent 38%),
+    rgba(255,255,255,0.74) !important;
+  box-shadow: 0 18px 44px rgba(34, 197, 94, 0.055) !important;
 }
 
-.judge-status-panel table thead th,
-.judge-submission-panel table thead th,
-.submission-status-card table thead th,
-.status-panel table thead th {
-  background: rgba(34, 197, 94, 0.10) !important;
+.judge-status-panel .eyebrow {
+  color: #15803d !important;
+}
+
+.judge-status-panel h3 {
+  color: #1f2937 !important;
+}
+
+.judge-status-panel .table-title p:not(.eyebrow):not(.table-helper) {
+  color: #5b5168;
+  font-weight: 750;
+}
+
+.judge-status-panel table thead th {
+  background: rgba(34, 197, 94, 0.055) !important;
   color: #166534 !important;
-  border-bottom: 1px solid rgba(34, 197, 94, 0.16) !important;
 }
 
-.judge-status-panel table tbody tr,
-.judge-submission-panel table tbody tr,
-.submission-status-card table tbody tr,
-.status-panel table tbody tr {
+.judge-status-panel table tbody tr {
   background: rgba(255,255,255,0.70) !important;
 }
 
-.judge-status-panel table tbody tr:nth-child(even),
-.judge-submission-panel table tbody tr:nth-child(even),
-.submission-status-card table tbody tr:nth-child(even),
-.status-panel table tbody tr:nth-child(even) {
-  background: rgba(240, 253, 244, 0.62) !important;
+.judge-status-panel table tbody tr:nth-child(even) {
+  background: rgba(247, 253, 249, 0.70) !important;
 }
 
+/* lock badges should be readable but not glowing */
+.submitted-pill,
 .locked-pill,
 .status-locked,
 .status-submitted,
 .lock-pill {
-  background: rgba(220, 252, 231, 0.96) !important;
+  background: rgba(220, 252, 231, 0.90) !important;
   color: #166534 !important;
-  border: 1px solid rgba(34, 197, 94, 0.20) !important;
-  font-weight: 1000 !important;
-  box-shadow: 0 8px 18px rgba(34, 197, 94, 0.08);
+  border: 1px solid rgba(34, 197, 94, 0.16) !important;
+  font-weight: 900 !important;
+  box-shadow: none !important;
 }
 
-/* 2) Preliminary Round Ranking - make clearly blue/violet */
-.prelim-ranking-panel,
-.preliminary-ranking-panel,
-.ranking-card {
-  border: 2px solid rgba(99, 102, 241, 0.26) !important;
-  background: linear-gradient(135deg, rgba(239, 246, 255, 0.70), rgba(245, 243, 255, 0.82)) !important;
-  box-shadow:
-    0 18px 44px rgba(79, 70, 229, 0.08),
-    0 0 0 1px rgba(255,255,255,0.88) inset !important;
+/* Preliminary ranking: subtle blue accent */
+.prelim-ranking-panel {
+  border: 1px solid rgba(99, 102, 241, 0.22) !important;
+  border-left: 6px solid rgba(99, 102, 241, 0.72) !important;
+  background:
+    linear-gradient(90deg, rgba(99, 102, 241, 0.045), transparent 38%),
+    rgba(255,255,255,0.76) !important;
+  box-shadow: 0 18px 44px rgba(79, 70, 229, 0.055) !important;
 }
 
-.prelim-ranking-panel h2,
-.preliminary-ranking-panel h2,
-.ranking-card h2,
-.prelim-ranking-panel h3,
-.preliminary-ranking-panel h3,
-.ranking-card h3 {
-  color: #3730a3 !important;
-}
-
-.prelim-ranking-panel .eyebrow,
-.preliminary-ranking-panel .eyebrow,
-.ranking-card .eyebrow {
-  color: #4338ca !important;
-  letter-spacing: 0.10em;
-  font-weight: 1000;
-}
-
-.prelim-ranking-panel table,
-.preliminary-ranking-panel table,
-.ranking-card table {
-  border-radius: 18px;
-  overflow: hidden;
-}
-
-.prelim-ranking-panel table thead th,
-.preliminary-ranking-panel table thead th,
-.ranking-card table thead th {
-  background: rgba(99, 102, 241, 0.10) !important;
-  color: #3730a3 !important;
-  border-bottom: 1px solid rgba(99, 102, 241, 0.16) !important;
-}
-
-.prelim-ranking-panel table tbody tr,
-.preliminary-ranking-panel table tbody tr,
-.ranking-card table tbody tr {
-  background: rgba(255,255,255,0.74) !important;
-}
-
-.prelim-ranking-panel table tbody tr:nth-child(even),
-.preliminary-ranking-panel table tbody tr:nth-child(even),
-.ranking-card table tbody tr:nth-child(even) {
-  background: rgba(238, 242, 255, 0.52) !important;
-}
-
-/* top 3 highlight rows */
-.prelim-ranking-panel table tbody tr:nth-child(1),
-.preliminary-ranking-panel table tbody tr:nth-child(1),
-.ranking-card table tbody tr:nth-child(1) {
-  background: rgba(254, 243, 199, 0.90) !important;
-}
-
-.prelim-ranking-panel table tbody tr:nth-child(2),
-.preliminary-ranking-panel table tbody tr:nth-child(2),
-.ranking-card table tbody tr:nth-child(2) {
-  background: rgba(239, 246, 255, 0.90) !important;
-}
-
-.prelim-ranking-panel table tbody tr:nth-child(3),
-.preliminary-ranking-panel table tbody tr:nth-child(3),
-.ranking-card table tbody tr:nth-child(3) {
-  background: rgba(255, 237, 213, 0.90) !important;
-}
-
-/* judges submitted badge in ranking table */
-.prelim-ranking-panel table tbody td:last-child,
-.preliminary-ranking-panel table tbody td:last-child,
-.ranking-card table tbody td:last-child {
-  font-weight: 1000;
-}
-
-.prelim-ranking-panel table tbody td:last-child span,
-.preliminary-ranking-panel table tbody td:last-child span,
-.ranking-card table tbody td:last-child span {
-  background: rgba(220, 252, 231, 0.94);
-  color: #166534;
-  border: 1px solid rgba(34, 197, 94, 0.16);
-}
-
-/* 3) Make the "Preliminary Round Leader" card match the prelim family */
-.qualifier-card,
-.current-leader,
-.leader-card,
-.top3-card,
-.prelim-card,
-.preliminary-card {
-  border: 2px solid rgba(99, 102, 241, 0.26) !important;
-  background: linear-gradient(135deg, rgba(239, 246, 255, 0.56), rgba(245, 243, 255, 0.82)) !important;
-  box-shadow:
-    0 18px 40px rgba(79, 70, 229, 0.08),
-    0 0 0 1px rgba(255,255,255,0.88) inset !important;
-}
-
-.qualifier-card .eyebrow,
-.current-leader .eyebrow,
-.leader-card .eyebrow,
-.top3-card .eyebrow,
-.prelim-card .eyebrow,
-.preliminary-card .eyebrow {
+.prelim-ranking-panel .eyebrow {
   color: #4f46e5 !important;
 }
 
-.qualifier-card strong,
-.current-leader strong,
-.leader-card strong,
-.top3-card strong,
-.prelim-card strong,
-.preliminary-card strong {
-  color: #6d28d9 !important;
-}
-
-/* 4) footer tiny enhancement */
-.site-footer,
-.app-footer,
-footer:not(.tv-credit-footer) {
-  border: 2px solid rgba(124, 58, 237, 0.26) !important;
-  box-shadow: 0 14px 34px rgba(76, 29, 149, 0.12);
-}
-
-/* ===== PRELIM STATUS RANK COLOR TUNE END ===== */
-
-
-/* ===== KIRCH TABLE HELPER COPY START ===== */
-.table-helper {
-  margin-top: 8px;
-  max-width: 900px;
-  color: #4b5563;
-  font-size: 12px;
-  font-weight: 800;
-  line-height: 1.45;
-}
-
-.judge-status-panel .table-helper {
-  color: #166534;
-  background: rgba(220, 252, 231, 0.68);
-  border: 1px solid rgba(34, 197, 94, 0.18);
-  border-radius: 999px;
-  padding: 8px 12px;
+.prelim-ranking-panel h3 {
+  color: #1f2937 !important;
 }
 
 .prelim-ranking-panel .table-title p:not(.eyebrow) {
-  color: #4338ca;
-  font-weight: 800;
+  color: #5b5168 !important;
+  font-weight: 750;
 }
-/* ===== KIRCH TABLE HELPER COPY END ===== */
+
+.prelim-ranking-panel table thead th {
+  background: rgba(99, 102, 241, 0.055) !important;
+  color: #3730a3 !important;
+}
+
+/* only Top 3 rows get color; rest stay clean */
+.prelim-ranking-panel table tbody tr {
+  background: rgba(255,255,255,0.70) !important;
+}
+
+.prelim-ranking-panel table tbody tr:nth-child(1) {
+  background: rgba(254, 243, 199, 0.74) !important;
+}
+
+.prelim-ranking-panel table tbody tr:nth-child(2) {
+  background: rgba(239, 246, 255, 0.78) !important;
+}
+
+.prelim-ranking-panel table tbody tr:nth-child(3) {
+  background: rgba(255, 237, 213, 0.72) !important;
+}
+
+.prelim-ranking-panel table tbody tr:nth-child(n+4):nth-child(even) {
+  background: rgba(248, 250, 252, 0.62) !important;
+}
+
+/* Preliminary leader card: make it blue but not huge/loud */
+.leader-card,
+.current-leader,
+.qualifier-card {
+  border: 1px solid rgba(99, 102, 241, 0.22) !important;
+  border-left: 6px solid rgba(99, 102, 241, 0.72) !important;
+  background:
+    linear-gradient(90deg, rgba(99, 102, 241, 0.045), transparent 42%),
+    rgba(255,255,255,0.74) !important;
+  box-shadow: 0 16px 40px rgba(79, 70, 229, 0.055) !important;
+}
+
+.leader-card .eyebrow,
+.current-leader .eyebrow,
+.qualifier-card .eyebrow {
+  color: #4f46e5 !important;
+}
+
+/* keep final winners strongest */
+.final-results-panel {
+  border: 2px solid rgba(236, 72, 153, 0.28) !important;
+  border-left: 7px solid rgba(219, 39, 119, 0.78) !important;
+}
+
+/* footer: keep polished, not noisy */
+.site-footer,
+.app-footer,
+footer:not(.tv-credit-footer) {
+  border: 1px solid rgba(124, 58, 237, 0.22) !important;
+  box-shadow: 0 12px 28px rgba(76, 29, 149, 0.10) !important;
+}
+
+/* ===== KIRCH SUBTLE PRELIM STATUS UI END ===== */
+
