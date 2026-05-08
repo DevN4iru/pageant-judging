@@ -2532,33 +2532,6 @@ footer:not(.tv-credit-footer) {
    Gold rows = Top 3 finalists
 */
 
-/* clean helper chips */
-.table-helper.helper-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 10px;
-  max-width: 100%;
-}
-
-.table-helper.helper-chips span {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 6px 9px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.70);
-  border: 1px solid rgba(124, 58, 237, 0.12);
-  color: #5b5168;
-  font-size: 11px;
-  font-weight: 750;
-  line-height: 1.2;
-}
-
-.table-helper.helper-chips strong {
-  color: #2f1a47;
-  font-weight: 1000;
-}
 
 /* Judge submission status: subtle green accent, not full green card */
 .judge-status-panel {

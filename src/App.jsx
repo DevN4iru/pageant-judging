@@ -1218,12 +1218,6 @@ function AdminPanel() {
               <p className="eyebrow">Preliminary Round Completion</p>
               <h3>Judge Submission Status · Preliminary Round</h3>
               <p>{lockedJudges} of {judgeStatuses.length} judges submitted Preliminary Round scores</p>
-              <div className="table-helper helper-chips">
-                <span><strong>Judge</strong> assigned judge account</span>
-                <span><strong>Status</strong> editing or locked</span>
-                <span><strong>Score Entries</strong> saved Preliminary Round scores</span>
-                <span><strong>Submitted Time</strong> time the judge locked the round</span>
-              </div>
             </div>
           </div>
 
