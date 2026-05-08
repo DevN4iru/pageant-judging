@@ -171,7 +171,7 @@ export default function App() {
   }
 
   return (
-    <div className="app-shell">
+    <div className={admin ? 'app-shell admin-shell' : 'app-shell'}>
       <header className="topbar">
         <div className="brand-block">
           <img
@@ -1194,7 +1194,7 @@ function AdminPanel() {
     <main className="content-grid admin-dashboard-view">
       <section className="panel dashboard-hero">
         <div>
-          <p className="eyebrow">Admin Dashboard</p>
+          <p className="eyebrow">Admin Control</p>
           <h2>Admin Control · Live Tabulation</h2>
           <p>Admin control screen. Preliminary Round chooses the Top 3 Finalists. Finals Night 2 decides the winners.</p>
           {loadWarning && <p className="warning-note">Warning: {loadWarning}</p>}
