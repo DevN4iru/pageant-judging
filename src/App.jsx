@@ -918,6 +918,17 @@ function FinalInterviewAdminPanel() {
 
   return (
     <>
+      {winner && (
+        <section className="panel final-round-leader-card">
+          <div>
+            <p className="eyebrow">Final Round Leader</p>
+            <h2>#{winner.number} {winner.name}</h2>
+            <p>Leading candidate after the Final Interview</p>
+          </div>
+          <strong>{Number(winner.final_score || 0).toFixed(2)}</strong>
+        </section>
+      )}
+
       <section className="panel table-panel final-results-panel">
       <div className="table-title">
         <div>

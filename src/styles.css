@@ -2794,3 +2794,58 @@ footer:not(.tv-credit-footer) {
 }
 /* ===== KIRCH FINAL STATUS TOP3 PANELS END ===== */
 
+/* ===== KIRCH FINAL ROUND LEADER CARD START ===== */
+.final-round-leader-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+  border: 2px solid rgba(236, 72, 153, 0.30) !important;
+  border-left: 7px solid rgba(219, 39, 119, 0.78) !important;
+  background:
+    radial-gradient(circle at 95% 15%, rgba(236, 72, 153, 0.13), transparent 30%),
+    linear-gradient(90deg, rgba(236, 72, 153, 0.070), transparent 42%),
+    rgba(255, 255, 255, 0.78) !important;
+  box-shadow:
+    0 22px 58px rgba(219, 39, 119, 0.10),
+    0 0 0 1px rgba(255,255,255,0.86) inset !important;
+}
+
+.final-round-leader-card .eyebrow {
+  color: #be185d !important;
+  font-weight: 1000;
+  letter-spacing: 0.12em;
+}
+
+.final-round-leader-card h2 {
+  margin-top: 4px;
+  color: #1f1433;
+  font-size: clamp(24px, 3vw, 38px);
+  letter-spacing: -0.04em;
+}
+
+.final-round-leader-card p:not(.eyebrow) {
+  margin-top: 4px;
+  color: #6b5d77;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.final-round-leader-card > strong {
+  color: #db2777;
+  font-size: clamp(34px, 4vw, 54px);
+  line-height: 1;
+  font-weight: 1000;
+}
+
+@media (max-width: 720px) {
+  .final-round-leader-card {
+    grid-template-columns: 1fr;
+  }
+
+  .final-round-leader-card > strong {
+    justify-self: start;
+  }
+}
+/* ===== KIRCH FINAL ROUND LEADER CARD END ===== */
+
