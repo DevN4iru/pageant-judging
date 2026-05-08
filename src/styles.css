@@ -1982,3 +1982,200 @@ input {
 }
 /* ===== KIRCH POLISHED FINAL GATE END ===== */
 
+
+/* ===== KIRCH TV BUTTON + HIERARCHY START ===== */
+.final-results-panel {
+  border-width: 2px !important;
+  box-shadow:
+    0 26px 70px rgba(76, 29, 149, 0.18),
+    0 0 0 1px rgba(255, 255, 255, 0.82) inset !important;
+}
+
+.final-winner-strip span {
+  line-height: 1.25;
+}
+
+.final-results-panel th:first-child,
+.final-results-panel td:first-child {
+  min-width: 150px;
+}
+
+.final-results-panel .rank-pill {
+  white-space: nowrap;
+}
+
+.leader-card,
+.current-leader,
+.qualifier-card {
+  opacity: 0.82;
+}
+
+/* TV mode is the only page safe for projector/public display. */
+.tv-stage {
+  min-height: 100vh;
+  padding: clamp(28px, 4vw, 58px);
+  display: grid;
+  align-content: center;
+  gap: clamp(22px, 3vw, 36px);
+  color: #1f1235;
+  background:
+    radial-gradient(circle at 20% 10%, rgba(124, 58, 237, 0.22), transparent 34%),
+    radial-gradient(circle at 90% 20%, rgba(236, 72, 153, 0.18), transparent 32%),
+    radial-gradient(circle at 82% 88%, rgba(245, 158, 11, 0.20), transparent 30%),
+    linear-gradient(135deg, #fff7ed, #f3e8ff 46%, #fdf2f8);
+}
+
+.tv-header {
+  max-width: 1180px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  padding: 22px 26px;
+  border-radius: 30px;
+  border: 1px solid rgba(124, 58, 237, 0.24);
+  background: rgba(255, 255, 255, 0.68);
+  box-shadow: 0 24px 70px rgba(76, 29, 149, 0.18);
+  backdrop-filter: blur(18px);
+}
+
+.tv-header img,
+.tv-waiting img {
+  width: 82px;
+  height: 82px;
+  object-fit: contain;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.80);
+  border: 1px solid rgba(124, 58, 237, 0.18);
+}
+
+.tv-header h1 {
+  margin: 0;
+  font-size: clamp(34px, 5vw, 72px);
+  line-height: 0.95;
+  letter-spacing: -0.06em;
+}
+
+.tv-header p:last-child {
+  margin-top: 8px;
+  font-size: clamp(15px, 1.6vw, 22px);
+  color: #6d5b7a;
+}
+
+.tv-winner-card {
+  max-width: 1180px;
+  width: 100%;
+  margin: 0 auto;
+  padding: clamp(30px, 5vw, 70px);
+  border-radius: 36px;
+  color: white;
+  background:
+    radial-gradient(circle at 18% 20%, rgba(255, 255, 255, 0.20), transparent 26%),
+    linear-gradient(135deg, #581c87, #7e22ce 42%, #db2777);
+  box-shadow: 0 35px 90px rgba(126, 34, 206, 0.32);
+  border: 1px solid rgba(255, 255, 255, 0.30);
+}
+
+.tv-winner-card p {
+  color: #fde68a;
+  font-size: clamp(16px, 2vw, 28px);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+}
+
+.tv-winner-card h2 {
+  margin-top: 14px;
+  font-size: clamp(48px, 8vw, 118px);
+  line-height: 0.92;
+  letter-spacing: -0.07em;
+}
+
+.tv-winner-card strong {
+  display: block;
+  margin-top: 20px;
+  color: #fef08a;
+  font-size: clamp(36px, 5vw, 82px);
+  line-height: 1;
+}
+
+.tv-runner-grid {
+  max-width: 1180px;
+  width: 100%;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.tv-runner-grid article {
+  padding: clamp(22px, 3vw, 38px);
+  border-radius: 28px;
+  border: 1px solid rgba(124, 58, 237, 0.22);
+  background: rgba(255, 255, 255, 0.76);
+  box-shadow: 0 18px 50px rgba(76, 29, 149, 0.12);
+  backdrop-filter: blur(16px);
+}
+
+.tv-runner-grid span {
+  color: #6d28d9;
+  font-weight: 1000;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.tv-runner-grid h3 {
+  margin-top: 10px;
+  font-size: clamp(26px, 3.5vw, 50px);
+  line-height: 1;
+  letter-spacing: -0.05em;
+}
+
+.tv-runner-grid strong {
+  display: block;
+  margin-top: 12px;
+  color: #581c87;
+  font-size: clamp(24px, 3vw, 44px);
+}
+
+.tv-footer {
+  max-width: 1180px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  color: #6d5b7a;
+  font-weight: 800;
+}
+
+.tv-waiting {
+  place-items: center;
+  text-align: center;
+}
+
+.tv-waiting h1 {
+  font-size: clamp(34px, 6vw, 84px);
+  letter-spacing: -0.06em;
+}
+
+.tv-waiting p,
+.tv-waiting span {
+  color: #6d5b7a;
+  font-size: clamp(16px, 2vw, 24px);
+  font-weight: 800;
+}
+
+@media (max-width: 800px) {
+  .tv-header,
+  .tv-footer {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .tv-runner-grid {
+    grid-template-columns: 1fr;
+  }
+}
+/* ===== KIRCH TV BUTTON + HIERARCHY END ===== */

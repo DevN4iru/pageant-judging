@@ -151,6 +151,12 @@ export default function App() {
   const [mode, setMode] = useState(localStorage.getItem('mode') || 'home');
   const [judge, setJudge] = useState(getSavedJudge());
   const [admin, setAdmin] = useState(localStorage.getItem('admin') === 'true');
+  const params = new URLSearchParams(window.location.search);
+  const isTvMode = params.has('tv') || params.get('view') === 'tv';
+
+  if (isTvMode) {
+    return <TVWinnersDisplay />;
+  }
 
   function logout() {
     localStorage.clear();
@@ -910,7 +916,7 @@ function FinalInterviewAdminPanel() {
       <div className="table-title">
         <div>
           <p className="eyebrow">Final Interview Results</p>
-          <h3>Final Ranking · Top 3</h3>
+          <h3>Official Winners · Final Interview</h3>
           <p>
             {loading ? 'Loading final round...' : `${lockedJudges} of ${judgeStatuses.length} judges submitted final scores`}
             {lastUpdated ? ` · Updated ${lastUpdated}` : ''}
@@ -928,7 +934,7 @@ function FinalInterviewAdminPanel() {
 
       {winner && (
         <div className="final-winner-strip">
-          <span>👑 Final Leader</span>
+          <span>👑 Miss Poblacion Occidental 2026</span>
           <strong>#{winner.number} {winner.name}</strong>
           <em>{Number(winner.final_score || 0).toFixed(2)}</em>
         </div>
@@ -940,10 +946,10 @@ function FinalInterviewAdminPanel() {
             <tr>
               <th>Final Rank</th>
               <th>Candidate</th>
-              <th>Beauty / Poise</th>
-              <th>Wit / Intelligence / Answer</th>
+              <th>Beauty Points 60%</th>
+              <th>Wit Points 40%</th>
               <th>Final Score</th>
-              <th>Pre-final Score</th>
+              <th>Top 3 Basis Score</th>
               <th>Judges Submitted</th>
             </tr>
           </thead>
@@ -953,7 +959,13 @@ function FinalInterviewAdminPanel() {
               <tr key={r.id} className={r.rank === 1 ? 'top-rank' : ''}>
                 <td>
                   <span className="rank-pill">
-                    {r.rank === 1 ? '👑' : r.rank === 2 ? '🥈' : r.rank === 3 ? '🥉' : r.rank}
+                    {r.rank === 1
+                      ? '👑 Winner'
+                      : r.rank === 2
+                        ? '🥈 1st Runner-Up'
+                        : r.rank === 3
+                          ? '🥉 2nd Runner-Up'
+                          : r.rank}
                   </span>
                 </td>
                 <td><strong>#{r.number} {r.name}</strong></td>
@@ -1019,6 +1031,10 @@ function FinalInterviewAdminPanel() {
 
 
 function AdminPanel() {
+  function openTvMode() {
+    const url = `${window.location.origin}${window.location.pathname}?tv=1`;
+    window.open(url, '_blank', 'noopener,noreferrer');
+  }
   const [results, setResults] = useState([]);
   const [details, setDetails] = useState([]);
   const [judgeStatuses, setJudgeStatuses] = useState([]);
@@ -1128,8 +1144,8 @@ function AdminPanel() {
       <section className="panel dashboard-hero">
         <div>
           <p className="eyebrow">Admin Dashboard</p>
-          <h2>Live Tabulation</h2>
-          <p>Auto-refreshes every 3 seconds. Scores are weighted and totaled out of 100.</p>
+          <h2>Admin Control · Live Tabulation</h2>
+          <p>Admin control screen. Use Open TV Mode for public display. Pre-final scores only determine the official Top 3.</p>
           {loadWarning && <p className="warning-note">Warning: {loadWarning}</p>}
         </div>
 
@@ -1154,6 +1170,10 @@ function AdminPanel() {
             Declare Winner
           </button>
 
+          <button className="btn btn-dark" onClick={openTvMode}>
+            Open TV Mode
+          </button>
+
           {declaredWinner && (
             <button className="btn btn-light" onClick={clearWinner}>
               Clear Winner
@@ -1172,7 +1192,7 @@ function AdminPanel() {
         <section className="leader-card">
           <div>
             <span className="medal">🏆</span>
-            <p className="eyebrow">Current Leader</p>
+            <p className="eyebrow">Top 3 Qualifier Rank 1</p>
             <h2>#{leader.number} {leader.name}</h2>
           </div>
           <strong>{Number(leader.total_score).toFixed(2)}</strong>
@@ -1434,6 +1454,102 @@ function DeveloperCredits() {
     </section>
   );
 }
+
+
+function TVWinnersDisplay() {
+  const [results, setResults] = useState([]);
+  const [judgeStatuses, setJudgeStatuses] = useState([]);
+  const [lastUpdated, setLastUpdated] = useState('');
+  const [error, setError] = useState('');
+
+  async function loadTvResults() {
+    try {
+      const [finalResults, finalJudges] = await Promise.all([
+        api('/api/final/results'),
+        api('/api/final/judges/status')
+      ]);
+
+      setResults(finalResults || []);
+      setJudgeStatuses(finalJudges || []);
+      setLastUpdated(new Date().toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      }));
+      setError('');
+    } catch (err) {
+      setError(err.message);
+    }
+  }
+
+  useEffect(() => {
+    loadTvResults();
+    const timer = setInterval(loadTvResults, 3000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const ranked = results.map((result, index) => ({
+    ...result,
+    rank: index + 1
+  }));
+
+  const submittedFinalJudges = judgeStatuses.filter((judge) => judge.submitted_at).length;
+  const allFinalSubmitted = judgeStatuses.length > 0 && submittedFinalJudges === judgeStatuses.length;
+  const winner = ranked[0];
+  const firstRunnerUp = ranked[1];
+  const secondRunnerUp = ranked[2];
+
+  if (error || !allFinalSubmitted || ranked.length < 3) {
+    return (
+      <main className="tv-stage tv-waiting">
+        <img src="/pageant-logo.jpg" alt="Miss Poblacion Occidental 2026 Logo" />
+        <p className="eyebrow">Miss Poblacion Occidental 2026</p>
+        <h1>Final results are not yet released.</h1>
+        <p>{error || 'Waiting for all final interview scores to be submitted and locked.'}</p>
+        <span>{submittedFinalJudges} of {judgeStatuses.length || 5} final judges submitted</span>
+      </main>
+    );
+  }
+
+  return (
+    <main className="tv-stage">
+      <section className="tv-header">
+        <img src="/pageant-logo.jpg" alt="Miss Poblacion Occidental 2026 Logo" />
+        <div>
+          <p className="eyebrow">Official Final Results</p>
+          <h1>Miss Poblacion Occidental 2026</h1>
+          <p>Final ranking is based on the Final Interview round.</p>
+        </div>
+      </section>
+
+      <section className="tv-winner-card">
+        <p>👑 Miss Poblacion Occidental 2026</p>
+        <h2>#{winner.number} {winner.name}</h2>
+        <strong>{Number(winner.final_score || 0).toFixed(2)}</strong>
+      </section>
+
+      <section className="tv-runner-grid">
+        <article>
+          <span>🥈 First Runner-Up</span>
+          <h3>#{firstRunnerUp.number} {firstRunnerUp.name}</h3>
+          <strong>{Number(firstRunnerUp.final_score || 0).toFixed(2)}</strong>
+        </article>
+
+        <article>
+          <span>🥉 Second Runner-Up</span>
+          <h3>#{secondRunnerUp.number} {secondRunnerUp.name}</h3>
+          <strong>{Number(secondRunnerUp.final_score || 0).toFixed(2)}</strong>
+        </article>
+      </section>
+
+      <footer className="tv-footer">
+        <span>5 of 5 judges submitted final scores</span>
+        <span>Updated {lastUpdated}</span>
+      </footer>
+    </main>
+  );
+}
+
 
 function SiteFooter() {
   const year = new Date().getFullYear();
