@@ -4174,3 +4174,122 @@ body:has(.tv-stage) {
 }
 
 /* ===== KIRCH DEV CREDIT BANNER POLISH END ===== */
+
+/* ===== KIRCH TV CREDIT BANNER 1TO1 START ===== */
+
+/*
+  TV display credit banner must visually match the main compact footer banner 1:1.
+  This intentionally overrides older TV-only footer styling.
+*/
+
+.tv-credit-footer {
+  position: relative !important;
+  isolation: isolate;
+  min-height: 0 !important;
+  display: block !important;
+  margin-top: 0;
+  padding: 20px 22px !important;
+  overflow: hidden;
+  border-radius: 16px !important;
+  color: #fff7ed !important;
+  background:
+    radial-gradient(circle at 88% 22%, rgba(251, 191, 36, 0.18), transparent 28%),
+    radial-gradient(circle at 10% 8%, rgba(236, 72, 153, 0.16), transparent 30%),
+    linear-gradient(135deg, #251448 0%, #4b2a73 48%, #865ab1 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  box-shadow:
+    0 22px 54px rgba(24, 16, 39, 0.20),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16) !important;
+}
+
+.tv-credit-footer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.08), transparent 32%, rgba(255, 255, 255, 0.06)),
+    radial-gradient(circle at 94% 50%, rgba(255, 255, 255, 0.12), transparent 22%);
+  pointer-events: none;
+  z-index: -2;
+}
+
+.tv-credit-footer::after {
+  content: "♕";
+  position: absolute;
+  right: 26px;
+  top: 50%;
+  color: rgba(255, 255, 255, 0.075);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 118px;
+  line-height: 1;
+  transform: translateY(-50%) rotate(-8deg);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.tv-credit-footer > * {
+  position: relative;
+  z-index: 1;
+}
+
+.tv-credit-main {
+  display: block !important;
+}
+
+.tv-credit-main strong {
+  display: block;
+  margin: 0 0 5px;
+  color: #fff7ed !important;
+  font-size: 15px !important;
+  font-weight: 950;
+  line-height: 1.2;
+  letter-spacing: -0.01em !important;
+  text-transform: none !important;
+}
+
+.tv-credit-main span,
+.tv-credit-main small {
+  display: block;
+  margin: 5px 0 0;
+  color: rgba(255, 255, 255, 0.78) !important;
+  font-size: 11px !important;
+  font-weight: 650 !important;
+  line-height: 1.45;
+}
+
+.tv-credit-main b,
+.tv-credit-main a,
+.tv-credit-meta b,
+.tv-credit-meta a {
+  color: #fbbf24 !important;
+  font-weight: 950 !important;
+  text-decoration: none;
+}
+
+.tv-credit-main a:hover,
+.tv-credit-meta a:hover {
+  color: #fde68a !important;
+  text-decoration: underline;
+}
+
+.tv-credit-meta {
+  display: none !important;
+}
+
+/* Fold TV meta into the single-banner feel by keeping only the left credit block visible. */
+.tv-stage .tv-credit-footer {
+  width: 100%;
+}
+
+@media (max-width: 720px) {
+  .tv-credit-footer {
+    padding: 18px !important;
+  }
+
+  .tv-credit-footer::after {
+    right: 12px;
+    font-size: 92px;
+  }
+}
+
+/* ===== KIRCH TV CREDIT BANNER 1TO1 END ===== */
