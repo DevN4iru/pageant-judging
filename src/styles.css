@@ -2665,3 +2665,132 @@ footer:not(.tv-credit-footer) {
 
 /* ===== KIRCH SUBTLE PRELIM STATUS UI END ===== */
 
+/* ===== KIRCH FINAL STATUS TOP3 PANELS START ===== */
+
+/* Final Interview judge status: final-colored accent but clean table */
+.final-status-panel {
+  border: 1px solid rgba(236, 72, 153, 0.24) !important;
+  border-left: 6px solid rgba(219, 39, 119, 0.72) !important;
+  background:
+    linear-gradient(90deg, rgba(236, 72, 153, 0.050), transparent 42%),
+    rgba(255,255,255,0.76) !important;
+  box-shadow: 0 18px 44px rgba(219, 39, 119, 0.055) !important;
+}
+
+.final-status-panel .eyebrow {
+  color: #be185d !important;
+}
+
+.final-status-panel h3 {
+  color: #1f2937 !important;
+}
+
+.final-status-panel .table-title p:not(.eyebrow) {
+  color: #5b5168;
+  font-weight: 750;
+}
+
+.final-status-panel table thead th {
+  background: rgba(236, 72, 153, 0.055) !important;
+  color: #9d174d !important;
+}
+
+.final-status-panel table tbody tr {
+  background: rgba(255,255,255,0.72) !important;
+}
+
+.final-status-panel table tbody tr:nth-child(even) {
+  background: rgba(253, 242, 248, 0.52) !important;
+}
+
+/* Top 3 Finalists announcement panel */
+.top3-finalists-panel {
+  border: 1px solid rgba(99, 102, 241, 0.24) !important;
+  border-left: 6px solid rgba(99, 102, 241, 0.72) !important;
+  background:
+    linear-gradient(90deg, rgba(99, 102, 241, 0.05), transparent 42%),
+    rgba(255,255,255,0.76) !important;
+  box-shadow: 0 18px 44px rgba(79, 70, 229, 0.055) !important;
+}
+
+.top3-finalists-panel .eyebrow {
+  color: #4f46e5 !important;
+}
+
+.top3-finalists-panel h3 {
+  color: #1f2937 !important;
+}
+
+.top3-finalists-panel .table-title p:not(.eyebrow) {
+  color: #5b5168;
+  font-weight: 750;
+}
+
+.top3-finalists-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.top3-finalist-card {
+  border: 1px solid rgba(124, 58, 237, 0.16);
+  border-radius: 22px;
+  padding: 16px;
+  background: rgba(255,255,255,0.74);
+  box-shadow: 0 12px 28px rgba(76, 29, 149, 0.08);
+}
+
+.top3-finalist-card.rank-1 {
+  background: linear-gradient(135deg, rgba(254, 243, 199, 0.86), rgba(255,255,255,0.72));
+  border-color: rgba(245, 158, 11, 0.24);
+}
+
+.top3-finalist-card.rank-2 {
+  background: linear-gradient(135deg, rgba(239, 246, 255, 0.86), rgba(255,255,255,0.72));
+  border-color: rgba(59, 130, 246, 0.20);
+}
+
+.top3-finalist-card.rank-3 {
+  background: linear-gradient(135deg, rgba(255, 237, 213, 0.82), rgba(255,255,255,0.72));
+  border-color: rgba(249, 115, 22, 0.20);
+}
+
+.top3-finalist-card span {
+  display: inline-flex;
+  margin-bottom: 9px;
+  color: #4f46e5;
+  font-size: 12px;
+  font-weight: 1000;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.top3-finalist-card h4 {
+  font-size: 18px;
+  color: #1f1433;
+  margin: 0;
+}
+
+.top3-finalist-card p {
+  margin-top: 8px;
+  color: #6b5d77;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.top3-finalist-card strong {
+  display: block;
+  margin-top: 4px;
+  color: #6d28d9;
+  font-size: 26px;
+  line-height: 1;
+}
+
+@media (max-width: 900px) {
+  .top3-finalists-grid {
+    grid-template-columns: 1fr;
+  }
+}
+/* ===== KIRCH FINAL STATUS TOP3 PANELS END ===== */
+

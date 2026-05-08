@@ -917,13 +917,14 @@ function FinalInterviewAdminPanel() {
   }
 
   return (
-    <section className="panel table-panel final-results-panel">
+    <>
+      <section className="panel table-panel final-results-panel">
       <div className="table-title">
         <div>
           <p className="eyebrow">Final Interview Results</p>
           <h3>Final Interview Winners</h3>
           <p>
-            {loading ? 'Loading final round...' : `${lockedJudges} of ${judgeStatuses.length} judges submitted final scores`}
+            {loading ? 'Loading final round...' : `${lockedJudges} of ${judgeStatuses.length} judges submitted Final Interview scores`}
             {lastUpdated ? ` · Updated ${lastUpdated}` : ''}
           </p>
           {loadWarning && <p className="warning-note">Warning: {loadWarning}</p>}
@@ -1029,6 +1030,49 @@ function FinalInterviewAdminPanel() {
         </div>
       )}
     </section>
+
+      {judgeStatuses.length > 0 && (
+        <section className="panel table-panel final-status-panel">
+          <div className="table-title">
+            <div>
+              <p className="eyebrow">Final Interview Completion</p>
+              <h3>Judge Submission Status · Final Interview</h3>
+              <p>{lockedJudges} of {judgeStatuses.length} judges submitted Final Interview scores</p>
+            </div>
+          </div>
+
+          <div className="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Judge</th>
+                  <th>Status</th>
+                  <th>Final Score Entries</th>
+                  <th>Submitted Time</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {judgeStatuses.map((judgeStatusRow) => (
+                  <tr key={judgeStatusRow.id}>
+                    <td><strong>{judgeStatusRow.name}</strong></td>
+                    <td>
+                      {judgeStatusRow.submitted_at ? (
+                        <span className="submitted-pill">🔒 Locked</span>
+                      ) : (
+                        <span className="rank-pill">Editing</span>
+                      )}
+                    </td>
+                    <td>{judgeStatusRow.score_count}</td>
+                    <td>{formatDateTime(judgeStatusRow.submitted_at)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      )}
+    </>
   );
 }
 
@@ -1210,6 +1254,38 @@ function AdminPanel() {
         </section>
       )}
 
+
+      {ranked.length >= 3 && (
+        <section className="panel top3-finalists-panel">
+          <div className="table-title">
+            <div>
+              <p className="eyebrow">Official Top 3 Finalists</p>
+              <h3>Candidates Advancing to Final Interview</h3>
+              <p>Based on the Preliminary Round ranking</p>
+            </div>
+          </div>
+
+          <div className="top3-finalists-grid">
+            {ranked.slice(0, 3).map((candidate, index) => (
+              <article
+                key={candidate.id}
+                className={`top3-finalist-card rank-${index + 1}`}
+              >
+                <span>
+                  {index === 0
+                    ? '🥇 Top 3 Finalist'
+                    : index === 1
+                      ? '🥈 Top 3 Finalist'
+                      : '🥉 Top 3 Finalist'}
+                </span>
+                <h4>#{candidate.number} {candidate.name}</h4>
+                <p>Preliminary Round Score</p>
+                <strong>{Number(candidate.total_score || 0).toFixed(2)}</strong>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
 
       {judgeStatuses.length > 0 && (
         <section className="panel table-panel judge-status-panel">
