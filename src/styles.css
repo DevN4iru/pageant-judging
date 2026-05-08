@@ -1982,7 +1982,6 @@ input {
 }
 /* ===== KIRCH POLISHED FINAL GATE END ===== */
 
-
 /* ===== KIRCH TV BUTTON + HIERARCHY START ===== */
 .final-results-panel {
   border-width: 2px !important;
@@ -2007,21 +2006,20 @@ input {
 .leader-card,
 .current-leader,
 .qualifier-card {
-  opacity: 0.82;
+  opacity: 0.84;
 }
 
-/* TV mode is the only page safe for projector/public display. */
 .tv-stage {
   min-height: 100vh;
   padding: clamp(28px, 4vw, 58px);
   display: grid;
   align-content: center;
-  gap: clamp(22px, 3vw, 36px);
+  gap: clamp(18px, 2.6vw, 30px);
   color: #1f1235;
   background:
     radial-gradient(circle at 20% 10%, rgba(124, 58, 237, 0.22), transparent 34%),
-    radial-gradient(circle at 90% 20%, rgba(236, 72, 153, 0.18), transparent 32%),
-    radial-gradient(circle at 82% 88%, rgba(245, 158, 11, 0.20), transparent 30%),
+    radial-gradient(circle at 90% 20%, rgba(236, 72, 153, 0.16), transparent 32%),
+    radial-gradient(circle at 82% 88%, rgba(245, 158, 11, 0.16), transparent 30%),
     linear-gradient(135deg, #fff7ed, #f3e8ff 46%, #fdf2f8);
 }
 
@@ -2035,13 +2033,12 @@ input {
   padding: 22px 26px;
   border-radius: 30px;
   border: 1px solid rgba(124, 58, 237, 0.24);
-  background: rgba(255, 255, 255, 0.68);
+  background: rgba(255, 255, 255, 0.74);
   box-shadow: 0 24px 70px rgba(76, 29, 149, 0.18);
   backdrop-filter: blur(18px);
 }
 
-.tv-header img,
-.tv-waiting img {
+.tv-header img {
   width: 82px;
   height: 82px;
   object-fit: contain;
@@ -2063,6 +2060,27 @@ input {
   color: #6d5b7a;
 }
 
+.tv-note-strip {
+  max-width: 1180px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 22px;
+  border-radius: 999px;
+  border: 1px solid rgba(124, 58, 237, 0.18);
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: 0 14px 38px rgba(76, 29, 149, 0.10);
+  color: #4c1d95;
+  font-weight: 900;
+}
+
+.tv-note-strip span:last-child {
+  color: #6d5b7a;
+  font-weight: 800;
+}
+
 .tv-winner-card {
   max-width: 1180px;
   width: 100%;
@@ -2075,6 +2093,12 @@ input {
     linear-gradient(135deg, #581c87, #7e22ce 42%, #db2777);
   box-shadow: 0 35px 90px rgba(126, 34, 206, 0.32);
   border: 1px solid rgba(255, 255, 255, 0.30);
+}
+
+.tv-top3-card {
+  background:
+    radial-gradient(circle at 18% 20%, rgba(255, 255, 255, 0.18), transparent 26%),
+    linear-gradient(135deg, #1d4ed8, #7c3aed 46%, #db2777);
 }
 
 .tv-winner-card p {
@@ -2113,7 +2137,7 @@ input {
   padding: clamp(22px, 3vw, 38px);
   border-radius: 28px;
   border: 1px solid rgba(124, 58, 237, 0.22);
-  background: rgba(255, 255, 255, 0.76);
+  background: rgba(255, 255, 255, 0.78);
   box-shadow: 0 18px 50px rgba(76, 29, 149, 0.12);
   backdrop-filter: blur(16px);
 }
@@ -2139,37 +2163,74 @@ input {
   font-size: clamp(24px, 3vw, 44px);
 }
 
-.tv-footer {
+.tv-wait-card {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 28px 34px;
+  text-align: center;
+  border-radius: 28px;
+  border: 1px solid rgba(124, 58, 237, 0.22);
+  background: rgba(255, 255, 255, 0.80);
+  box-shadow: 0 18px 50px rgba(76, 29, 149, 0.12);
+}
+
+.tv-wait-card h2 {
+  font-size: clamp(32px, 4vw, 54px);
+  margin-bottom: 10px;
+}
+
+.tv-credit-footer {
   max-width: 1180px;
   width: 100%;
   margin: 0 auto;
   display: flex;
   justify-content: space-between;
   gap: 20px;
-  color: #6d5b7a;
+  padding: 18px 22px;
+  border-radius: 22px;
+  border: 1px solid rgba(124, 58, 237, 0.22);
+  background: linear-gradient(135deg, rgba(61, 25, 92, 0.92), rgba(137, 92, 176, 0.90));
+  color: #fff;
+  box-shadow: 0 16px 40px rgba(76, 29, 149, 0.18);
+}
+
+.tv-credit-left {
+  display: grid;
+  gap: 3px;
+}
+
+.tv-credit-left strong {
+  font-size: 16px;
+  font-weight: 1000;
+}
+
+.tv-credit-left span {
+  color: #f5e9ff;
   font-weight: 800;
 }
 
-.tv-waiting {
-  place-items: center;
-  text-align: center;
+.tv-credit-left small {
+  color: #fde68a;
+  font-weight: 900;
+  letter-spacing: 0.04em;
 }
 
-.tv-waiting h1 {
-  font-size: clamp(34px, 6vw, 84px);
-  letter-spacing: -0.06em;
+.tv-credit-right {
+  display: grid;
+  align-content: center;
+  justify-items: end;
+  gap: 6px;
 }
 
-.tv-waiting p,
-.tv-waiting span {
-  color: #6d5b7a;
-  font-size: clamp(16px, 2vw, 24px);
-  font-weight: 800;
+.tv-credit-right span {
+  font-weight: 900;
+  color: #fff7d6;
 }
 
 @media (max-width: 800px) {
   .tv-header,
-  .tv-footer {
+  .tv-note-strip,
+  .tv-credit-footer {
     flex-direction: column;
     text-align: center;
   }
@@ -2177,5 +2238,10 @@ input {
   .tv-runner-grid {
     grid-template-columns: 1fr;
   }
+
+  .tv-credit-right {
+    justify-items: center;
+  }
 }
 /* ===== KIRCH TV BUTTON + HIERARCHY END ===== */
+
