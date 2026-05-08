@@ -713,11 +713,11 @@ function FinalInterviewJudgePanel({ judge }) {
           <p className="eyebrow">Final Interview · Locked</p>
           <h2>Final Round opens after Top 3 is official.</h2>
           <p>
-            Complete and final-submit all pre-final scores first. Current pre-final
+            Complete and final-submit all Preliminary Round scores first. Current Preliminary Round
             submissions: {readiness?.submitted_judges ?? 0}/{readiness?.total_judges ?? 0} judges.
           </p>
         </div>
-        <div className="locked-badge">🔒 Waiting for pre-final lock</div>
+        <div className="locked-badge">🔒 Waiting for Preliminary Round lock</div>
       </section>
     );
   }
@@ -774,7 +774,7 @@ function FinalInterviewJudgePanel({ judge }) {
                 <span className="candidate-number">Top 3 · Candidate #{candidate.number}</span>
                 <h3>{candidate.name}</h3>
                 <p className="prefinal-note">
-                  Pre-final score: {Number(candidate.pre_final_score || 0).toFixed(2)}
+                  Preliminary Round score: {Number(candidate.pre_final_score || 0).toFixed(2)}
                 </p>
               </div>
 
@@ -814,7 +814,7 @@ function FinalInterviewJudgePanel({ judge }) {
         {contestants.length === 0 && (
           <article className="candidate-card">
             <h3>No Top 3 data yet</h3>
-            <p>Complete pre-final scoring first.</p>
+            <p>Complete Preliminary Round scoring first.</p>
           </article>
         )}
       </div>
@@ -907,8 +907,8 @@ function FinalInterviewAdminPanel() {
             <p className="eyebrow">Final Interview Results</p>
             <h3>Waiting for official Top 3</h3>
             <p>
-              Final Interview results are locked until all pre-final judges final-submit.
-              Current pre-final submissions: {finalReadiness.submitted_judges}/{finalReadiness.total_judges} judges.
+              Final Interview results are locked until all Preliminary Round judges final-submit.
+              Current Preliminary Round submissions: {finalReadiness.submitted_judges}/{finalReadiness.total_judges} judges.
             </p>
           </div>
         </div>
@@ -921,7 +921,7 @@ function FinalInterviewAdminPanel() {
       <div className="table-title">
         <div>
           <p className="eyebrow">Final Interview Results</p>
-          <h3>Official Final Winners · Final Interview</h3>
+          <h3>Final Interview Winners</h3>
           <p>
             {loading ? 'Loading final round...' : `${lockedJudges} of ${judgeStatuses.length} judges submitted final scores`}
             {lastUpdated ? ` · Updated ${lastUpdated}` : ''}
@@ -951,10 +951,10 @@ function FinalInterviewAdminPanel() {
             <tr>
               <th>Final Rank</th>
               <th>Candidate</th>
-              <th>Beauty Points 60%</th>
-              <th>Wit Points 40%</th>
+              <th>Beauty & Poise 60%</th>
+              <th>Final Q&A 40%</th>
               <th>Final Score</th>
-              <th>Top 3 Basis Score</th>
+              <th>Preliminary Score</th>
               <th>Judges Submitted</th>
             </tr>
           </thead>
@@ -1150,7 +1150,7 @@ function AdminPanel() {
         <div>
           <p className="eyebrow">Admin Dashboard</p>
           <h2>Admin Control · Live Tabulation</h2>
-          <p>Admin control screen. Use the TV buttons for public display. Final winners are shown first. Pre-final data below is for Top 3 search, audit, and support only.</p>
+          <p>Admin control screen. Use the TV buttons for public display. Preliminary Round scores choose the Top 3 Finalists; Final Interview decides the winners.</p>
           {loadWarning && <p className="warning-note">Warning: {loadWarning}</p>}
         </div>
 
@@ -1176,11 +1176,11 @@ function AdminPanel() {
           </button>
 
           <button className="btn btn-dark" onClick={() => openTvMode('top3')}>
-            TV Top 3 Search
+            TV Top 3 Finalists
           </button>
 
           <button className="btn btn-dark" onClick={() => openTvMode('final')}>
-            TV Final Winners
+            TV Coronation Results
           </button>
 
           {declaredWinner && (
@@ -1203,7 +1203,7 @@ function AdminPanel() {
         <section className="leader-card">
           <div>
             <span className="medal">🏆</span>
-            <p className="eyebrow">Top 3 Search Leader · Pre-Final Basis Only</p>
+            <p className="eyebrow">Preliminary Round Leader · Top 3 Finalist</p>
             <h2>#{leader.number} {leader.name}</h2>
           </div>
           <strong>{Number(leader.total_score).toFixed(2)}</strong>
@@ -1215,7 +1215,7 @@ function AdminPanel() {
         <section className="panel table-panel">
           <div className="table-title">
             <div>
-              <h3>Judge Submission Status · Pre-Final</h3>
+              <h3>Judge Submission Status · Preliminary Round</h3>
               <p>{lockedJudges} of {judgeStatuses.length} judges final submitted</p>
             </div>
           </div>
@@ -1255,7 +1255,7 @@ function AdminPanel() {
       <section className="panel table-panel">
         <div className="table-title">
           <div>
-            <h3>Official Pre-Final Ranking · Top 3 Basis</h3>
+            <h3>Preliminary Round Ranking · Top 3 Finalists</h3>
             <p>{ranked.length} candidates</p>
           </div>
         </div>
@@ -1469,13 +1469,13 @@ function DeveloperCredits() {
 function TVCreditFooter({ leftLabel, rightLabel }) {
   return (
     <footer className="tv-credit-footer">
-      <div className="tv-credit-left">
-        <strong>Miss Poblacion Occidental Automated Judging System</strong>
+      <div className="tv-credit-main">
+        <strong>OFFICIAL AUTOMATED JUDGING AND TABULATION SYSTEM</strong>
         <span>Developed by Kirch Ivan A. Balite and Osiris Kedigadash Palac</span>
         <small>Kirjane Labs × Dev Siris</small>
       </div>
 
-      <div className="tv-credit-right">
+      <div className="tv-credit-meta">
         {leftLabel && <span>{leftLabel}</span>}
         {rightLabel && <span>{rightLabel}</span>}
       </div>
@@ -1535,17 +1535,17 @@ function TVWinnersDisplay() {
           <div>
             <p className="eyebrow">Official Final Results</p>
             <h1>Miss Poblacion Occidental 2026</h1>
-            <p>Final winner screen opens once all Final Interview scores are locked.</p>
+            <p>Coronation results will appear once all Final Interview scores are locked.</p>
           </div>
         </section>
 
         <section className="tv-wait-card">
-          <h2>Waiting for final winners</h2>
+          <h2>Waiting for coronation results</h2>
           <p>{error || 'Final Interview submissions are not yet complete.'}</p>
         </section>
 
         <TVCreditFooter
-          leftLabel={`${submittedFinalJudges} of ${judgeStatuses.length || 5} judges submitted`}
+          leftLabel="Awaiting official confirmation"
           rightLabel={lastUpdated ? `Updated ${lastUpdated}` : ''}
         />
       </main>
@@ -1559,37 +1559,34 @@ function TVWinnersDisplay() {
         <div>
           <p className="eyebrow">Official Final Results</p>
           <h1>Miss Poblacion Occidental 2026</h1>
-          <p>Final winners based on the Final Interview round.</p>
+          <p>Official coronation results.</p>
         </div>
       </section>
 
       <section className="tv-note-strip">
-        <strong>TV Mode · Final Winners</strong>
-        <span>This public screen is safe for the official winner reveal.</span>
+        <strong>TV Display · Coronation Results</strong>
+        <span>Official display for the coronation results.</span>
       </section>
 
       <section className="tv-winner-card">
         <p>👑 Miss Poblacion Occidental 2026</p>
         <h2>#{winner.number} {winner.name}</h2>
-        <strong>{Number(winner.final_score || 0).toFixed(2)}</strong>
       </section>
 
       <section className="tv-runner-grid">
         <article>
           <span>🥈 First Runner-Up</span>
           <h3>#{firstRunnerUp.number} {firstRunnerUp.name}</h3>
-          <strong>{Number(firstRunnerUp.final_score || 0).toFixed(2)}</strong>
         </article>
 
         <article>
           <span>🥉 Second Runner-Up</span>
           <h3>#{secondRunnerUp.number} {secondRunnerUp.name}</h3>
-          <strong>{Number(secondRunnerUp.final_score || 0).toFixed(2)}</strong>
         </article>
       </section>
 
       <TVCreditFooter
-        leftLabel="5 of 5 judges submitted final scores"
+        leftLabel="Final Interview results confirmed"
         rightLabel={lastUpdated ? `Updated ${lastUpdated}` : ''}
       />
     </main>
@@ -1651,19 +1648,19 @@ function TVTop3Display() {
         <section className="tv-header">
           <img src="/pageant-logo.jpg" alt="Miss Poblacion Occidental 2026 Logo" />
           <div>
-            <p className="eyebrow">Top 3 Search Results</p>
+            <p className="eyebrow">Official Top 3 Finalists</p>
             <h1>Miss Poblacion Occidental 2026</h1>
-            <p>Pre-final ranking screen for identifying the official Top 3.</p>
+            <p>Official display for the candidates advancing to the Final Interview.</p>
           </div>
         </section>
 
         <section className="tv-wait-card">
           <h2>Waiting for Top 3 data</h2>
-          <p>{error || 'Pre-final ranking is not ready yet.'}</p>
+          <p>{error || 'Preliminary Round ranking is not ready yet.'}</p>
         </section>
 
         <TVCreditFooter
-          leftLabel={`${submittedJudges} of ${judgeStatuses.length || 5} judges submitted`}
+          leftLabel="Awaiting official confirmation"
           rightLabel={lastUpdated ? `Updated ${lastUpdated}` : ''}
         />
       </main>
@@ -1675,39 +1672,36 @@ function TVTop3Display() {
       <section className="tv-header">
         <img src="/pageant-logo.jpg" alt="Miss Poblacion Occidental 2026 Logo" />
         <div>
-          <p className="eyebrow">Top 3 Search Results</p>
+          <p className="eyebrow">Official Top 3 Finalists</p>
           <h1>Miss Poblacion Occidental 2026</h1>
-          <p>Pre-final basis only. This screen confirms the official Top 3.</p>
+          <p>These candidates advance to the Final Interview.</p>
         </div>
       </section>
 
       <section className="tv-note-strip">
-        <strong>TV Mode · Top 3 Search</strong>
-        <span>Pre-final weighted scores determine the official Top 3 only.</span>
+        <strong>TV Display · Top 3 Finalists</strong>
+        <span>These candidates advance to the Final Interview.</span>
       </section>
 
       <section className="tv-winner-card tv-top3-card">
-        <p>🥇 Top 3 Search Rank 1</p>
+        <p>✨ Top 3 Finalist</p>
         <h2>#{top1.number} {top1.name}</h2>
-        <strong>{preFinalScore(top1)}</strong>
       </section>
 
       <section className="tv-runner-grid">
         <article>
-          <span>🥈 Top 3 Search Rank 2</span>
+          <span>✨ Top 3 Finalist</span>
           <h3>#{top2.number} {top2.name}</h3>
-          <strong>{preFinalScore(top2)}</strong>
         </article>
 
         <article>
-          <span>🥉 Top 3 Search Rank 3</span>
+          <span>✨ Top 3 Finalist</span>
           <h3>#{top3.number} {top3.name}</h3>
-          <strong>{preFinalScore(top3)}</strong>
         </article>
       </section>
 
       <TVCreditFooter
-        leftLabel={`${submittedJudges} of ${judgeStatuses.length || 5} judges submitted pre-final scores`}
+        leftLabel="Top 3 Finalists confirmed"
         rightLabel={lastUpdated ? `Updated ${lastUpdated}` : ''}
       />
     </main>
