@@ -152,10 +152,15 @@ export default function App() {
   const [judge, setJudge] = useState(getSavedJudge());
   const [admin, setAdmin] = useState(localStorage.getItem('admin') === 'true');
   const params = new URLSearchParams(window.location.search);
-  const isTvMode = params.has('tv') || params.get('view') === 'tv';
+  const rawTvMode = params.get('tv');
+  const wantsTvMode = params.has('tv') || params.get('view') === 'tv';
+  const tvMode =
+    rawTvMode === 'top3' || rawTvMode === 'search'
+      ? 'top3'
+      : 'final';
 
-  if (isTvMode) {
-    return <TVWinnersDisplay />;
+  if (wantsTvMode) {
+    return tvMode === 'top3' ? <TVTop3Display /> : <TVWinnersDisplay />;
   }
 
   function logout() {
@@ -916,7 +921,7 @@ function FinalInterviewAdminPanel() {
       <div className="table-title">
         <div>
           <p className="eyebrow">Final Interview Results</p>
-          <h3>Official Winners · Final Interview</h3>
+          <h3>Official Final Winners · Final Interview</h3>
           <p>
             {loading ? 'Loading final round...' : `${lockedJudges} of ${judgeStatuses.length} judges submitted final scores`}
             {lastUpdated ? ` · Updated ${lastUpdated}` : ''}
@@ -1031,8 +1036,8 @@ function FinalInterviewAdminPanel() {
 
 
 function AdminPanel() {
-  function openTvMode() {
-    const url = `${window.location.origin}${window.location.pathname}?tv=1`;
+  function openTvMode(mode = 'final') {
+    const url = `${window.location.origin}${window.location.pathname}?tv=${mode}`;
     window.open(url, '_blank', 'noopener,noreferrer');
   }
   const [results, setResults] = useState([]);
@@ -1145,7 +1150,7 @@ function AdminPanel() {
         <div>
           <p className="eyebrow">Admin Dashboard</p>
           <h2>Admin Control · Live Tabulation</h2>
-          <p>Admin control screen. Use Open TV Mode for public display. Final winners are shown first; pre-final data below is audit/support only.</p>
+          <p>Admin control screen. Use the TV buttons for public display. Final winners are shown first. Pre-final data below is for Top 3 search, audit, and support only.</p>
           {loadWarning && <p className="warning-note">Warning: {loadWarning}</p>}
         </div>
 
@@ -1170,8 +1175,12 @@ function AdminPanel() {
             Declare Winner
           </button>
 
-          <button className="btn btn-dark" onClick={openTvMode}>
-            Open TV Mode
+          <button className="btn btn-dark" onClick={() => openTvMode('top3')}>
+            TV Top 3 Search
+          </button>
+
+          <button className="btn btn-dark" onClick={() => openTvMode('final')}>
+            TV Final Winners
           </button>
 
           {declaredWinner && (
@@ -1194,7 +1203,7 @@ function AdminPanel() {
         <section className="leader-card">
           <div>
             <span className="medal">🏆</span>
-            <p className="eyebrow">Top 3 Qualifier Rank 1 · Audit Only</p>
+            <p className="eyebrow">Top 3 Search Leader · Pre-Final Basis Only</p>
             <h2>#{leader.number} {leader.name}</h2>
           </div>
           <strong>{Number(leader.total_score).toFixed(2)}</strong>
@@ -1206,7 +1215,7 @@ function AdminPanel() {
         <section className="panel table-panel">
           <div className="table-title">
             <div>
-              <h3>Judge Submission Status</h3>
+              <h3>Judge Submission Status · Pre-Final</h3>
               <p>{lockedJudges} of {judgeStatuses.length} judges final submitted</p>
             </div>
           </div>
@@ -1246,7 +1255,7 @@ function AdminPanel() {
       <section className="panel table-panel">
         <div className="table-title">
           <div>
-            <h3>Official Ranking</h3>
+            <h3>Official Pre-Final Ranking · Top 3 Basis</h3>
             <p>{ranked.length} candidates</p>
           </div>
         </div>
@@ -1457,6 +1466,23 @@ function DeveloperCredits() {
 }
 
 
+function TVCreditFooter({ leftLabel, rightLabel }) {
+  return (
+    <footer className="tv-credit-footer">
+      <div className="tv-credit-left">
+        <strong>Miss Poblacion Occidental Automated Judging System</strong>
+        <span>Developed by Kirch Ivan A. Balite and Osiris Kedigadash Palac</span>
+        <small>Kirjane Labs × Dev Siris</small>
+      </div>
+
+      <div className="tv-credit-right">
+        {leftLabel && <span>{leftLabel}</span>}
+        {rightLabel && <span>{rightLabel}</span>}
+      </div>
+    </footer>
+  );
+}
+
 function TVWinnersDisplay() {
   const [results, setResults] = useState([]);
   const [judgeStatuses, setJudgeStatuses] = useState([]);
@@ -1496,6 +1522,7 @@ function TVWinnersDisplay() {
 
   const submittedFinalJudges = judgeStatuses.filter((judge) => judge.submitted_at).length;
   const allFinalSubmitted = judgeStatuses.length > 0 && submittedFinalJudges === judgeStatuses.length;
+
   const winner = ranked[0];
   const firstRunnerUp = ranked[1];
   const secondRunnerUp = ranked[2];
@@ -1503,11 +1530,24 @@ function TVWinnersDisplay() {
   if (error || !allFinalSubmitted || ranked.length < 3) {
     return (
       <main className="tv-stage tv-waiting">
-        <img src="/pageant-logo.jpg" alt="Miss Poblacion Occidental 2026 Logo" />
-        <p className="eyebrow">Miss Poblacion Occidental 2026</p>
-        <h1>Final results are not yet released.</h1>
-        <p>{error || 'Waiting for all final interview scores to be submitted and locked.'}</p>
-        <span>{submittedFinalJudges} of {judgeStatuses.length || 5} final judges submitted</span>
+        <section className="tv-header">
+          <img src="/pageant-logo.jpg" alt="Miss Poblacion Occidental 2026 Logo" />
+          <div>
+            <p className="eyebrow">Official Final Results</p>
+            <h1>Miss Poblacion Occidental 2026</h1>
+            <p>Final winner screen opens once all Final Interview scores are locked.</p>
+          </div>
+        </section>
+
+        <section className="tv-wait-card">
+          <h2>Waiting for final winners</h2>
+          <p>{error || 'Final Interview submissions are not yet complete.'}</p>
+        </section>
+
+        <TVCreditFooter
+          leftLabel={`${submittedFinalJudges} of ${judgeStatuses.length || 5} judges submitted`}
+          rightLabel={lastUpdated ? `Updated ${lastUpdated}` : ''}
+        />
       </main>
     );
   }
@@ -1519,8 +1559,13 @@ function TVWinnersDisplay() {
         <div>
           <p className="eyebrow">Official Final Results</p>
           <h1>Miss Poblacion Occidental 2026</h1>
-          <p>Final ranking is based on the Final Interview round.</p>
+          <p>Final winners based on the Final Interview round.</p>
         </div>
+      </section>
+
+      <section className="tv-note-strip">
+        <strong>TV Mode · Final Winners</strong>
+        <span>This public screen is safe for the official winner reveal.</span>
       </section>
 
       <section className="tv-winner-card">
@@ -1543,14 +1588,131 @@ function TVWinnersDisplay() {
         </article>
       </section>
 
-      <footer className="tv-footer">
-        <span>5 of 5 judges submitted final scores</span>
-        <span>Updated {lastUpdated}</span>
-      </footer>
+      <TVCreditFooter
+        leftLabel="5 of 5 judges submitted final scores"
+        rightLabel={lastUpdated ? `Updated ${lastUpdated}` : ''}
+      />
     </main>
   );
 }
 
+
+
+
+function TVTop3Display() {
+  const [results, setResults] = useState([]);
+  const [judgeStatuses, setJudgeStatuses] = useState([]);
+  const [lastUpdated, setLastUpdated] = useState('');
+  const [error, setError] = useState('');
+
+  async function loadTvTop3() {
+    try {
+      const [rankingResults, judgeData] = await Promise.all([
+        api('/api/results'),
+        api('/api/judges/status')
+      ]);
+
+      setResults(rankingResults || []);
+      setJudgeStatuses(judgeData || []);
+      setLastUpdated(new Date().toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      }));
+      setError('');
+    } catch (err) {
+      setError(err.message);
+    }
+  }
+
+  useEffect(() => {
+    loadTvTop3();
+    const timer = setInterval(loadTvTop3, 3000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const ranked = (results || []).slice(0, 3).map((result, index) => ({
+    ...result,
+    rank: index + 1
+  }));
+
+  const submittedJudges = judgeStatuses.filter((judge) => judge.submitted_at).length;
+  const top1 = ranked[0];
+  const top2 = ranked[1];
+  const top3 = ranked[2];
+
+  function preFinalScore(row) {
+    return Number(row.total || row.total_score || row.final_score || 0).toFixed(2);
+  }
+
+  if (error || ranked.length < 3) {
+    return (
+      <main className="tv-stage tv-waiting">
+        <section className="tv-header">
+          <img src="/pageant-logo.jpg" alt="Miss Poblacion Occidental 2026 Logo" />
+          <div>
+            <p className="eyebrow">Top 3 Search Results</p>
+            <h1>Miss Poblacion Occidental 2026</h1>
+            <p>Pre-final ranking screen for identifying the official Top 3.</p>
+          </div>
+        </section>
+
+        <section className="tv-wait-card">
+          <h2>Waiting for Top 3 data</h2>
+          <p>{error || 'Pre-final ranking is not ready yet.'}</p>
+        </section>
+
+        <TVCreditFooter
+          leftLabel={`${submittedJudges} of ${judgeStatuses.length || 5} judges submitted`}
+          rightLabel={lastUpdated ? `Updated ${lastUpdated}` : ''}
+        />
+      </main>
+    );
+  }
+
+  return (
+    <main className="tv-stage">
+      <section className="tv-header">
+        <img src="/pageant-logo.jpg" alt="Miss Poblacion Occidental 2026 Logo" />
+        <div>
+          <p className="eyebrow">Top 3 Search Results</p>
+          <h1>Miss Poblacion Occidental 2026</h1>
+          <p>Pre-final basis only. This screen confirms the official Top 3.</p>
+        </div>
+      </section>
+
+      <section className="tv-note-strip">
+        <strong>TV Mode · Top 3 Search</strong>
+        <span>Pre-final weighted scores determine the official Top 3 only.</span>
+      </section>
+
+      <section className="tv-winner-card tv-top3-card">
+        <p>🥇 Top 3 Search Rank 1</p>
+        <h2>#{top1.number} {top1.name}</h2>
+        <strong>{preFinalScore(top1)}</strong>
+      </section>
+
+      <section className="tv-runner-grid">
+        <article>
+          <span>🥈 Top 3 Search Rank 2</span>
+          <h3>#{top2.number} {top2.name}</h3>
+          <strong>{preFinalScore(top2)}</strong>
+        </article>
+
+        <article>
+          <span>🥉 Top 3 Search Rank 3</span>
+          <h3>#{top3.number} {top3.name}</h3>
+          <strong>{preFinalScore(top3)}</strong>
+        </article>
+      </section>
+
+      <TVCreditFooter
+        leftLabel={`${submittedJudges} of ${judgeStatuses.length || 5} judges submitted pre-final scores`}
+        rightLabel={lastUpdated ? `Updated ${lastUpdated}` : ''}
+      />
+    </main>
+  );
+}
 
 function SiteFooter() {
   const year = new Date().getFullYear();
