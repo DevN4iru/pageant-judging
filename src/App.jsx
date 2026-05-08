@@ -1191,7 +1191,7 @@ function AdminPanel() {
   }
 
   return (
-    <main className="content-grid">
+    <main className="content-grid admin-dashboard-view">
       <section className="panel dashboard-hero">
         <div>
           <p className="eyebrow">Admin Dashboard</p>

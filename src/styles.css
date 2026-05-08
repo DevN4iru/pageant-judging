@@ -2556,3 +2556,51 @@ footer:not(.tv-credit-footer) {
 
 /* ===== KIRCH CLEAN LEADER TOP3 FINAL END ===== */
 
+/* ===== KIRCH STATUS PANELS BOTTOM ORDER START ===== */
+
+/* Keep admin readable: status/audit tables go after results and rankings. */
+.admin-dashboard-view {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* Main result hierarchy */
+.admin-dashboard-view > .final-round-leader-card {
+  order: 10;
+}
+
+.admin-dashboard-view > .final-results-panel {
+  order: 20;
+}
+
+.admin-dashboard-view > .top3-finalists-panel {
+  order: 30;
+}
+
+.admin-dashboard-view > .prelim-ranking-panel {
+  order: 40;
+}
+
+/* All Judge Submission Status panels belong at the bottom. */
+.admin-dashboard-view > .final-status-panel {
+  order: 80;
+  margin-top: 18px;
+}
+
+.admin-dashboard-view > .judge-status-panel {
+  order: 90;
+}
+
+/* Make bottom status panels visibly secondary/admin-only. */
+.admin-dashboard-view > .final-status-panel,
+.admin-dashboard-view > .judge-status-panel {
+  opacity: 0.96;
+}
+
+.admin-dashboard-view > .final-status-panel .table-title,
+.admin-dashboard-view > .judge-status-panel .table-title {
+  padding-bottom: 4px;
+}
+
+/* ===== KIRCH STATUS PANELS BOTTOM ORDER END ===== */
+
