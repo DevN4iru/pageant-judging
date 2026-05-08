@@ -4293,3 +4293,142 @@ body:has(.tv-stage) {
 }
 
 /* ===== KIRCH TV CREDIT BANNER 1TO1 END ===== */
+
+/* ===== KIRCH TV CREDIT EXACT COMPACT BANNER START ===== */
+
+/*
+  Exact replication target:
+  TV display banner uses the same visual system as .site-footer.compact-footer.
+  Older .tv-credit-footer grid/meta styles are neutralized here.
+*/
+
+.tv-stage .tv-credit-footer.site-footer.compact-footer,
+.tv-credit-footer.site-footer.compact-footer {
+  position: relative !important;
+  isolation: isolate;
+  display: block !important;
+  grid-template-columns: none !important;
+  width: 100% !important;
+  min-height: 0 !important;
+  margin-top: 18px !important;
+  padding: 20px 22px !important;
+  overflow: hidden;
+  border-radius: 16px !important;
+  color: #fff7ed !important;
+  text-align: left !important;
+  background:
+    radial-gradient(circle at 88% 22%, rgba(251, 191, 36, 0.18), transparent 28%),
+    radial-gradient(circle at 10% 8%, rgba(236, 72, 153, 0.16), transparent 30%),
+    linear-gradient(135deg, #251448 0%, #4b2a73 48%, #865ab1 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  box-shadow:
+    0 22px 54px rgba(24, 16, 39, 0.20),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16) !important;
+  backdrop-filter: none !important;
+}
+
+.tv-credit-footer.site-footer.compact-footer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.08), transparent 32%, rgba(255, 255, 255, 0.06)),
+    radial-gradient(circle at 94% 50%, rgba(255, 255, 255, 0.12), transparent 22%);
+  pointer-events: none;
+  z-index: -2;
+}
+
+.tv-credit-footer.site-footer.compact-footer::after {
+  content: "♕";
+  position: absolute;
+  right: 26px;
+  top: 50%;
+  color: rgba(255, 255, 255, 0.075);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 118px;
+  line-height: 1;
+  transform: translateY(-50%) rotate(-8deg);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.tv-credit-footer.site-footer.compact-footer > * {
+  position: relative;
+  z-index: 1;
+}
+
+.tv-credit-footer.site-footer.compact-footer .compact-footer-inner {
+  max-width: none !important;
+}
+
+.tv-credit-footer.site-footer.compact-footer strong {
+  color: #fff7ed !important;
+}
+
+.tv-credit-footer.site-footer.compact-footer > .compact-footer-inner > strong {
+  display: block;
+  margin: 0;
+  color: #fff7ed !important;
+  font-size: 15px !important;
+  font-weight: 950;
+  line-height: 1.2;
+  letter-spacing: -0.01em !important;
+  text-transform: none !important;
+}
+
+.tv-credit-footer.site-footer.compact-footer p {
+  margin: 5px 0 0 !important;
+  color: rgba(255, 255, 255, 0.78) !important;
+  font-size: 11px !important;
+  font-weight: 650 !important;
+  line-height: 1.45 !important;
+  text-align: left !important;
+}
+
+.tv-credit-footer.site-footer.compact-footer .compact-dev-lines {
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  margin-top: 8px !important;
+}
+
+.tv-credit-footer.site-footer.compact-footer .compact-dev-lines p {
+  width: 100%;
+  margin: 0 !important;
+  font-size: 11px !important;
+}
+
+.tv-credit-footer.site-footer.compact-footer .compact-dev-lines strong {
+  color: #fbbf24 !important;
+  font-size: 11px !important;
+  font-weight: 950 !important;
+}
+
+.tv-credit-footer.site-footer.compact-footer a {
+  color: #fbbf24 !important;
+  font-weight: 950 !important;
+  text-decoration: none !important;
+}
+
+.tv-credit-footer.site-footer.compact-footer a:hover {
+  color: #fde68a !important;
+  text-decoration: underline !important;
+}
+
+.tv-credit-footer .tv-credit-main,
+.tv-credit-footer .tv-credit-meta {
+  display: none !important;
+}
+
+@media (max-width: 720px) {
+  .tv-credit-footer.site-footer.compact-footer {
+    padding: 18px !important;
+  }
+
+  .tv-credit-footer.site-footer.compact-footer::after {
+    right: 12px;
+    font-size: 92px;
+  }
+}
+
+/* ===== KIRCH TV CREDIT EXACT COMPACT BANNER END ===== */

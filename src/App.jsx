@@ -1533,18 +1533,26 @@ function DeveloperCredits() {
 }
 
 
-function TVCreditFooter({ leftLabel, rightLabel }) {
+function TVCreditFooter() {
   return (
-    <footer className="tv-credit-footer">
-      <div className="tv-credit-main">
-        <strong>OFFICIAL AUTOMATED JUDGING AND TABULATION SYSTEM</strong>
-        <span>Developed by Kirch Ivan A. Balite and Osiris Kedigadash Palac</span>
-        <small>Kirjane Labs × Dev Siris</small>
-      </div>
+    <footer className="tv-credit-footer site-footer compact-footer">
+      <div className="compact-footer-inner">
+        <strong>Miss Poblacion Occidental Automated Judging System</strong>
+        <p>© 2026 All rights reserved. Happy Fiesta from Kirjane Labs × Dev Siris.</p>
 
-      <div className="tv-credit-meta">
-        {leftLabel && <span>{leftLabel}</span>}
-        {rightLabel && <span>{rightLabel}</span>}
+        <div className="compact-dev-lines">
+          <p>
+            <strong>Kirjane Labs</strong> — Kirch Ivan A. Balite · 094863238533 ·{' '}
+            <a href="mailto:kirchbalite.careers@gmail.com">kirchbalite.careers@gmail.com</a>
+            {' '}· Facebook: Kirch Ivan
+          </p>
+
+          <p>
+            <strong>Dev Siris</strong> — Osiris Kedgidagash Palac · 09694213824 ·{' '}
+            <a href="mailto:palac.osiriskedgidagash@gmail.com">palac.osiriskedgidagash@gmail.com</a>
+            {' '}· Facebook: Siris Palac
+          </p>
+        </div>
       </div>
     </footer>
   );
