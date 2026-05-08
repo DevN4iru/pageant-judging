@@ -2237,3 +2237,290 @@ input {
 }
 /* ===== KIRCH HUMAN TV DISPLAY END ===== */
 
+/* ===== KIRCH COLOR CODING PASS START ===== */
+:root {
+  --kirch-final-border: rgba(244, 114, 182, 0.42);
+  --kirch-final-bg: linear-gradient(135deg, rgba(126, 34, 206, 0.12), rgba(236, 72, 153, 0.08));
+  --kirch-final-strip: linear-gradient(135deg, #6d28d9, #db2777);
+  --kirch-final-text: #4c1d95;
+
+  --kirch-prelim-border: rgba(99, 102, 241, 0.36);
+  --kirch-prelim-bg: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(124, 58, 237, 0.08));
+  --kirch-prelim-text: #4338ca;
+
+  --kirch-status-border: rgba(16, 185, 129, 0.24);
+  --kirch-status-bg: linear-gradient(135deg, rgba(16, 185, 129, 0.06), rgba(34, 197, 94, 0.06));
+  --kirch-status-text: #166534;
+
+  --kirch-warn-border: rgba(245, 158, 11, 0.30);
+  --kirch-warn-bg: linear-gradient(135deg, rgba(251, 191, 36, 0.10), rgba(245, 158, 11, 0.06));
+  --kirch-warn-text: #92400e;
+
+  --kirch-neutral-border: rgba(124, 58, 237, 0.18);
+  --kirch-neutral-bg: rgba(255, 255, 255, 0.72);
+  --kirch-soft-shadow: 0 18px 42px rgba(76, 29, 149, 0.10);
+}
+
+/* global card polish */
+.panel,
+.card,
+.section-card,
+.summary-card,
+.table-card,
+.results-card {
+  border-color: var(--kirch-neutral-border);
+  box-shadow: var(--kirch-soft-shadow);
+}
+
+/* ===== FINAL / OFFICIAL WINNERS ===== */
+.final-results-panel,
+.final-results-card,
+.final-winners-card {
+  border: 2px solid var(--kirch-final-border) !important;
+  background: var(--kirch-final-bg) !important;
+  box-shadow:
+    0 24px 60px rgba(126, 34, 206, 0.12),
+    0 0 0 1px rgba(255,255,255,0.85) inset !important;
+}
+
+.final-results-panel .eyebrow,
+.final-results-card .eyebrow,
+.final-winners-card .eyebrow {
+  color: #7e22ce !important;
+  font-weight: 1000;
+  letter-spacing: 0.12em;
+}
+
+.final-results-panel h2,
+.final-results-card h2,
+.final-winners-card h2,
+.final-results-panel h3,
+.final-results-card h3,
+.final-winners-card h3 {
+  color: #2e1065 !important;
+}
+
+.final-winner-strip,
+.final-leader-strip,
+.winner-strip {
+  background: var(--kirch-final-strip) !important;
+  color: white !important;
+  border: 1px solid rgba(255,255,255,0.24) !important;
+  box-shadow: 0 14px 30px rgba(126, 34, 206, 0.20);
+}
+
+.final-winner-strip *,
+.final-leader-strip *,
+.winner-strip * {
+  color: inherit !important;
+}
+
+.final-results-panel table thead th,
+.final-results-card table thead th,
+.final-winners-card table thead th {
+  background: rgba(124, 58, 237, 0.08);
+  color: #4c1d95;
+}
+
+.final-results-panel table tbody tr:first-child,
+.final-results-card table tbody tr:first-child,
+.final-winners-card table tbody tr:first-child {
+  background: rgba(250, 245, 220, 0.92) !important;
+}
+
+.final-results-panel table tbody tr:nth-child(2),
+.final-results-card table tbody tr:nth-child(2),
+.final-winners-card table tbody tr:nth-child(2) {
+  background: rgba(244, 240, 255, 0.88) !important;
+}
+
+.final-results-panel table tbody tr:nth-child(3),
+.final-results-card table tbody tr:nth-child(3),
+.final-winners-card table tbody tr:nth-child(3) {
+  background: rgba(252, 242, 234, 0.88) !important;
+}
+
+/* ===== PRELIMINARY ROUND / TOP 3 BASIS ===== */
+.qualifier-card,
+.current-leader,
+.leader-card,
+.top3-card,
+.prelim-card,
+.preliminary-card {
+  border: 2px solid var(--kirch-prelim-border) !important;
+  background: var(--kirch-prelim-bg) !important;
+  box-shadow:
+    0 22px 52px rgba(79, 70, 229, 0.10),
+    0 0 0 1px rgba(255,255,255,0.85) inset !important;
+}
+
+.qualifier-card .eyebrow,
+.current-leader .eyebrow,
+.leader-card .eyebrow,
+.top3-card .eyebrow,
+.prelim-card .eyebrow,
+.preliminary-card .eyebrow {
+  color: var(--kirch-prelim-text) !important;
+  font-weight: 1000;
+  letter-spacing: 0.12em;
+}
+
+.qualifier-card h2,
+.current-leader h2,
+.leader-card h2,
+.top3-card h2,
+.prelim-card h2,
+.preliminary-card h2,
+.qualifier-card h3,
+.current-leader h3,
+.leader-card h3,
+.top3-card h3,
+.prelim-card h3,
+.preliminary-card h3 {
+  color: #312e81 !important;
+}
+
+/* preliminary ranking table */
+.prelim-ranking-panel,
+.preliminary-ranking-panel,
+.ranking-card {
+  border: 2px solid rgba(99, 102, 241, 0.24) !important;
+  background: rgba(255,255,255,0.82) !important;
+}
+
+.prelim-ranking-panel table thead th,
+.preliminary-ranking-panel table thead th,
+.ranking-card table thead th {
+  background: rgba(79, 70, 229, 0.07);
+  color: #4338ca;
+}
+
+.prelim-ranking-panel table tbody tr:nth-child(-n+3),
+.preliminary-ranking-panel table tbody tr:nth-child(-n+3),
+.ranking-card table tbody tr:nth-child(-n+3) {
+  background: rgba(238, 242, 255, 0.80) !important;
+}
+
+/* rank pills / badges */
+.rank-pill,
+.badge-rank,
+.position-pill {
+  border: 1px solid rgba(124, 58, 237, 0.14);
+  font-weight: 900;
+}
+
+.rank-pill.rank-1,
+.badge-rank.rank-1,
+.position-pill.rank-1 {
+  background: rgba(254, 243, 199, 0.95);
+  color: #92400e;
+}
+
+.rank-pill.rank-2,
+.badge-rank.rank-2,
+.position-pill.rank-2 {
+  background: rgba(239, 246, 255, 0.95);
+  color: #1d4ed8;
+}
+
+.rank-pill.rank-3,
+.badge-rank.rank-3,
+.position-pill.rank-3 {
+  background: rgba(255, 237, 213, 0.95);
+  color: #c2410c;
+}
+
+/* ===== JUDGE STATUS / GOOD STATE ===== */
+.judge-status-panel,
+.judge-submission-panel,
+.status-panel,
+.submission-status-card {
+  border: 2px solid var(--kirch-status-border) !important;
+  background: var(--kirch-status-bg) !important;
+  box-shadow:
+    0 18px 44px rgba(22, 163, 74, 0.08),
+    0 0 0 1px rgba(255,255,255,0.82) inset !important;
+}
+
+.judge-status-panel .eyebrow,
+.judge-submission-panel .eyebrow,
+.status-panel .eyebrow,
+.submission-status-card .eyebrow {
+  color: var(--kirch-status-text) !important;
+}
+
+.locked-pill,
+.status-locked,
+.status-submitted,
+.lock-pill {
+  background: rgba(220, 252, 231, 0.96) !important;
+  color: #166534 !important;
+  border: 1px solid rgba(34, 197, 94, 0.18) !important;
+  font-weight: 900 !important;
+}
+
+.pending-pill,
+.status-pending,
+.status-waiting {
+  background: rgba(254, 243, 199, 0.96) !important;
+  color: #92400e !important;
+  border: 1px solid rgba(245, 158, 11, 0.20) !important;
+  font-weight: 900 !important;
+}
+
+/* ===== TV MODE COLOR EMPHASIS ===== */
+.tv-stage .tv-header {
+  border-color: rgba(124, 58, 237, 0.24);
+}
+
+.tv-stage .tv-note-strip {
+  border-color: rgba(124, 58, 237, 0.20);
+}
+
+.tv-stage .tv-credit-footer {
+  border: 2px solid rgba(253, 230, 138, 0.56);
+}
+
+.tv-top3-card {
+  background:
+    radial-gradient(circle at 18% 20%, rgba(255,255,255,0.18), transparent 26%),
+    linear-gradient(135deg, #1d4ed8, #4f46e5 42%, #7c3aed) !important;
+}
+
+.tv-winner-card:not(.tv-top3-card) {
+  background:
+    radial-gradient(circle at 18% 20%, rgba(255,255,255,0.20), transparent 26%),
+    linear-gradient(135deg, #7e22ce, #a21caf 42%, #db2777) !important;
+}
+
+/* footer on admin */
+.site-footer,
+.app-footer,
+footer:not(.tv-credit-footer) {
+  border: 2px solid rgba(124, 58, 237, 0.28);
+  box-shadow: 0 14px 34px rgba(76, 29, 149, 0.14);
+}
+
+/* admin hero / top control section */
+.admin-hero,
+.admin-panel,
+.control-panel,
+.dashboard-hero {
+  border: 2px solid rgba(124, 58, 237, 0.18) !important;
+  background: linear-gradient(135deg, rgba(255,255,255,0.82), rgba(246,240,255,0.80)) !important;
+}
+
+/* buttons */
+.btn-warm {
+  box-shadow: 0 10px 24px rgba(245, 158, 11, 0.18);
+}
+
+.btn-dark {
+  box-shadow: 0 10px 24px rgba(31, 18, 53, 0.16);
+}
+
+.btn-primary {
+  box-shadow: 0 10px 24px rgba(124, 58, 237, 0.18);
+}
+/* ===== KIRCH COLOR CODING PASS END ===== */
+
