@@ -629,7 +629,7 @@ function FinalInterviewJudgePanel({ judge }) {
 
   async function saveFinalScore(contestantId, criteriaKey, score) {
     if (isLocked) {
-      setStatus('Final Interview scores are already locked.');
+      setStatus('Finals Night 2 scores are already locked.');
       return;
     }
 
@@ -642,7 +642,7 @@ function FinalInterviewJudgePanel({ judge }) {
 
     if (score === '') return;
 
-    setStatus('Saving Final Interview score...');
+    setStatus('Saving Finals Night 2 score...');
 
     try {
       await api('/api/final/scores', {
@@ -657,7 +657,7 @@ function FinalInterviewJudgePanel({ judge }) {
 
       const currentStatus = await api(`/api/final/judge/${judge.id}/status`).catch(() => judgeStatus);
       setJudgeStatus(currentStatus);
-      setStatus('Final Interview score saved ✓');
+      setStatus('Finals Night 2 score saved ✓');
     } catch (err) {
       setStatus(err.message);
     }
@@ -665,18 +665,18 @@ function FinalInterviewJudgePanel({ judge }) {
 
   async function finalInterviewSubmit() {
     if (!canSubmit) {
-      setStatus(`Complete all Final Interview scores first. ${filledFields}/${totalFields} fields filled.`);
+      setStatus(`Complete all Finals Night 2 scores first. ${filledFields}/${totalFields} fields filled.`);
       return;
     }
 
     const yes = window.confirm(
-      'Submit Final Interview scores? After this, your Final Interview scores will be locked.'
+      'Submit Finals Night 2 scores? After this, your Finals Night 2 scores will be locked.'
     );
 
     if (!yes) return;
 
     setSubmitting(true);
-    setStatus('Submitting Final Interview scores...');
+    setStatus('Submitting Finals Night 2 scores...');
 
     try {
       const result = await api(`/api/final/judge/${judge.id}/submit`, {
@@ -689,7 +689,7 @@ function FinalInterviewJudgePanel({ judge }) {
       }));
 
       setJudgeStatus(currentStatus);
-      setStatus(`Final Interview submitted and locked at ${formatDateTime(result.submitted_at)}.`);
+      setStatus(`Finals Night 2 submitted and locked at ${formatDateTime(result.submitted_at)}.`);
     } catch (err) {
       setStatus(err.message);
     } finally {
@@ -754,7 +754,7 @@ function FinalInterviewJudgePanel({ judge }) {
               >
                 {submitting ? 'Submitting...' : 'Submit Final Interview'}
               </button>
-              <p className="warning-note">Locks Final Interview scores only.</p>
+              <p className="warning-note">Locks Finals Night 2 scores only.</p>
             </>
           )}
         </div>
@@ -904,7 +904,7 @@ function FinalInterviewAdminPanel() {
       <section className="panel table-panel final-results-panel final-round-locked">
         <div className="table-title">
           <div>
-            <p className="eyebrow">Final Interview Results</p>
+            <p className="eyebrow">Finals Night 2 Results</p>
             <h3>Waiting for official Top 3</h3>
             <p>
               Final Interview results are locked until all Preliminary Round judges final-submit.
@@ -921,9 +921,9 @@ function FinalInterviewAdminPanel() {
       {winner && (
         <section className="panel final-round-leader-card">
           <div>
-            <p className="eyebrow">Final Round Leader</p>
+            <p className="eyebrow">Finals Night 2 Leader</p>
             <h2>#{winner.number} {winner.name}</h2>
-            <p>Highest score after the Final Interview</p>
+            <p>Highest score after Finals Night 2</p>
           </div>
           <strong>{Number(winner.final_score || 0).toFixed(2)}</strong>
         </section>
@@ -932,10 +932,10 @@ function FinalInterviewAdminPanel() {
       <section className="panel table-panel final-results-panel">
       <div className="table-title">
         <div>
-          <p className="eyebrow">Final Interview Results</p>
-          <h3>Final Interview Winners</h3>
+          <p className="eyebrow">Finals Night 2 Results</p>
+          <h3>Finals Night 2 Winners</h3>
           <p>
-            {loading ? 'Loading final round...' : `${lockedJudges} of ${judgeStatuses.length} judges submitted Final Interview scores`}
+            {loading ? 'Loading final round...' : `${lockedJudges} of ${judgeStatuses.length} judges submitted Finals Night 2 scores`}
             {lastUpdated ? ` · Updated ${lastUpdated}` : ''}
           </p>
           {loadWarning && <p className="warning-note">Warning: {loadWarning}</p>}
@@ -955,7 +955,7 @@ function FinalInterviewAdminPanel() {
               <th>Final Rank</th>
               <th>Candidate</th>
               <th>Beauty & Poise 60%</th>
-              <th>Final Q&A 40%</th>
+              <th>Q&A 40%</th>
               <th>Final Score</th>
               <th>Preliminary Score</th>
               <th>Judges Submitted</th>
@@ -991,7 +991,7 @@ function FinalInterviewAdminPanel() {
 
             {ranked.length === 0 && (
               <tr>
-                <td colSpan="7">No Final Interview data yet.</td>
+                <td colSpan="7">No Finals Night 2 data yet.</td>
               </tr>
             )}
           </tbody>
@@ -1024,7 +1024,7 @@ function FinalInterviewAdminPanel() {
 
               {details.length === 0 && (
                 <tr>
-                  <td colSpan="5">No Final Interview details yet.</td>
+                  <td colSpan="5">No Finals Night 2 details yet.</td>
                 </tr>
               )}
             </tbody>
@@ -1037,9 +1037,9 @@ function FinalInterviewAdminPanel() {
         <section className="panel table-panel final-status-panel">
           <div className="table-title">
             <div>
-              <p className="eyebrow">Final Interview Completion</p>
-              <h3>Judge Submission Status · Final Interview</h3>
-              <p>{lockedJudges} of {judgeStatuses.length} judges submitted Final Interview scores</p>
+              <p className="eyebrow">Finals Night 2 Completion</p>
+              <h3>Judge Submission Status · Finals Night 2</h3>
+              <p>{lockedJudges} of {judgeStatuses.length} judges submitted Finals Night 2 scores</p>
             </div>
           </div>
 
@@ -1196,7 +1196,7 @@ function AdminPanel() {
         <div>
           <p className="eyebrow">Admin Dashboard</p>
           <h2>Admin Control · Live Tabulation</h2>
-          <p>Admin control screen. Use the TV buttons for public display. Preliminary Round scores choose the Top 3 Finalists; Final Interview decides the winners.</p>
+          <p>Admin control screen. Use the TV buttons for public display. Preliminary Round scores choose the Top 3 Finalists; Finals Night 2 decides the winners.</p>
           {loadWarning && <p className="warning-note">Warning: {loadWarning}</p>}
         </div>
 
@@ -1249,7 +1249,7 @@ function AdminPanel() {
           <div className="table-title">
             <div>
               <p className="eyebrow">Official Top 3 Finalists</p>
-              <h3>Candidates Advancing to Final Interview</h3>
+              <h3>Candidates Advancing to Finals Night 2</h3>
               <p>Color-coded live leaderboard from the Preliminary Round</p>
             </div>
           </div>
@@ -1323,7 +1323,7 @@ function AdminPanel() {
           <div>
             <p className="eyebrow">Preliminary Round Results</p>
             <h3>Preliminary Round Ranking · Top 3 Finalists</h3>
-            <p>{ranked.length} candidates · The Top 3 advance to the Final Interview</p>
+            <p>{ranked.length} candidates · The Top 3 advance to Finals Night 2</p>
           </div>
         </div>
 
@@ -1602,13 +1602,13 @@ function TVWinnersDisplay() {
           <div>
             <p className="eyebrow">Official Final Results</p>
             <h1>Miss Poblacion Occidental 2026</h1>
-            <p>Coronation results will appear once all Final Interview scores are locked.</p>
+            <p>Coronation results will appear once all Finals Night 2 scores are locked.</p>
           </div>
         </section>
 
         <section className="tv-wait-card">
           <h2>Waiting for coronation results</h2>
-          <p>{error || 'Final Interview submissions are not yet complete.'}</p>
+          <p>{error || 'Finals Night 2 submissions are not yet complete.'}</p>
         </section>
 
         <TVCreditFooter
@@ -1653,7 +1653,7 @@ function TVWinnersDisplay() {
       </section>
 
       <TVCreditFooter
-        leftLabel="Final Interview results confirmed"
+        leftLabel="Finals Night 2 results confirmed"
         rightLabel={lastUpdated ? `Updated ${lastUpdated}` : ''}
       />
     </main>
