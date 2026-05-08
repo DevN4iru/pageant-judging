@@ -3517,3 +3517,437 @@ body:has(.admin-shell) {
 }
 
 /* ===== KIRCH ADMIN SCROLL HEADER QA FIX END ===== */
+
+/* ===== KIRCH TV PREMIUM BANNER POLISH START ===== */
+
+/*
+  TV/TC display polish only.
+  Keeps TV footer as its own developer-credit context.
+  Does not touch scoring, API routes, formulas, or admin footer content.
+*/
+
+body:has(.tv-stage) {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 15% 14%, rgba(124, 58, 237, 0.26), transparent 30%),
+    radial-gradient(circle at 84% 14%, rgba(236, 72, 153, 0.24), transparent 32%),
+    radial-gradient(circle at 80% 84%, rgba(251, 191, 36, 0.16), transparent 34%),
+    linear-gradient(135deg, #f4e9ff 0%, #fff1f7 46%, #fff6ed 100%);
+  overflow-x: hidden;
+}
+
+.tv-stage {
+  width: min(1120px, calc(100% - 52px));
+  min-height: 100vh;
+  display: grid;
+  align-content: center;
+  gap: 24px;
+  margin: 0 auto;
+  padding: 58px 0 46px;
+  position: relative;
+  z-index: 1;
+}
+
+.tv-stage::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 11% 60%, rgba(255, 255, 255, 0.62) 0 38px, transparent 40px),
+    radial-gradient(circle at 97% 25%, rgba(255, 255, 255, 0.70) 0 4px, transparent 5px),
+    radial-gradient(circle at 22% 31%, rgba(255, 255, 255, 0.52) 0 4px, transparent 5px),
+    linear-gradient(90deg, rgba(124, 58, 237, 0.06), transparent 30%, transparent 72%, rgba(219, 39, 119, 0.06));
+  z-index: -2;
+}
+
+.tv-stage::after {
+  content: "♕";
+  position: fixed;
+  right: 7vw;
+  bottom: 18vh;
+  color: rgba(76, 29, 149, 0.06);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(180px, 20vw, 360px);
+  line-height: 1;
+  transform: rotate(-7deg);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.tv-header {
+  position: relative;
+  min-height: 160px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 24px;
+  padding: 30px 40px;
+  overflow: hidden;
+  border-radius: 26px;
+  border: 1px solid rgba(88, 56, 126, 0.15);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.90), rgba(255, 247, 253, 0.72)),
+    rgba(255, 255, 255, 0.72);
+  box-shadow:
+    0 28px 70px rgba(76, 29, 149, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(20px);
+}
+
+.tv-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 84% 12%, rgba(236, 72, 153, 0.13), transparent 34%),
+    linear-gradient(90deg, rgba(124, 58, 237, 0.10), transparent 34%);
+  pointer-events: none;
+}
+
+.tv-header::after {
+  content: "LIVE PAGEANT DISPLAY";
+  position: absolute;
+  right: 32px;
+  top: 24px;
+  padding: 8px 13px;
+  border-radius: 999px;
+  color: #9d174d;
+  background: rgba(255, 255, 255, 0.66);
+  border: 1px solid rgba(236, 72, 153, 0.18);
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: 0.16em;
+}
+
+.tv-header > * {
+  position: relative;
+  z-index: 1;
+}
+
+.tv-header img {
+  width: 78px;
+  height: 78px;
+  object-fit: contain;
+  padding: 8px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(88, 56, 126, 0.12);
+  box-shadow: 0 18px 34px rgba(76, 29, 149, 0.12);
+}
+
+.tv-header .eyebrow {
+  margin-bottom: 6px;
+  color: #6d28d9;
+  font-size: 13px;
+  letter-spacing: 0.22em;
+}
+
+.tv-header h1 {
+  margin-bottom: 8px;
+  color: #20113d;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(48px, 5.6vw, 78px);
+  font-weight: 700;
+  line-height: 0.95;
+  letter-spacing: -0.065em;
+}
+
+.tv-header p:last-child {
+  max-width: 780px;
+  margin: 0;
+  color: #6a5879;
+  font-size: clamp(18px, 1.7vw, 26px);
+  font-weight: 900;
+  line-height: 1.18;
+}
+
+.tv-note-strip {
+  position: relative;
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 14px 24px;
+  overflow: hidden;
+  border-radius: 999px;
+  color: #251448;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.90), rgba(255, 247, 253, 0.74)),
+    rgba(255, 255, 255, 0.70);
+  border: 1px solid rgba(88, 56, 126, 0.13);
+  box-shadow:
+    0 18px 42px rgba(76, 29, 149, 0.09),
+    inset 0 1px 0 rgba(255, 255, 255, 0.80);
+  backdrop-filter: blur(16px);
+}
+
+.tv-note-strip::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  inset-block: 0;
+  width: 8px;
+  background: linear-gradient(180deg, #7c3aed, #ec4899, #f59e0b);
+}
+
+.tv-note-strip strong {
+  color: #4c1d95;
+  font-size: 15px;
+  font-weight: 950;
+  letter-spacing: -0.01em;
+}
+
+.tv-note-strip span:last-child {
+  color: #5e4d72;
+  font-size: 14px;
+  font-weight: 900;
+  text-align: right;
+}
+
+.tv-winner-card {
+  position: relative;
+  min-height: 280px;
+  display: grid;
+  align-content: center;
+  padding: clamp(42px, 5vw, 74px);
+  overflow: hidden;
+  border-radius: 30px;
+  color: white;
+  background:
+    radial-gradient(circle at 16% 18%, rgba(255, 255, 255, 0.26), transparent 22%),
+    radial-gradient(circle at 90% 18%, rgba(251, 191, 36, 0.22), transparent 24%),
+    linear-gradient(135deg, #2459e8 0%, #7c3aed 47%, #db2777 100%);
+  box-shadow:
+    0 34px 90px rgba(76, 29, 149, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.30);
+}
+
+.tv-winner-card::before {
+  content: "♕";
+  position: absolute;
+  right: clamp(24px, 4vw, 58px);
+  top: 50%;
+  color: rgba(255, 255, 255, 0.12);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(150px, 19vw, 300px);
+  line-height: 1;
+  transform: translateY(-50%) rotate(-8deg);
+}
+
+.tv-winner-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  pointer-events: none;
+}
+
+.tv-winner-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.tv-winner-card p {
+  margin-bottom: 18px;
+  color: #fde68a;
+  font-size: clamp(22px, 2.2vw, 36px);
+  font-weight: 950;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.tv-winner-card h2 {
+  margin: 0;
+  color: white;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size: clamp(76px, 8vw, 132px);
+  font-weight: 950;
+  line-height: 0.94;
+  letter-spacing: -0.075em;
+  text-shadow: 0 14px 42px rgba(24, 16, 39, 0.20);
+}
+
+.tv-top3-card {
+  background:
+    radial-gradient(circle at 18% 16%, rgba(255, 255, 255, 0.26), transparent 22%),
+    radial-gradient(circle at 87% 18%, rgba(251, 191, 36, 0.24), transparent 25%),
+    linear-gradient(135deg, #2563eb 0%, #7c3aed 46%, #db2777 100%);
+}
+
+.tv-runner-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
+}
+
+.tv-runner-grid article {
+  position: relative;
+  min-height: 152px;
+  display: grid;
+  align-content: center;
+  padding: 34px 38px;
+  overflow: hidden;
+  border-radius: 24px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.91), rgba(255, 247, 253, 0.72)),
+    rgba(255, 255, 255, 0.70);
+  border: 1px solid rgba(88, 56, 126, 0.13);
+  box-shadow:
+    0 22px 54px rgba(76, 29, 149, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(18px);
+}
+
+.tv-runner-grid article::after {
+  content: "♛";
+  position: absolute;
+  right: 30px;
+  top: 50%;
+  color: rgba(76, 29, 149, 0.07);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 116px;
+  line-height: 1;
+  transform: translateY(-50%) rotate(-8deg);
+}
+
+.tv-runner-grid span {
+  position: relative;
+  z-index: 1;
+  margin-bottom: 12px;
+  color: #6d28d9;
+  font-size: clamp(14px, 1.3vw, 18px);
+  font-weight: 950;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.tv-runner-grid h3 {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  color: #20113d;
+  font-size: clamp(36px, 3.1vw, 58px);
+  font-weight: 950;
+  line-height: 1;
+  letter-spacing: -0.055em;
+}
+
+.tv-credit-footer {
+  min-height: 96px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 24px;
+  padding: 22px 26px;
+  overflow: hidden;
+  border-radius: 18px;
+  color: white;
+  background:
+    radial-gradient(circle at 92% 18%, rgba(251, 191, 36, 0.17), transparent 25%),
+    linear-gradient(135deg, rgba(34, 17, 61, 0.96), rgba(91, 50, 132, 0.94));
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  box-shadow: 0 26px 60px rgba(24, 16, 39, 0.22);
+}
+
+.tv-credit-footer strong {
+  color: #fff7ed;
+  font-size: 18px;
+  letter-spacing: 0.06em;
+}
+
+.tv-credit-footer span,
+.tv-credit-footer small {
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.tv-credit-footer b,
+.tv-credit-footer a {
+  color: #fbbf24;
+}
+
+.tv-credit-meta {
+  text-align: right;
+}
+
+.tv-credit-meta span {
+  color: #fff7ed;
+  font-size: 14px;
+  font-weight: 950;
+}
+
+.tv-credit-meta small {
+  color: rgba(255, 255, 255, 0.80);
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.tv-wait-card {
+  min-height: 250px;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  padding: 46px;
+  border-radius: 28px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.90), rgba(255, 247, 253, 0.72)),
+    rgba(255, 255, 255, 0.70);
+  border: 1px solid rgba(88, 56, 126, 0.13);
+  box-shadow: 0 24px 64px rgba(76, 29, 149, 0.12);
+  backdrop-filter: blur(18px);
+}
+
+.tv-wait-card h2 {
+  color: #20113d;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(42px, 4vw, 70px);
+}
+
+.tv-wait-card p {
+  color: #6a5879;
+  font-size: 20px;
+  font-weight: 850;
+}
+
+@media (max-width: 900px) {
+  .tv-stage {
+    width: min(100% - 28px, 1120px);
+    padding: 28px 0;
+  }
+
+  .tv-header {
+    grid-template-columns: 1fr;
+    min-height: 0;
+    padding: 28px;
+  }
+
+  .tv-header::after {
+    position: static;
+    width: fit-content;
+    order: -1;
+  }
+
+  .tv-note-strip,
+  .tv-credit-footer {
+    align-items: flex-start;
+    flex-direction: column;
+    display: flex;
+  }
+
+  .tv-note-strip span:last-child,
+  .tv-credit-meta {
+    text-align: left;
+  }
+
+  .tv-runner-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tv-winner-card {
+    min-height: 230px;
+  }
+}
+
+/* ===== KIRCH TV PREMIUM BANNER POLISH END ===== */
