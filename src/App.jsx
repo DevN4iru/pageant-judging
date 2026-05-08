@@ -1145,7 +1145,7 @@ function AdminPanel() {
         <div>
           <p className="eyebrow">Admin Dashboard</p>
           <h2>Admin Control · Live Tabulation</h2>
-          <p>Admin control screen. Use Open TV Mode for public display. Pre-final scores only determine the official Top 3.</p>
+          <p>Admin control screen. Use Open TV Mode for public display. Final winners are shown first; pre-final data below is audit/support only.</p>
           {loadWarning && <p className="warning-note">Warning: {loadWarning}</p>}
         </div>
 
@@ -1188,18 +1188,19 @@ function AdminPanel() {
         <WinnerAnnouncement winnerName={declaredWinner} declaredAt={declaredAt} />
       )}
 
+      <FinalInterviewAdminPanel />
+
       {leader && (
         <section className="leader-card">
           <div>
             <span className="medal">🏆</span>
-            <p className="eyebrow">Top 3 Qualifier Rank 1</p>
+            <p className="eyebrow">Top 3 Qualifier Rank 1 · Audit Only</p>
             <h2>#{leader.number} {leader.name}</h2>
           </div>
           <strong>{Number(leader.total_score).toFixed(2)}</strong>
         </section>
       )}
 
-      <FinalInterviewAdminPanel />
 
       {judgeStatuses.length > 0 && (
         <section className="panel table-panel">
