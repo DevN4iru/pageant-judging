@@ -1,15 +1,12 @@
 import React, { useState } from 'react';
 import {
-  createContestant,
   createJudge,
   createRound,
   createCriterion,
-  deleteContestant,
   deleteCriterion,
   deleteJudge,
   deleteRound,
   setJudgePin,
-  updateContestant,
   updateCriterion,
   updateEventSettings,
   updateJudge,
@@ -24,6 +21,7 @@ import JudgesPanel from './panels/JudgesPanel.jsx';
 import AuditLogsPanel from './panels/AuditLogsPanel.jsx';
 import RoundsCriteriaPanel from './panels/RoundsCriteriaPanel.jsx';
 import useSaasBuilderData from './hooks/useSaasBuilderData.js';
+import useContestantActions from './hooks/useContestantActions.js';
 
 
 export default function SaasBuilderApp() {
@@ -54,6 +52,20 @@ export default function SaasBuilderApp() {
   const [criterionForms, setCriterionForms] = useState({});
   const [saving, setSaving] = useState(false);
 
+  const {
+    addContestant,
+    renameContestant,
+    removeContestant
+  } = useContestantActions({
+    eventId,
+    contestantForm,
+    setContestantForm,
+    refresh,
+    setSaving,
+    setStatus
+  });
+
+
   async function saveSettings() {
     setSaving(true);
     setStatus('Saving settings...');
@@ -72,66 +84,7 @@ export default function SaasBuilderApp() {
     }
   }
 
-  async function addContestant() {
-    setSaving(true);
-    setStatus('Adding contestant...');
 
-    try {
-      await createContestant(eventId, {
-        contestantNumber: Number(contestantForm.contestantNumber),
-        name: contestantForm.name,
-        photoUrl: contestantForm.photoUrl || null,
-        details: {}
-      });
-      setContestantForm({ contestantNumber: '', name: '', photoUrl: '' });
-      await refresh(eventId);
-      setStatus('Contestant added');
-    } catch (err) {
-      setStatus(err.message);
-    } finally {
-      setSaving(false);
-    }
-  }
-
-  async function renameContestant(contestant) {
-    const nextName = window.prompt('New contestant name:', contestant.name);
-
-    if (!nextName) {
-      return;
-    }
-
-    setSaving(true);
-    setStatus('Updating contestant...');
-
-    try {
-      await updateContestant(eventId, contestant.id, { name: nextName });
-      await refresh(eventId);
-      setStatus('Contestant updated');
-    } catch (err) {
-      setStatus(err.message);
-    } finally {
-      setSaving(false);
-    }
-  }
-
-  async function removeContestant(contestant) {
-    if (!window.confirm(`Delete ${contestant.name}?`)) {
-      return;
-    }
-
-    setSaving(true);
-    setStatus('Deleting contestant...');
-
-    try {
-      await deleteContestant(eventId, contestant.id);
-      await refresh(eventId);
-      setStatus('Contestant deleted');
-    } catch (err) {
-      setStatus(err.message);
-    } finally {
-      setSaving(false);
-    }
-  }
 
   async function addJudge() {
     setSaving(true);
