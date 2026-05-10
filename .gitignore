@@ -13,3 +13,6 @@ pageant-db-backups/
 
 # Local audit logs
 /audits/
+
+# Local safety backups
+/.safety/
