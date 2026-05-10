@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import {
   createContestant,
   createJudge,
@@ -29,15 +29,25 @@ import ContestantsPanel from './panels/ContestantsPanel.jsx';
 import JudgesPanel from './panels/JudgesPanel.jsx';
 import AuditLogsPanel from './panels/AuditLogsPanel.jsx';
 import RoundsCriteriaPanel from './panels/RoundsCriteriaPanel.jsx';
+import useSaasBuilderData from './hooks/useSaasBuilderData.js';
 
 
 export default function SaasBuilderApp() {
-  const [templates, setTemplates] = useState([]);
-  const [events, setEvents] = useState([]);
-  const [builder, setBuilder] = useState(null);
-  const [auditLogs, setAuditLogs] = useState([]);
-  const [eventId, setEventId] = useState('1');
-  const [settings, setSettings] = useState({});
+  const {
+    templates,
+    events,
+    builder,
+    auditLogs,
+    eventId,
+    setEventId,
+    settings,
+    setSettings,
+    status,
+    setStatus,
+    refresh,
+    activeEvent,
+    templateSummary
+  } = useSaasBuilderData('1');
   const [contestantForm, setContestantForm] = useState({ contestantNumber: '', name: '', photoUrl: '' });
   const [judgeForm, setJudgeForm] = useState({ name: '', displayOrder: '', pin: '' });
   const [roundForm, setRoundForm] = useState({
@@ -50,46 +60,6 @@ export default function SaasBuilderApp() {
   const [criterionForms, setCriterionForms] = useState({});
   const [status, setStatus] = useState('Loading builder...');
   const [saving, setSaving] = useState(false);
-
-  async function refresh(selectedEventId = eventId) {
-    setStatus('Loading builder...');
-
-    const [templateData, eventData, builderData, auditData] = await Promise.all([
-      getTemplates(),
-      getEvents(),
-      getBuilder(selectedEventId),
-      getAuditLogs(selectedEventId)
-    ]);
-
-    setTemplates(templateData);
-    setEvents(eventData);
-    setBuilder(builderData);
-    setAuditLogs(auditData);
-    setSettings({
-      title: builderData.event.title || '',
-      organizationName: builderData.event.organization_name || '',
-      logoUrl: builderData.event.logo_url || '',
-      themeColor: builderData.event.theme_color || '',
-      tvDisplayTitle: builderData.event.tv_display_title || '',
-      pdfFooter: builderData.event.pdf_footer || '',
-      preparedByText: builderData.event.prepared_by_text || '',
-      developerCredits: builderData.event.developer_credits || '',
-      advancingCount: builderData.event.advancing_count || 3,
-      scoreCarryMode: builderData.event.score_carry_mode || 'qualifier_only'
-    });
-
-    setStatus('Builder loaded');
-  }
-
-  useEffect(() => {
-    refresh('1').catch((err) => setStatus(err.message));
-  }, []);
-
-  const activeEvent = builder?.event;
-
-  const templateSummary = useMemo(() => {
-    return templates.map((template) => `${template.name}: ${template.rounds?.length || 0} round(s)`).join(' • ');
-  }, [templates]);
 
   async function saveSettings() {
     setSaving(true);
