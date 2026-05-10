@@ -38,3 +38,50 @@ export function updateEventSettings(eventId, payload) {
     body: JSON.stringify(payload)
   });
 }
+
+export function createContestant(eventId, payload) {
+  return request(`/api/saas/events/${eventId}/contestants`, {
+    method: 'POST',
+    body: JSON.stringify(payload)
+  });
+}
+
+export function updateContestant(eventId, contestantId, payload) {
+  return request(`/api/saas/events/${eventId}/contestants/${contestantId}`, {
+    method: 'PATCH',
+    body: JSON.stringify(payload)
+  });
+}
+
+export function deleteContestant(eventId, contestantId) {
+  return request(`/api/saas/events/${eventId}/contestants/${contestantId}`, {
+    method: 'DELETE'
+  });
+}
+
+export function createJudge(eventId, payload) {
+  return request(`/api/saas/events/${eventId}/judges`, {
+    method: 'POST',
+    body: JSON.stringify(payload)
+  });
+}
+
+export function updateJudge(eventId, judgeId, payload) {
+  return request(`/api/saas/events/${eventId}/judges/${judgeId}`, {
+    method: 'PATCH',
+    body: JSON.stringify(payload)
+  });
+}
+
+export function deleteJudge(eventId, judgeId) {
+  return request(`/api/saas/events/${eventId}/judges/${judgeId}`, {
+    method: 'DELETE'
+  });
+}
+
+export function setJudgePin(eventId, judgeId, pin) {
+  return request(`/api/saas/events/${eventId}/judges/${judgeId}/credentials`, {
+    method: 'POST',
+    body: JSON.stringify({ pin })
+  });
+}

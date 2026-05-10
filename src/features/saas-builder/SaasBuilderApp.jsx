@@ -1,10 +1,17 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import {
+  createContestant,
+  createJudge,
+  deleteContestant,
+  deleteJudge,
   getAuditLogs,
   getBuilder,
   getEvents,
   getTemplates,
-  updateEventSettings
+  setJudgePin,
+  updateContestant,
+  updateEventSettings,
+  updateJudge
 } from './saasBuilderApi.js';
 
 const card = {
@@ -87,6 +94,8 @@ export default function SaasBuilderApp() {
   const [auditLogs, setAuditLogs] = useState([]);
   const [eventId, setEventId] = useState('1');
   const [settings, setSettings] = useState({});
+  const [contestantForm, setContestantForm] = useState({ contestantNumber: '', name: '', photoUrl: '' });
+  const [judgeForm, setJudgeForm] = useState({ name: '', displayOrder: '', pin: '' });
   const [status, setStatus] = useState('Loading builder...');
   const [saving, setSaving] = useState(false);
 
@@ -147,6 +156,148 @@ export default function SaasBuilderApp() {
       setSaving(false);
     }
   }
+
+  async function addContestant() {
+    setSaving(true);
+    setStatus('Adding contestant...');
+
+    try {
+      await createContestant(eventId, {
+        contestantNumber: Number(contestantForm.contestantNumber),
+        name: contestantForm.name,
+        photoUrl: contestantForm.photoUrl || null,
+        details: {}
+      });
+      setContestantForm({ contestantNumber: '', name: '', photoUrl: '' });
+      await refresh(eventId);
+      setStatus('Contestant added');
+    } catch (err) {
+      setStatus(err.message);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function renameContestant(contestant) {
+    const nextName = window.prompt('New contestant name:', contestant.name);
+
+    if (!nextName) {
+      return;
+    }
+
+    setSaving(true);
+    setStatus('Updating contestant...');
+
+    try {
+      await updateContestant(eventId, contestant.id, { name: nextName });
+      await refresh(eventId);
+      setStatus('Contestant updated');
+    } catch (err) {
+      setStatus(err.message);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function removeContestant(contestant) {
+    if (!window.confirm(`Delete ${contestant.name}?`)) {
+      return;
+    }
+
+    setSaving(true);
+    setStatus('Deleting contestant...');
+
+    try {
+      await deleteContestant(eventId, contestant.id);
+      await refresh(eventId);
+      setStatus('Contestant deleted');
+    } catch (err) {
+      setStatus(err.message);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function addJudge() {
+    setSaving(true);
+    setStatus('Adding judge...');
+
+    try {
+      const result = await createJudge(eventId, {
+        name: judgeForm.name,
+        displayOrder: Number(judgeForm.displayOrder || builder.judges.length + 1),
+        isEnabled: true
+      });
+
+      if (judgeForm.pin) {
+        await setJudgePin(eventId, result.judge.id, judgeForm.pin);
+      }
+
+      setJudgeForm({ name: '', displayOrder: '', pin: '' });
+      await refresh(eventId);
+      setStatus('Judge added');
+    } catch (err) {
+      setStatus(err.message);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function toggleJudge(judge) {
+    setSaving(true);
+    setStatus('Updating judge...');
+
+    try {
+      await updateJudge(eventId, judge.id, { isEnabled: !judge.is_enabled });
+      await refresh(eventId);
+      setStatus('Judge updated');
+    } catch (err) {
+      setStatus(err.message);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function resetJudgePin(judge) {
+    const pin = window.prompt(`New PIN for ${judge.name}:`);
+
+    if (!pin) {
+      return;
+    }
+
+    setSaving(true);
+    setStatus('Resetting judge PIN...');
+
+    try {
+      await setJudgePin(eventId, judge.id, pin);
+      await refresh(eventId);
+      setStatus('Judge PIN reset');
+    } catch (err) {
+      setStatus(err.message);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function removeJudge(judge) {
+    if (!window.confirm(`Delete ${judge.name}?`)) {
+      return;
+    }
+
+    setSaving(true);
+    setStatus('Deleting judge...');
+
+    try {
+      await deleteJudge(eventId, judge.id);
+      await refresh(eventId);
+      setStatus('Judge deleted');
+    } catch (err) {
+      setStatus(err.message);
+    } finally {
+      setSaving(false);
+    }
+  }
+
 
   if (!builder) {
     return (
@@ -212,23 +363,58 @@ export default function SaasBuilderApp() {
         </Section>
 
         <Section title="Contestants">
+          <div style={{ display: 'grid', gridTemplateColumns: '120px 1fr 1fr auto', gap: 12, marginBottom: 16 }}>
+            <input style={input} type="number" placeholder="#" value={contestantForm.contestantNumber} onChange={(e) => setContestantForm({ ...contestantForm, contestantNumber: e.target.value })} />
+            <input style={input} placeholder="Contestant name" value={contestantForm.name} onChange={(e) => setContestantForm({ ...contestantForm, name: e.target.value })} />
+            <input style={input} placeholder="Photo URL" value={contestantForm.photoUrl} onChange={(e) => setContestantForm({ ...contestantForm, photoUrl: e.target.value })} />
+            <button type="button" disabled={saving} onClick={addContestant} style={{ border: 0, borderRadius: 14, padding: '12px 16px', fontWeight: 900, background: '#ec4899', color: 'white' }}>Add</button>
+          </div>
+
           <MiniTable
             columns={[
               { key: 'contestant_number', label: '#' },
               { key: 'name', label: 'Name' },
               { key: 'photo_url', label: 'Photo' },
-              { key: 'is_active', label: 'Active', render: (row) => row.is_active ? 'Yes' : 'No' }
+              { key: 'is_active', label: 'Active', render: (row) => row.is_active ? 'Yes' : 'No' },
+              {
+                key: 'actions',
+                label: 'Actions',
+                render: (row) => (
+                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                    <button type="button" onClick={() => renameContestant(row)} style={{ border: 0, borderRadius: 10, padding: '8px 10px', fontWeight: 800 }}>Rename</button>
+                    <button type="button" onClick={() => removeContestant(row)} style={{ border: 0, borderRadius: 10, padding: '8px 10px', fontWeight: 800, background: '#ef4444', color: 'white' }}>Delete</button>
+                  </div>
+                )
+              }
             ]}
             rows={builder.contestants}
           />
         </Section>
 
         <Section title="Judges">
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 120px 160px auto', gap: 12, marginBottom: 16 }}>
+            <input style={input} placeholder="Judge name" value={judgeForm.name} onChange={(e) => setJudgeForm({ ...judgeForm, name: e.target.value })} />
+            <input style={input} type="number" placeholder="Order" value={judgeForm.displayOrder} onChange={(e) => setJudgeForm({ ...judgeForm, displayOrder: e.target.value })} />
+            <input style={input} placeholder="PIN" value={judgeForm.pin} onChange={(e) => setJudgeForm({ ...judgeForm, pin: e.target.value })} />
+            <button type="button" disabled={saving} onClick={addJudge} style={{ border: 0, borderRadius: 14, padding: '12px 16px', fontWeight: 900, background: '#ec4899', color: 'white' }}>Add</button>
+          </div>
+
           <MiniTable
             columns={[
               { key: 'display_order', label: 'Order' },
               { key: 'name', label: 'Name' },
-              { key: 'is_enabled', label: 'Enabled', render: (row) => row.is_enabled ? 'Yes' : 'No' }
+              { key: 'is_enabled', label: 'Enabled', render: (row) => row.is_enabled ? 'Yes' : 'No' },
+              {
+                key: 'actions',
+                label: 'Actions',
+                render: (row) => (
+                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                    <button type="button" onClick={() => toggleJudge(row)} style={{ border: 0, borderRadius: 10, padding: '8px 10px', fontWeight: 800 }}>{row.is_enabled ? 'Disable' : 'Enable'}</button>
+                    <button type="button" onClick={() => resetJudgePin(row)} style={{ border: 0, borderRadius: 10, padding: '8px 10px', fontWeight: 800 }}>Reset PIN</button>
+                    <button type="button" onClick={() => removeJudge(row)} style={{ border: 0, borderRadius: 10, padding: '8px 10px', fontWeight: 800, background: '#ef4444', color: 'white' }}>Delete</button>
+                  </div>
+                )
+              }
             ]}
             rows={builder.judges}
           />
