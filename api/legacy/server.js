@@ -943,7 +943,7 @@ app.get('/api/final/details', async (req, res) => {
 
 
 /* ===== KIRCH PRODUCTION STATIC FRONTEND START ===== */
-const distPath = path.join(__dirname, '..', 'dist');
+const distPath = path.join(__dirname, '..', '..', 'dist');
 
 app.use(express.static(distPath));
 
