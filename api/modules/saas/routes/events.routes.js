@@ -193,4 +193,31 @@ router.patch('/events/:eventId/settings', async (req, res) => {
     client.release();
   }
 });
+
+router.get('/events/:eventId/audit-logs', async (req, res) => {
+  try {
+    const { eventId } = req.params;
+
+    const result = await pool.query(`
+      SELECT
+        id,
+        actor_role,
+        action_type,
+        target_type,
+        target_id,
+        reason,
+        created_at
+      FROM audit_logs
+      WHERE event_id = $1
+      ORDER BY created_at DESC
+      LIMIT 100
+    `, [eventId]);
+
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
 module.exports = router;
