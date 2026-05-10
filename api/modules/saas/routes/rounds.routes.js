@@ -363,4 +363,126 @@ router.get('/events/:eventId/rounds/:roundId/criteria/weight-check', async (req,
   }
 });
 
+
+router.delete('/events/:eventId/rounds/:roundId/criteria/:criterionId', async (req, res) => {
+  const client = await pool.connect();
+
+  try {
+    const { eventId, roundId, criterionId } = req.params;
+
+    await client.query('BEGIN');
+
+    const event = await getEventOr404(client, eventId);
+
+    if (!event) {
+      await client.query('ROLLBACK');
+      return res.status(404).json({ error: 'Event not found' });
+    }
+
+    if (event.scoring_started_at) {
+      await client.query('ROLLBACK');
+      return res.status(423).json({ error: 'Cannot delete criteria after scoring starts.' });
+    }
+
+    const before = await client.query(
+      'SELECT * FROM event_criteria WHERE id = $1 AND round_id = $2 AND event_id = $3',
+      [criterionId, roundId, eventId]
+    );
+
+    if (before.rows.length === 0) {
+      await client.query('ROLLBACK');
+      return res.status(404).json({ error: 'Criterion not found' });
+    }
+
+    await client.query(
+      'DELETE FROM event_criteria WHERE id = $1 AND round_id = $2 AND event_id = $3',
+      [criterionId, roundId, eventId]
+    );
+
+    await client.query(`
+      INSERT INTO audit_logs (
+        organization_id, event_id, actor_role, action_type,
+        target_type, target_id, old_value, reason
+      )
+      VALUES ($1, $2, 'admin', 'criterion_deleted', 'criterion', $3, $4, $5)
+    `, [
+      event.organization_id,
+      eventId,
+      String(criterionId),
+      JSON.stringify(before.rows[0]),
+      'Deleted criterion through SaaS builder API.'
+    ]);
+
+    await client.query('COMMIT');
+
+    res.json({ ok: true });
+  } catch (err) {
+    await client.query('ROLLBACK').catch(() => {});
+    res.status(500).json({ error: err.message });
+  } finally {
+    client.release();
+  }
+});
+
+router.delete('/events/:eventId/rounds/:roundId', async (req, res) => {
+  const client = await pool.connect();
+
+  try {
+    const { eventId, roundId } = req.params;
+
+    await client.query('BEGIN');
+
+    const event = await getEventOr404(client, eventId);
+
+    if (!event) {
+      await client.query('ROLLBACK');
+      return res.status(404).json({ error: 'Event not found' });
+    }
+
+    if (event.scoring_started_at) {
+      await client.query('ROLLBACK');
+      return res.status(423).json({ error: 'Cannot delete rounds after scoring starts.' });
+    }
+
+    const before = await client.query(
+      'SELECT * FROM event_rounds WHERE id = $1 AND event_id = $2',
+      [roundId, eventId]
+    );
+
+    if (before.rows.length === 0) {
+      await client.query('ROLLBACK');
+      return res.status(404).json({ error: 'Round not found' });
+    }
+
+    await client.query(
+      'DELETE FROM event_rounds WHERE id = $1 AND event_id = $2',
+      [roundId, eventId]
+    );
+
+    await client.query(`
+      INSERT INTO audit_logs (
+        organization_id, event_id, actor_role, action_type,
+        target_type, target_id, old_value, reason
+      )
+      VALUES ($1, $2, 'admin', 'round_deleted', 'round', $3, $4, $5)
+    `, [
+      event.organization_id,
+      eventId,
+      String(roundId),
+      JSON.stringify(before.rows[0]),
+      'Deleted round through SaaS builder API.'
+    ]);
+
+    await client.query('COMMIT');
+
+    res.json({ ok: true });
+  } catch (err) {
+    await client.query('ROLLBACK').catch(() => {});
+    res.status(500).json({ error: err.message });
+  } finally {
+    client.release();
+  }
+});
+
+
 module.exports = router;
