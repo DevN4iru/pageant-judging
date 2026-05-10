@@ -85,3 +85,43 @@ export function setJudgePin(eventId, judgeId, pin) {
     body: JSON.stringify({ pin })
   });
 }
+
+export function createRound(eventId, payload) {
+  return request(`/api/saas/events/${eventId}/rounds`, {
+    method: 'POST',
+    body: JSON.stringify(payload)
+  });
+}
+
+export function updateRound(eventId, roundId, payload) {
+  return request(`/api/saas/events/${eventId}/rounds/${roundId}`, {
+    method: 'PATCH',
+    body: JSON.stringify(payload)
+  });
+}
+
+export function deleteRound(eventId, roundId) {
+  return request(`/api/saas/events/${eventId}/rounds/${roundId}`, {
+    method: 'DELETE'
+  });
+}
+
+export function createCriterion(eventId, roundId, payload) {
+  return request(`/api/saas/events/${eventId}/rounds/${roundId}/criteria`, {
+    method: 'POST',
+    body: JSON.stringify(payload)
+  });
+}
+
+export function updateCriterion(eventId, roundId, criterionId, payload) {
+  return request(`/api/saas/events/${eventId}/rounds/${roundId}/criteria/${criterionId}`, {
+    method: 'PATCH',
+    body: JSON.stringify(payload)
+  });
+}
+
+export function deleteCriterion(eventId, roundId, criterionId) {
+  return request(`/api/saas/events/${eventId}/rounds/${roundId}/criteria/${criterionId}`, {
+    method: 'DELETE'
+  });
+}

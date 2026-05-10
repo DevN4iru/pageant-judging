@@ -117,3 +117,42 @@
     min-width: 600px;
   }
 }
+
+.saas-builder-round-form {
+  display: grid;
+  grid-template-columns: 1fr 120px 180px 140px 180px auto;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.saas-builder-criterion-form {
+  display: grid;
+  grid-template-columns: 1fr 140px 120px auto;
+  gap: 12px;
+  margin: 12px 0 16px;
+}
+
+@media (max-width: 1180px) {
+  .saas-builder-round-form {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 980px) {
+  .saas-builder-round-form,
+  .saas-builder-criterion-form {
+    grid-template-columns: 1fr !important;
+  }
+
+  .saas-builder-round-form button,
+  .saas-builder-criterion-form button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .saas-builder-round-header {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+  }
+}

@@ -2,16 +2,22 @@ import React, { useEffect, useMemo, useState } from 'react';
 import {
   createContestant,
   createJudge,
+  createRound,
+  createCriterion,
   deleteContestant,
+  deleteCriterion,
   deleteJudge,
+  deleteRound,
   getAuditLogs,
   getBuilder,
   getEvents,
   getTemplates,
   setJudgePin,
   updateContestant,
+  updateCriterion,
   updateEventSettings,
-  updateJudge
+  updateJudge,
+  updateRound
 } from './saasBuilderApi.js';
 import './saasBuilder.css';
 
@@ -97,6 +103,14 @@ export default function SaasBuilderApp() {
   const [settings, setSettings] = useState({});
   const [contestantForm, setContestantForm] = useState({ contestantNumber: '', name: '', photoUrl: '' });
   const [judgeForm, setJudgeForm] = useState({ name: '', displayOrder: '', pin: '' });
+  const [roundForm, setRoundForm] = useState({
+    name: '',
+    sortOrder: '',
+    candidatePoolMode: 'all_contestants',
+    advancingCount: '',
+    scoreCarryMode: 'qualifier_only'
+  });
+  const [criterionForms, setCriterionForms] = useState({});
   const [status, setStatus] = useState('Loading builder...');
   const [saving, setSaving] = useState(false);
 
@@ -300,6 +314,178 @@ export default function SaasBuilderApp() {
   }
 
 
+  function updateCriterionForm(roundId, patch) {
+    setCriterionForms((current) => ({
+      ...current,
+      [roundId]: {
+        name: '',
+        weightPercent: '',
+        sortOrder: '',
+        ...(current[roundId] || {}),
+        ...patch
+      }
+    }));
+  }
+
+  async function addRound() {
+    setSaving(true);
+    setStatus('Adding round...');
+
+    try {
+      await createRound(eventId, {
+        name: roundForm.name,
+        sortOrder: Number(roundForm.sortOrder || builder.rounds.length + 1),
+        candidatePoolMode: roundForm.candidatePoolMode,
+        advancingCount: roundForm.advancingCount === '' ? null : Number(roundForm.advancingCount),
+        scoreCarryMode: roundForm.scoreCarryMode
+      });
+
+      setRoundForm({
+        name: '',
+        sortOrder: '',
+        candidatePoolMode: 'all_contestants',
+        advancingCount: '',
+        scoreCarryMode: 'qualifier_only'
+      });
+
+      await refresh(eventId);
+      setStatus('Round added');
+    } catch (err) {
+      setStatus(err.message);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function renameRound(round) {
+    const nextName = window.prompt('New round name:', round.name);
+
+    if (!nextName) {
+      return;
+    }
+
+    setSaving(true);
+    setStatus('Updating round...');
+
+    try {
+      await updateRound(eventId, round.id, { name: nextName });
+      await refresh(eventId);
+      setStatus('Round updated');
+    } catch (err) {
+      setStatus(err.message);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function toggleRoundLock(round) {
+    setSaving(true);
+    setStatus(round.is_locked ? 'Unlocking round...' : 'Locking round...');
+
+    try {
+      await updateRound(eventId, round.id, { isLocked: !round.is_locked });
+      await refresh(eventId);
+      setStatus(round.is_locked ? 'Round unlocked' : 'Round locked');
+    } catch (err) {
+      setStatus(err.message);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function removeRound(round) {
+    if (!window.confirm(`Delete ${round.name}? Criteria inside this round will also be deleted.`)) {
+      return;
+    }
+
+    setSaving(true);
+    setStatus('Deleting round...');
+
+    try {
+      await deleteRound(eventId, round.id);
+      await refresh(eventId);
+      setStatus('Round deleted');
+    } catch (err) {
+      setStatus(err.message);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function addCriterion(round) {
+    const form = criterionForms[round.id] || {};
+
+    setSaving(true);
+    setStatus('Adding criterion...');
+
+    try {
+      await createCriterion(eventId, round.id, {
+        name: form.name,
+        weight: Number(form.weightPercent) / 100,
+        sortOrder: Number(form.sortOrder || round.criteria.length + 1)
+      });
+
+      updateCriterionForm(round.id, { name: '', weightPercent: '', sortOrder: '' });
+      await refresh(eventId);
+      setStatus('Criterion added');
+    } catch (err) {
+      setStatus(err.message);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function editCriterion(round, criterion) {
+    const nextName = window.prompt('Criterion name:', criterion.name);
+
+    if (!nextName) {
+      return;
+    }
+
+    const nextWeight = window.prompt('Weight percent:', String(Number(criterion.weight) * 100));
+
+    if (!nextWeight) {
+      return;
+    }
+
+    setSaving(true);
+    setStatus('Updating criterion...');
+
+    try {
+      await updateCriterion(eventId, round.id, criterion.id, {
+        name: nextName,
+        weight: Number(nextWeight) / 100
+      });
+
+      await refresh(eventId);
+      setStatus('Criterion updated');
+    } catch (err) {
+      setStatus(err.message);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function removeCriterion(round, criterion) {
+    if (!window.confirm(`Delete ${criterion.name}?`)) {
+      return;
+    }
+
+    setSaving(true);
+    setStatus('Deleting criterion...');
+
+    try {
+      await deleteCriterion(eventId, round.id, criterion.id);
+      await refresh(eventId);
+      setStatus('Criterion deleted');
+    } catch (err) {
+      setStatus(err.message);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+
   if (!builder) {
     return (
       <main style={{ minHeight: '100vh', background: '#020617', color: '#f8fafc', padding: 32 }}>
@@ -422,20 +608,71 @@ export default function SaasBuilderApp() {
         </Section>
 
         <Section title="Rounds & Criteria">
+          <div className="saas-builder-round-form" style={{ display: 'grid', gridTemplateColumns: '1fr 120px 180px 140px 180px auto', gap: 12, marginBottom: 16 }}>
+            <input style={input} placeholder="Round name" value={roundForm.name} onChange={(e) => setRoundForm({ ...roundForm, name: e.target.value })} />
+            <input style={input} type="number" placeholder="Order" value={roundForm.sortOrder} onChange={(e) => setRoundForm({ ...roundForm, sortOrder: e.target.value })} />
+            <select style={input} value={roundForm.candidatePoolMode} onChange={(e) => setRoundForm({ ...roundForm, candidatePoolMode: e.target.value })}>
+              <option value="all_contestants">All contestants</option>
+              <option value="previous_round_advancers">Previous round advancers</option>
+              <option value="custom_pool">Custom pool</option>
+            </select>
+            <input style={input} type="number" placeholder="Top count" value={roundForm.advancingCount} onChange={(e) => setRoundForm({ ...roundForm, advancingCount: e.target.value })} />
+            <select style={input} value={roundForm.scoreCarryMode} onChange={(e) => setRoundForm({ ...roundForm, scoreCarryMode: e.target.value })}>
+              <option value="qualifier_only">Qualifier only</option>
+              <option value="round_only">Round only</option>
+              <option value="carry_over">Carry over</option>
+            </select>
+            <button type="button" disabled={saving} onClick={addRound} style={{ border: 0, borderRadius: 14, padding: '12px 16px', fontWeight: 900, background: '#ec4899', color: 'white' }}>Add</button>
+          </div>
+
           <div style={{ display: 'grid', gap: 14 }}>
             {builder.rounds.map((round) => {
               const totalWeight = round.criteria.reduce((sum, criterion) => sum + Number(criterion.weight || 0), 0);
+              const isWeightValid = Math.abs(totalWeight - 1) < 0.000001;
+              const criterionForm = criterionForms[round.id] || { name: '', weightPercent: '', sortOrder: '' };
+
               return (
                 <div key={round.id} style={{ border: '1px solid rgba(148, 163, 184, 0.18)', borderRadius: 18, padding: 16 }}>
-                  <h3 style={{ margin: 0 }}>{round.name}</h3>
-                  <p style={{ color: '#94a3b8', margin: '8px 0 12px' }}>
-                    Pool: {round.candidate_pool_mode} • Advancing: {round.advancing_count || 'None'} • Weight total: {(totalWeight * 100).toFixed(2)}%
-                  </p>
+                  <div className="saas-builder-round-header" style={{ display: 'flex', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
+                    <div>
+                      <h3 style={{ margin: 0 }}>{round.name}</h3>
+                      <p style={{ color: '#94a3b8', margin: '8px 0 12px' }}>
+                        Pool: {round.candidate_pool_mode} • Advancing: {round.advancing_count || 'None'} • Status: {round.is_locked ? 'Locked' : 'Editable'}
+                      </p>
+                      <p style={{ color: isWeightValid ? '#22c55e' : '#f97316', margin: '0 0 12px', fontWeight: 900 }}>
+                        Weight total: {(totalWeight * 100).toFixed(2)}% {isWeightValid ? '✓' : '— must total 100%'}
+                      </p>
+                    </div>
+
+                    <div className="saas-builder-actions" style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                      <button type="button" onClick={() => renameRound(round)} style={{ border: 0, borderRadius: 10, padding: '8px 10px', fontWeight: 800 }}>Rename</button>
+                      <button type="button" onClick={() => toggleRoundLock(round)} style={{ border: 0, borderRadius: 10, padding: '8px 10px', fontWeight: 800 }}>{round.is_locked ? 'Unlock' : 'Lock'}</button>
+                      <button type="button" onClick={() => removeRound(round)} style={{ border: 0, borderRadius: 10, padding: '8px 10px', fontWeight: 800, background: '#ef4444', color: 'white' }}>Delete</button>
+                    </div>
+                  </div>
+
+                  <div className="saas-builder-criterion-form" style={{ display: 'grid', gridTemplateColumns: '1fr 140px 120px auto', gap: 12, margin: '12px 0 16px' }}>
+                    <input style={input} placeholder="Criterion name" value={criterionForm.name} onChange={(e) => updateCriterionForm(round.id, { name: e.target.value })} />
+                    <input style={input} type="number" placeholder="Weight %" value={criterionForm.weightPercent} onChange={(e) => updateCriterionForm(round.id, { weightPercent: e.target.value })} />
+                    <input style={input} type="number" placeholder="Order" value={criterionForm.sortOrder} onChange={(e) => updateCriterionForm(round.id, { sortOrder: e.target.value })} />
+                    <button type="button" disabled={saving} onClick={() => addCriterion(round)} style={{ border: 0, borderRadius: 14, padding: '12px 16px', fontWeight: 900, background: '#22c55e', color: 'white' }}>Add Criterion</button>
+                  </div>
+
                   <MiniTable
                     columns={[
                       { key: 'sort_order', label: 'Order' },
                       { key: 'name', label: 'Criterion' },
-                      { key: 'weight', label: 'Weight', render: (row) => `${(Number(row.weight) * 100).toFixed(2)}%` }
+                      { key: 'weight', label: 'Weight', render: (row) => `${(Number(row.weight) * 100).toFixed(2)}%` },
+                      {
+                        key: 'actions',
+                        label: 'Actions',
+                        render: (row) => (
+                          <div className="saas-builder-actions" style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                            <button type="button" onClick={() => editCriterion(round, row)} style={{ border: 0, borderRadius: 10, padding: '8px 10px', fontWeight: 800 }}>Edit</button>
+                            <button type="button" onClick={() => removeCriterion(round, row)} style={{ border: 0, borderRadius: 10, padding: '8px 10px', fontWeight: 800, background: '#ef4444', color: 'white' }}>Delete</button>
+                          </div>
+                        )
+                      }
                     ]}
                     rows={round.criteria}
                   />
