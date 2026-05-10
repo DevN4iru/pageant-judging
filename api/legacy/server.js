@@ -4,11 +4,13 @@ const express = require('express');
 const path = require('path');
 const cors = require('cors');
 const pool = require('../db');
+const saasRoutes = require('../modules/saas/saas.routes');
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use('/api/saas', saasRoutes);
 
 app.get('/api/health', async (req, res) => {
   res.json({
