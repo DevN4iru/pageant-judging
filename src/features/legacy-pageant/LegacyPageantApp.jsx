@@ -6,21 +6,7 @@ import { Home } from './components/Home.jsx';
 import { TVTop3Display, TVWinnersDisplay } from './tv/TvDisplays.jsx';
 import { JudgePanel } from './judge/JudgePanels.jsx';
 import { AdminPanel } from './admin/AdminPanels.jsx';
-
-async function api(path, options = {}) {
-  const res = await fetch(path, {
-    headers: { 'Content-Type': 'application/json' },
-    ...options
-  });
-
-  const data = await res.json().catch(() => ({}));
-
-  if (!res.ok) {
-    throw new Error(data.error || 'Request failed');
-  }
-
-  return data;
-}
+import { api } from './utils/apiClient.js';
 
 export default function App() {
   const [mode, setMode] = useState(localStorage.getItem('mode') || 'home');

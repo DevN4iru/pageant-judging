@@ -6,10 +6,11 @@ Purpose: split the remaining JSX god file without rewriting scoring logic.
 
 ## File Size
 
-- `LegacyPageantApp.jsx`: 122 lines
+- `LegacyPageantApp.jsx`: 108 lines
 
 ## Extracted So Far
 
+- `utils/apiClient.js`: legacy fetch API helper
 - `utils/session.js`: `getSavedJudge`
 - `utils/formatting.js`: `formatDateTime`
 - `components/CriteriaGuide.jsx`: criteria guide constants/components
@@ -24,14 +25,19 @@ Purpose: split the remaining JSX god file without rewriting scoring logic.
 
 | Line | Type | Name |
 |---:|---|---|
-| 41 | helper/function | `logout` |
+| 11 | shell/component | `App` |
+| 27 | helper/function | `logout` |
 
-## Suggested Split Order
+## Current State
 
-1. Extract `api` helper into `utils/apiClient.js`.
-2. Keep `LegacyPageantApp.jsx` as the legacy shell only.
-3. Start SaaS event-builder schema work after confirming runtime behavior.
+`LegacyPageantApp.jsx` is now a thin legacy shell. The previous frontend god file has been split into focused modules.
+
+## Next Recommended Work
+
+1. Runtime smoke test judge login, admin login, TV mode, PDF print, preliminary scoring, finals scoring.
+2. Stop splitting frontend unless a file approaches 1,000 lines.
+3. Start SaaS event-builder database migration work.
 
 ## Rule
 
-Move code mechanically. Do not change scoring formulas, API routes, or labels during extraction.
+Do not change scoring formulas, API routes, or labels until the legacy split is verified in browser.
