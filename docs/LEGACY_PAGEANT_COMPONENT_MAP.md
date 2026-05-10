@@ -6,7 +6,7 @@ Purpose: split the remaining JSX god file without rewriting scoring logic.
 
 ## File Size
 
-- `LegacyPageantApp.jsx`: 766 lines
+- `LegacyPageantApp.jsx`: 122 lines
 
 ## Extracted So Far
 
@@ -18,21 +18,19 @@ Purpose: split the remaining JSX god file without rewriting scoring logic.
 - `components/Home.jsx`: landing screen
 - `tv/TvDisplays.jsx`: TV finalist and winners displays
 - `judge/JudgePanels.jsx`: preliminary judge panel and finals judge panel
+- `admin/AdminPanels.jsx`: preliminary admin dashboard and finals admin panel
 
 ## Top-Level Components and Functions
 
 | Line | Type | Name |
 |---:|---|---|
-| 42 | helper/function | `logout` |
-| 124 | component/function | `FinalInterviewAdminPanel` |
-| 383 | component/function | `AdminPanel` |
-| 384 | helper/function | `openTvMode` |
+| 41 | helper/function | `logout` |
 
 ## Suggested Split Order
 
-1. Extract admin panels.
-2. Extract API helper once admin dependencies are separated.
-3. Convert legacy panels into event-builder modules after behavior is stable.
+1. Extract `api` helper into `utils/apiClient.js`.
+2. Keep `LegacyPageantApp.jsx` as the legacy shell only.
+3. Start SaaS event-builder schema work after confirming runtime behavior.
 
 ## Rule
 
