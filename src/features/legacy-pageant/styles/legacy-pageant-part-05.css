@@ -1,0 +1,521 @@
+
+.tv-top3-card {
+  background:
+    radial-gradient(circle at 18% 20%, rgba(255, 255, 255, 0.18), transparent 26%),
+    linear-gradient(135deg, #1d4ed8, #7c3aed 46%, #db2777);
+}
+
+.tv-winner-card p {
+  color: #fde68a;
+  font-size: clamp(17px, 2vw, 30px);
+  font-weight: 1000;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+}
+
+.tv-winner-card h2 {
+  margin-top: 16px;
+  font-size: clamp(54px, 8.5vw, 128px);
+  line-height: 0.92;
+  letter-spacing: -0.07em;
+}
+
+.tv-runner-grid {
+  max-width: 1180px;
+  width: 100%;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.tv-runner-grid article {
+  padding: clamp(26px, 3.2vw, 42px);
+  border-radius: 28px;
+  border: 1px solid rgba(124, 58, 237, 0.22);
+  background: rgba(255, 255, 255, 0.80);
+  box-shadow: 0 18px 50px rgba(76, 29, 149, 0.12);
+  backdrop-filter: blur(16px);
+}
+
+.tv-runner-grid span {
+  color: #6d28d9;
+  font-weight: 1000;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: clamp(13px, 1.3vw, 18px);
+}
+
+.tv-runner-grid h3 {
+  margin-top: 12px;
+  font-size: clamp(30px, 3.7vw, 56px);
+  line-height: 1;
+  letter-spacing: -0.05em;
+}
+
+.tv-wait-card {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 28px 34px;
+  text-align: center;
+  border-radius: 28px;
+  border: 1px solid rgba(124, 58, 237, 0.22);
+  background: rgba(255, 255, 255, 0.80);
+  box-shadow: 0 18px 50px rgba(76, 29, 149, 0.12);
+}
+
+.tv-wait-card h2 {
+  font-size: clamp(32px, 4vw, 54px);
+  margin-bottom: 10px;
+}
+
+.tv-credit-footer {
+  max-width: 1180px;
+  width: 100%;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 20px;
+  padding: 20px 24px;
+  border-radius: 24px;
+  border: 2px solid rgba(253, 230, 138, 0.55);
+  background: linear-gradient(135deg, rgba(34, 18, 55, 0.96), rgba(96, 55, 137, 0.94));
+  color: #fff;
+  box-shadow: 0 20px 50px rgba(76, 29, 149, 0.25);
+}
+
+.tv-credit-main {
+  display: grid;
+  gap: 5px;
+}
+
+.tv-credit-main strong {
+  font-size: clamp(16px, 1.55vw, 24px);
+  font-weight: 1000;
+  letter-spacing: 0.06em;
+  color: #fff7d6;
+}
+
+.tv-credit-main span {
+  color: #ffffff;
+  font-size: clamp(15px, 1.35vw, 21px);
+  font-weight: 1000;
+}
+
+.tv-credit-main small {
+  color: #fde68a;
+  font-size: clamp(13px, 1.1vw, 18px);
+  font-weight: 1000;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.tv-credit-meta {
+  display: grid;
+  align-content: center;
+  justify-items: end;
+  gap: 6px;
+  text-align: right;
+}
+
+.tv-credit-meta span {
+  font-weight: 1000;
+  color: #fff7d6;
+  font-size: clamp(13px, 1.1vw, 18px);
+}
+
+@media (max-width: 800px) {
+  .tv-header,
+  .tv-note-strip,
+  .tv-credit-footer {
+    grid-template-columns: 1fr;
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .tv-runner-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tv-credit-meta {
+    justify-items: center;
+    text-align: center;
+  }
+}
+/* ===== KIRCH HUMAN TV DISPLAY END ===== */
+
+/* ===== KIRCH CLEAN LEADER TOP3 FINAL START ===== */
+
+/* Overall rule:
+   Final = pink/purple.
+   Top 3 live leaderboard = gold/silver/bronze.
+   Judge status = neutral admin/audit table.
+*/
+
+/* Final Round Leader: one clean hero, not duplicated anywhere else */
+.final-round-leader-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+  padding: 18px 22px !important;
+  border: 2px solid rgba(219, 39, 119, 0.28) !important;
+  border-left: 7px solid rgba(219, 39, 119, 0.78) !important;
+  border-radius: 24px !important;
+  background:
+    radial-gradient(circle at 95% 15%, rgba(236, 72, 153, 0.10), transparent 32%),
+    linear-gradient(90deg, rgba(236, 72, 153, 0.055), transparent 45%),
+    rgba(255, 255, 255, 0.80) !important;
+  box-shadow:
+    0 18px 44px rgba(219, 39, 119, 0.08),
+    0 0 0 1px rgba(255,255,255,0.88) inset !important;
+}
+
+.final-round-leader-card .eyebrow {
+  color: #be185d !important;
+  font-weight: 1000;
+  letter-spacing: 0.12em;
+}
+
+.final-round-leader-card h2 {
+  margin: 2px 0 0;
+  color: #1f1433;
+  font-size: clamp(24px, 3vw, 38px);
+  letter-spacing: -0.04em;
+}
+
+.final-round-leader-card p:not(.eyebrow) {
+  margin-top: 4px;
+  color: #6b5d77;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.final-round-leader-card > strong {
+  color: #db2777;
+  font-size: clamp(34px, 4vw, 54px);
+  line-height: 1;
+  font-weight: 1000;
+}
+
+/* Final Interview Winners table: important but no duplicate hero strip */
+.final-results-panel {
+  border: 1px solid rgba(219, 39, 119, 0.22) !important;
+  border-left: 6px solid rgba(219, 39, 119, 0.64) !important;
+  background:
+    linear-gradient(90deg, rgba(236, 72, 153, 0.040), transparent 42%),
+    rgba(255, 255, 255, 0.78) !important;
+  box-shadow: 0 16px 40px rgba(219, 39, 119, 0.055) !important;
+}
+
+.final-results-panel .eyebrow {
+  color: #be185d !important;
+}
+
+.final-results-panel h3 {
+  color: #1f2937 !important;
+}
+
+.final-results-panel table thead th {
+  background: rgba(236, 72, 153, 0.050) !important;
+  color: #9d174d !important;
+}
+
+.final-results-panel table tbody tr:first-child {
+  background: rgba(254, 243, 199, 0.70) !important;
+}
+
+.final-results-panel table tbody tr:nth-child(2) {
+  background: rgba(241, 245, 249, 0.72) !important;
+}
+
+.final-results-panel table tbody tr:nth-child(3) {
+  background: rgba(255, 237, 213, 0.62) !important;
+}
+
+/* Final judge status: neutral audit panel, not loud */
+.final-status-panel,
+.judge-status-panel {
+  border: 1px solid rgba(124, 58, 237, 0.16) !important;
+  border-left: 5px solid rgba(148, 163, 184, 0.70) !important;
+  background: rgba(255, 255, 255, 0.76) !important;
+  box-shadow: 0 14px 34px rgba(76, 29, 149, 0.055) !important;
+}
+
+.final-status-panel .eyebrow,
+.judge-status-panel .eyebrow {
+  color: #6b7280 !important;
+}
+
+.final-status-panel h3,
+.judge-status-panel h3 {
+  color: #1f2937 !important;
+}
+
+.final-status-panel .table-title p:not(.eyebrow),
+.judge-status-panel .table-title p:not(.eyebrow) {
+  color: #6b5d77;
+  font-weight: 750;
+}
+
+.final-status-panel table thead th,
+.judge-status-panel table thead th {
+  background: rgba(148, 163, 184, 0.08) !important;
+  color: #475569 !important;
+}
+
+.final-status-panel table tbody tr,
+.judge-status-panel table tbody tr {
+  background: rgba(255,255,255,0.72) !important;
+}
+
+.final-status-panel table tbody tr:nth-child(even),
+.judge-status-panel table tbody tr:nth-child(even) {
+  background: rgba(248,250,252,0.72) !important;
+}
+
+.submitted-pill,
+.locked-pill,
+.status-locked,
+.status-submitted,
+.lock-pill {
+  background: rgba(220, 252, 231, 0.88) !important;
+  color: #166534 !important;
+  border: 1px solid rgba(34, 197, 94, 0.16) !important;
+  box-shadow: none !important;
+  font-weight: 900 !important;
+}
+
+/* Official Top 3 Finalists = the live leaderboard color coding */
+.top3-finalists-panel {
+  border: 1px solid rgba(124, 58, 237, 0.18) !important;
+  border-left: 6px solid rgba(124, 58, 237, 0.70) !important;
+  background:
+    radial-gradient(circle at 95% 20%, rgba(124, 58, 237, 0.075), transparent 32%),
+    rgba(255, 255, 255, 0.78) !important;
+  box-shadow: 0 16px 40px rgba(79, 70, 229, 0.065) !important;
+}
+
+.top3-finalists-panel .eyebrow {
+  color: #6d28d9 !important;
+  font-weight: 1000;
+}
+
+.top3-finalists-panel h3 {
+  color: #1f2937 !important;
+}
+
+.top3-finalists-panel .table-title p:not(.eyebrow) {
+  color: #6b5d77;
+  font-weight: 750;
+}
+
+.top3-finalists-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.top3-finalist-card {
+  min-height: 128px;
+  border-radius: 22px;
+  padding: 16px;
+  box-shadow: 0 12px 28px rgba(76, 29, 149, 0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+.top3-finalist-card::after {
+  content: "";
+  position: absolute;
+  width: 130px;
+  height: 130px;
+  border-radius: 999px;
+  right: -54px;
+  top: -58px;
+  opacity: 0.22;
+}
+
+.top3-finalist-card.rank-1 {
+  border: 2px solid rgba(245, 158, 11, 0.38);
+  background:
+    linear-gradient(135deg, rgba(254, 243, 199, 0.95), rgba(255,255,255,0.74));
+}
+
+.top3-finalist-card.rank-1::after {
+  background: #f59e0b;
+}
+
+.top3-finalist-card.rank-2 {
+  border: 2px solid rgba(100, 116, 139, 0.26);
+  background:
+    linear-gradient(135deg, rgba(241, 245, 249, 0.98), rgba(255,255,255,0.76));
+}
+
+.top3-finalist-card.rank-2::after {
+  background: #94a3b8;
+}
+
+.top3-finalist-card.rank-3 {
+  border: 2px solid rgba(217, 119, 6, 0.30);
+  background:
+    linear-gradient(135deg, rgba(255, 237, 213, 0.95), rgba(255,255,255,0.76));
+}
+
+.top3-finalist-card.rank-3::after {
+  background: #d97706;
+}
+
+.top3-finalist-card span {
+  display: inline-flex;
+  margin-bottom: 9px;
+  color: #4c1d95;
+  font-size: 12px;
+  font-weight: 1000;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  position: relative;
+  z-index: 1;
+}
+
+.top3-finalist-card h4 {
+  font-size: 18px;
+  color: #1f1433;
+  margin: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.top3-finalist-card p {
+  margin-top: 8px;
+  color: #6b5d77;
+  font-size: 12px;
+  font-weight: 800;
+  position: relative;
+  z-index: 1;
+}
+
+.top3-finalist-card strong {
+  display: block;
+  margin-top: 4px;
+  color: #6d28d9;
+  font-size: 26px;
+  line-height: 1;
+  position: relative;
+  z-index: 1;
+}
+
+/* Preliminary ranking table: keep simple, highlight top 3 rows only */
+.prelim-ranking-panel {
+  border: 1px solid rgba(124, 58, 237, 0.16) !important;
+  background: rgba(255,255,255,0.76) !important;
+  box-shadow: 0 14px 34px rgba(76, 29, 149, 0.055) !important;
+}
+
+.prelim-ranking-panel table thead th {
+  background: rgba(124, 58, 237, 0.055) !important;
+  color: #4c1d95 !important;
+}
+
+.prelim-ranking-panel table tbody tr:nth-child(1) {
+  background: rgba(254, 243, 199, 0.68) !important;
+}
+
+.prelim-ranking-panel table tbody tr:nth-child(2) {
+  background: rgba(241, 245, 249, 0.76) !important;
+}
+
+.prelim-ranking-panel table tbody tr:nth-child(3) {
+  background: rgba(255, 237, 213, 0.60) !important;
+}
+
+.prelim-ranking-panel table tbody tr:nth-child(n+4) {
+  background: rgba(255,255,255,0.72) !important;
+}
+
+.prelim-ranking-panel table tbody tr:nth-child(n+4):nth-child(even) {
+  background: rgba(248,250,252,0.68) !important;
+}
+
+.site-footer,
+.app-footer,
+footer:not(.tv-credit-footer) {
+  border: 1px solid rgba(124, 58, 237, 0.22) !important;
+  box-shadow: 0 12px 28px rgba(76, 29, 149, 0.10) !important;
+}
+
+@media (max-width: 900px) {
+  .top3-finalists-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .final-round-leader-card {
+    grid-template-columns: 1fr;
+  }
+
+  .final-round-leader-card > strong {
+    justify-self: start;
+  }
+}
+
+/* ===== KIRCH CLEAN LEADER TOP3 FINAL END ===== */
+
+/* ===== KIRCH STATUS PANELS BOTTOM ORDER START ===== */
+
+/* Keep admin readable: status/audit tables go after results and rankings. */
+.admin-dashboard-view {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* Main result hierarchy */
+.admin-dashboard-view > .final-round-leader-card {
+  order: 10;
+}
+
+.admin-dashboard-view > .final-results-panel {
+  order: 20;
+}
+
+.admin-dashboard-view > .top3-finalists-panel {
+  order: 30;
+}
+
+.admin-dashboard-view > .prelim-ranking-panel {
+  order: 40;
+}
+
+/* All Judge Submission Status panels belong at the bottom. */
+.admin-dashboard-view > .final-status-panel {
+  order: 80;
+  margin-top: 18px;
+}
+
+.admin-dashboard-view > .judge-status-panel {
+  order: 90;
+}
+
+/* Make bottom status panels visibly secondary/admin-only. */
+.admin-dashboard-view > .final-status-panel,
+.admin-dashboard-view > .judge-status-panel {
+  opacity: 0.96;
+}
+
+.admin-dashboard-view > .final-status-panel .table-title,
+.admin-dashboard-view > .judge-status-panel .table-title {
+  padding-bottom: 4px;
+}
+
+/* ===== KIRCH STATUS PANELS BOTTOM ORDER END ===== */
+
+/* ===== SANDBOX FINAL CLEAN HIERARCHY START ===== */
+
+/* Hide redundant Preliminary Round Leader if any old markup still renders. */
+.admin-dashboard-view > .leader-card,
+.admin-dashboard-view > .current-leader,
+.admin-dashboard-view > .qualifier-card {
+  display: none !important;
+}

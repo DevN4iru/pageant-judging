@@ -1,0 +1,520 @@
+
+.final-round-leader-card .eyebrow {
+  color: #ec4899;
+}
+
+.final-round-leader-card h2 {
+  margin-bottom: 3px;
+  color: #21113f;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 21px;
+  letter-spacing: -0.02em;
+}
+
+.final-round-leader-card p:not(.eyebrow) {
+  margin: 0;
+  color: #4d4169;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.final-round-leader-card > strong {
+  color: #ec4899;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(38px, 4vw, 52px);
+  font-weight: 700;
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+}
+
+.final-results-panel {
+  padding: 13px 16px;
+}
+
+.final-results-panel .table-title {
+  padding-bottom: 9px;
+}
+
+.final-results-panel .table-title button {
+  display: none;
+}
+
+.final-results-panel h3,
+.top3-finalists-panel h3,
+.prelim-ranking-panel h3,
+.final-status-panel h3,
+.judge-status-panel h3 {
+  color: #251448;
+  font-size: 15px;
+}
+
+.final-results-panel .table-title p:not(.eyebrow),
+.top3-finalists-panel .table-title p:not(.eyebrow),
+.prelim-ranking-panel .table-title p:not(.eyebrow),
+.final-status-panel .table-title p:not(.eyebrow),
+.judge-status-panel .table-title p:not(.eyebrow) {
+  color: #55496e;
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.admin-dashboard-view .table-wrap {
+  border-radius: 9px;
+  border-color: rgba(58, 36, 91, 0.10);
+  background: rgba(255, 255, 255, 0.66);
+}
+
+.admin-dashboard-view table {
+  min-width: 840px;
+  background: rgba(255, 255, 255, 0.80);
+}
+
+.admin-dashboard-view th {
+  padding: 8px 10px;
+  color: #5d36be;
+  background: rgba(250, 245, 255, 0.82);
+  font-size: 9px;
+  letter-spacing: 0.10em;
+}
+
+.admin-dashboard-view td {
+  padding: 8px 10px;
+  color: #21183c;
+  font-size: 11px;
+}
+
+.final-results-panel table tbody tr:first-child td {
+  background: linear-gradient(90deg, rgba(254, 243, 199, 0.82), rgba(255, 250, 235, 0.62));
+}
+
+.final-results-panel table tbody tr:nth-child(2) td {
+  background: linear-gradient(90deg, rgba(237, 233, 254, 0.72), rgba(255, 255, 255, 0.52));
+}
+
+.final-results-panel table tbody tr:nth-child(3) td {
+  background: linear-gradient(90deg, rgba(255, 237, 213, 0.72), rgba(255, 255, 255, 0.52));
+}
+
+.final-results-panel .grand-total {
+  color: #ec4899;
+  background: transparent;
+}
+
+.top3-finalists-panel {
+  padding: 13px 16px 16px;
+}
+
+.top3-finalists-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.top3-finalist-card {
+  min-height: 90px;
+  position: relative;
+  padding: 15px 15px 15px 94px;
+  overflow: hidden;
+  border-radius: 10px;
+  border: 1px solid rgba(64, 45, 91, 0.12);
+  box-shadow: 0 12px 26px rgba(39, 21, 72, 0.08);
+}
+
+.top3-finalist-card::before {
+  content: "♕";
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  width: 58px;
+  height: 58px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  transform: translateY(-50%);
+  font-size: 31px;
+}
+
+.top3-finalist-card::after {
+  position: absolute;
+  right: 14px;
+  top: 12px;
+  font-size: 10px;
+  font-weight: 950;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.top3-finalist-card.rank-1 {
+  background: linear-gradient(135deg, rgba(255, 248, 214, 0.96), rgba(255, 243, 195, 0.66));
+  border-color: rgba(245, 158, 11, 0.28);
+}
+
+.top3-finalist-card.rank-1::before {
+  color: #b87500;
+  background: rgba(255, 247, 211, 0.92);
+  border: 1px solid rgba(245, 158, 11, 0.32);
+}
+
+.top3-finalist-card.rank-1::after {
+  content: "Rank 1";
+  color: #b87500;
+}
+
+.top3-finalist-card.rank-2 {
+  background: linear-gradient(135deg, rgba(243, 240, 255, 0.98), rgba(236, 233, 254, 0.66));
+  border-color: rgba(139, 124, 184, 0.28);
+}
+
+.top3-finalist-card.rank-2::before {
+  color: #8b86a5;
+  background: rgba(246, 244, 255, 0.95);
+  border: 1px solid rgba(139, 124, 184, 0.30);
+}
+
+.top3-finalist-card.rank-2::after {
+  content: "Rank 2";
+  color: #6d6490;
+}
+
+.top3-finalist-card.rank-3 {
+  background: linear-gradient(135deg, rgba(255, 237, 225, 0.96), rgba(255, 228, 214, 0.68));
+  border-color: rgba(217, 119, 72, 0.28);
+}
+
+.top3-finalist-card.rank-3::before {
+  color: #c96738;
+  background: rgba(255, 241, 232, 0.94);
+  border: 1px solid rgba(217, 119, 72, 0.30);
+}
+
+.top3-finalist-card.rank-3::after {
+  content: "Rank 3";
+  color: #b6572e;
+}
+
+.top3-finalist-card span,
+.top3-finalist-card h4,
+.top3-finalist-card p,
+.top3-finalist-card strong {
+  position: relative;
+  z-index: 1;
+}
+
+.top3-finalist-card span {
+  display: block;
+  margin-bottom: 2px;
+  color: #3a2b61;
+  font-size: 10px;
+  font-weight: 950;
+  text-transform: uppercase;
+  letter-spacing: 0.10em;
+}
+
+.top3-finalist-card h4 {
+  margin: 0;
+  color: #21113f;
+  font-size: 15px;
+}
+
+.top3-finalist-card p {
+  margin: 2px 0 0;
+  color: #5f5278;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.top3-finalist-card strong {
+  display: block;
+  margin-top: 3px;
+  color: #c2410c;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 24px;
+  line-height: 1;
+}
+
+.prelim-ranking-panel {
+  padding: 12px 16px;
+}
+
+.prelim-ranking-panel table tbody tr:nth-child(1) td {
+  background: rgba(254, 243, 199, 0.36);
+}
+
+.prelim-ranking-panel table tbody tr:nth-child(2) td {
+  background: rgba(237, 233, 254, 0.36);
+}
+
+.prelim-ranking-panel table tbody tr:nth-child(3) td {
+  background: rgba(255, 237, 213, 0.36);
+}
+
+.final-status-panel,
+.judge-status-panel {
+  padding: 12px 16px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.78), rgba(250, 247, 255, 0.58)),
+    rgba(255, 255, 255, 0.68) !important;
+  box-shadow: 0 10px 24px rgba(76, 29, 149, 0.06) !important;
+}
+
+.final-status-panel .eyebrow,
+.judge-status-panel .eyebrow {
+  color: #7c6aa6;
+}
+
+.final-status-panel h3,
+.judge-status-panel h3 {
+  color: #3b3154;
+}
+
+.final-status-panel .table-wrap,
+.judge-status-panel .table-wrap {
+  opacity: 0.94;
+}
+
+.admin-dashboard-view .rank-pill {
+  min-width: 26px;
+  height: 22px;
+  padding: 0 8px;
+  font-size: 10px;
+}
+
+.admin-dashboard-view .submitted-pill {
+  min-width: 28px;
+  height: 22px;
+  padding: 0 8px;
+  color: #087044;
+  background: rgba(187, 247, 208, 0.66);
+  font-size: 10px;
+}
+
+.admin-shell .site-footer,
+.admin-shell.compact-footer,
+.admin-shell .compact-footer,
+.admin-shell footer:not(.tv-credit-footer) {
+  /* footer audited: keep existing footer content and behavior */
+}
+
+@media (max-width: 920px) {
+  .admin-shell {
+    width: min(100% - 18px, 1040px);
+  }
+
+  .dashboard-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-actions {
+    justify-content: flex-start;
+  }
+
+  .dashboard-actions .last-updated {
+    text-align: left;
+  }
+
+  .top3-finalists-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .final-round-leader-card {
+    grid-template-columns: 56px 1fr;
+  }
+
+  .final-round-leader-card > strong {
+    grid-column: 1 / -1;
+    justify-self: start;
+    margin-left: 72px;
+  }
+}
+
+@media (max-width: 560px) {
+  .admin-shell > .topbar {
+    min-height: 0;
+  }
+
+  .admin-shell .brand-logo {
+    width: 66px;
+    height: 66px;
+  }
+
+  .top3-finalist-card {
+    padding-left: 82px;
+  }
+}
+
+/* ===== KIRCH ADMIN PREMIUM MOCKUP POLISH END ===== */
+
+/* ===== KIRCH ADMIN SCROLL HEADER QA FIX START ===== */
+
+/*
+  QA fix:
+  The admin brand header must not float/reappear over lower sections.
+  Keep TV footer/header untouched.
+*/
+
+.admin-shell > .topbar {
+  position: static !important;
+  top: auto !important;
+  z-index: auto !important;
+  transform: none !important;
+}
+
+.admin-shell .topbar {
+  position: static !important;
+}
+
+.admin-dashboard-view {
+  position: relative;
+  z-index: 1;
+}
+
+.admin-dashboard-view > .panel {
+  position: relative;
+  z-index: 1;
+}
+
+.admin-shell::after {
+  z-index: 0;
+}
+
+.admin-shell::before {
+  z-index: -1;
+}
+
+/* ===== KIRCH ADMIN SCROLL HEADER QA FIX END ===== */
+
+/* ===== KIRCH TV PREMIUM BANNER POLISH START ===== */
+
+/*
+  TV/TC display polish only.
+  Keeps TV footer as its own developer-credit context.
+  Does not touch scoring, API routes, formulas, or admin footer content.
+*/
+
+body:has(.tv-stage) {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 15% 14%, rgba(124, 58, 237, 0.26), transparent 30%),
+    radial-gradient(circle at 84% 14%, rgba(236, 72, 153, 0.24), transparent 32%),
+    radial-gradient(circle at 80% 84%, rgba(251, 191, 36, 0.16), transparent 34%),
+    linear-gradient(135deg, #f4e9ff 0%, #fff1f7 46%, #fff6ed 100%);
+  overflow-x: hidden;
+}
+
+.tv-stage {
+  width: min(1120px, calc(100% - 52px));
+  min-height: 100vh;
+  display: grid;
+  align-content: center;
+  gap: 24px;
+  margin: 0 auto;
+  padding: 58px 0 46px;
+  position: relative;
+  z-index: 1;
+}
+
+.tv-stage::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 11% 60%, rgba(255, 255, 255, 0.62) 0 38px, transparent 40px),
+    radial-gradient(circle at 97% 25%, rgba(255, 255, 255, 0.70) 0 4px, transparent 5px),
+    radial-gradient(circle at 22% 31%, rgba(255, 255, 255, 0.52) 0 4px, transparent 5px),
+    linear-gradient(90deg, rgba(124, 58, 237, 0.06), transparent 30%, transparent 72%, rgba(219, 39, 119, 0.06));
+  z-index: -2;
+}
+
+.tv-stage::after {
+  content: "♕";
+  position: fixed;
+  right: 7vw;
+  bottom: 18vh;
+  color: rgba(76, 29, 149, 0.06);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(180px, 20vw, 360px);
+  line-height: 1;
+  transform: rotate(-7deg);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.tv-header {
+  position: relative;
+  min-height: 160px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 24px;
+  padding: 30px 40px;
+  overflow: hidden;
+  border-radius: 26px;
+  border: 1px solid rgba(88, 56, 126, 0.15);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.90), rgba(255, 247, 253, 0.72)),
+    rgba(255, 255, 255, 0.72);
+  box-shadow:
+    0 28px 70px rgba(76, 29, 149, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(20px);
+}
+
+.tv-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 84% 12%, rgba(236, 72, 153, 0.13), transparent 34%),
+    linear-gradient(90deg, rgba(124, 58, 237, 0.10), transparent 34%);
+  pointer-events: none;
+}
+
+.tv-header::after {
+  content: "LIVE PAGEANT DISPLAY";
+  position: absolute;
+  right: 32px;
+  top: 24px;
+  padding: 8px 13px;
+  border-radius: 999px;
+  color: #9d174d;
+  background: rgba(255, 255, 255, 0.66);
+  border: 1px solid rgba(236, 72, 153, 0.18);
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: 0.16em;
+}
+
+.tv-header > * {
+  position: relative;
+  z-index: 1;
+}
+
+.tv-header img {
+  width: 78px;
+  height: 78px;
+  object-fit: contain;
+  padding: 8px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(88, 56, 126, 0.12);
+  box-shadow: 0 18px 34px rgba(76, 29, 149, 0.12);
+}
+
+.tv-header .eyebrow {
+  margin-bottom: 6px;
+  color: #6d28d9;
+  font-size: 13px;
+  letter-spacing: 0.22em;
+}
+
+.tv-header h1 {
+  margin-bottom: 8px;
+  color: #20113d;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(48px, 5.6vw, 78px);
+  font-weight: 700;
+  line-height: 0.95;
+  letter-spacing: -0.065em;
+}
+
