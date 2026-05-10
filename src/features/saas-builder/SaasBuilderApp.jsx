@@ -13,6 +13,7 @@ import {
   updateEventSettings,
   updateJudge
 } from './saasBuilderApi.js';
+import './saasBuilder.css';
 
 const card = {
   border: '1px solid rgba(148, 163, 184, 0.22)',
@@ -51,7 +52,7 @@ function Stat({ label, value }) {
 
 function Section({ title, children }) {
   return (
-    <section style={card}>
+    <section className="saas-builder-section" style={card}>
       <h2 style={{ margin: '0 0 16px', color: '#f8fafc', fontSize: 22 }}>{title}</h2>
       {children}
     </section>
@@ -60,8 +61,8 @@ function Section({ title, children }) {
 
 function MiniTable({ columns, rows }) {
   return (
-    <div style={{ overflowX: 'auto' }}>
-      <table style={{ width: '100%', borderCollapse: 'collapse', color: '#e2e8f0' }}>
+    <div className="saas-builder-table-wrap" style={{ overflowX: 'auto' }}>
+      <table className="saas-builder-table" style={{ width: '100%', borderCollapse: 'collapse', color: '#e2e8f0' }}>
         <thead>
           <tr>
             {columns.map((column) => (
@@ -309,10 +310,10 @@ export default function SaasBuilderApp() {
   }
 
   return (
-    <main style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #020617, #111827 45%, #3b0764)', color: '#f8fafc', padding: 28 }}>
-      <div style={{ maxWidth: 1280, margin: '0 auto', display: 'grid', gap: 22 }}>
+    <main className="saas-builder-shell" style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #020617, #111827 45%, #3b0764)', color: '#f8fafc', padding: 28 }}>
+      <div className="saas-builder-page" style={{ maxWidth: 1280, margin: '0 auto', display: 'grid', gap: 22 }}>
         <header style={{ ...card, display: 'grid', gap: 14 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
+          <div className="saas-builder-header-row" style={{ display: 'flex', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
             <div>
               <div style={{ color: '#f9a8d4', fontWeight: 900, textTransform: 'uppercase', letterSpacing: 1 }}>
                 SaaS Event Builder
@@ -334,7 +335,7 @@ export default function SaasBuilderApp() {
           <div style={{ color: '#94a3b8', fontSize: 13 }}>{templateSummary}</div>
         </header>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: 16 }}>
+        <div className="saas-builder-stats" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: 16 }}>
           <Stat label="Contestants" value={builder.contestants.length} />
           <Stat label="Judges" value={builder.judges.length} />
           <Stat label="Rounds" value={builder.rounds.length} />
@@ -342,7 +343,7 @@ export default function SaasBuilderApp() {
         </div>
 
         <Section title="Event Settings">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 14 }}>
+          <div className="saas-builder-settings-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 14 }}>
             <label style={label}>Event title<input style={input} value={settings.title} onChange={(e) => setSettings({ ...settings, title: e.target.value })} /></label>
             <label style={label}>Organization name<input style={input} value={settings.organizationName} onChange={(e) => setSettings({ ...settings, organizationName: e.target.value })} /></label>
             <label style={label}>Logo URL<input style={input} value={settings.logoUrl} onChange={(e) => setSettings({ ...settings, logoUrl: e.target.value })} /></label>
@@ -363,7 +364,7 @@ export default function SaasBuilderApp() {
         </Section>
 
         <Section title="Contestants">
-          <div style={{ display: 'grid', gridTemplateColumns: '120px 1fr 1fr auto', gap: 12, marginBottom: 16 }}>
+          <div className="saas-builder-contestant-form" style={{ display: 'grid', gridTemplateColumns: '120px 1fr 1fr auto', gap: 12, marginBottom: 16 }}>
             <input style={input} type="number" placeholder="#" value={contestantForm.contestantNumber} onChange={(e) => setContestantForm({ ...contestantForm, contestantNumber: e.target.value })} />
             <input style={input} placeholder="Contestant name" value={contestantForm.name} onChange={(e) => setContestantForm({ ...contestantForm, name: e.target.value })} />
             <input style={input} placeholder="Photo URL" value={contestantForm.photoUrl} onChange={(e) => setContestantForm({ ...contestantForm, photoUrl: e.target.value })} />
@@ -380,7 +381,7 @@ export default function SaasBuilderApp() {
                 key: 'actions',
                 label: 'Actions',
                 render: (row) => (
-                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  <div className="saas-builder-actions" style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                     <button type="button" onClick={() => renameContestant(row)} style={{ border: 0, borderRadius: 10, padding: '8px 10px', fontWeight: 800 }}>Rename</button>
                     <button type="button" onClick={() => removeContestant(row)} style={{ border: 0, borderRadius: 10, padding: '8px 10px', fontWeight: 800, background: '#ef4444', color: 'white' }}>Delete</button>
                   </div>
@@ -392,7 +393,7 @@ export default function SaasBuilderApp() {
         </Section>
 
         <Section title="Judges">
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 120px 160px auto', gap: 12, marginBottom: 16 }}>
+          <div className="saas-builder-judge-form" style={{ display: 'grid', gridTemplateColumns: '1fr 120px 160px auto', gap: 12, marginBottom: 16 }}>
             <input style={input} placeholder="Judge name" value={judgeForm.name} onChange={(e) => setJudgeForm({ ...judgeForm, name: e.target.value })} />
             <input style={input} type="number" placeholder="Order" value={judgeForm.displayOrder} onChange={(e) => setJudgeForm({ ...judgeForm, displayOrder: e.target.value })} />
             <input style={input} placeholder="PIN" value={judgeForm.pin} onChange={(e) => setJudgeForm({ ...judgeForm, pin: e.target.value })} />
@@ -408,7 +409,7 @@ export default function SaasBuilderApp() {
                 key: 'actions',
                 label: 'Actions',
                 render: (row) => (
-                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  <div className="saas-builder-actions" style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                     <button type="button" onClick={() => toggleJudge(row)} style={{ border: 0, borderRadius: 10, padding: '8px 10px', fontWeight: 800 }}>{row.is_enabled ? 'Disable' : 'Enable'}</button>
                     <button type="button" onClick={() => resetJudgePin(row)} style={{ border: 0, borderRadius: 10, padding: '8px 10px', fontWeight: 800 }}>Reset PIN</button>
                     <button type="button" onClick={() => removeJudge(row)} style={{ border: 0, borderRadius: 10, padding: '8px 10px', fontWeight: 800, background: '#ef4444', color: 'white' }}>Delete</button>
