@@ -723,7 +723,7 @@ function FinalInterviewJudgePanel({ judge }) {
   }
 
   return (
-    <section className="panel final-round-panel">
+    <section className="panel final-round-panel finals-judge-panel">
       <div className="final-round-head">
         <div>
           <p className="eyebrow">Finals · Top 3 Only</p>
@@ -766,9 +766,9 @@ function FinalInterviewJudgePanel({ judge }) {
         </div>
       )}
 
-      <div className="final-candidate-grid">
+      <div className="final-candidate-grid finals-judge-grid">
         {contestants.map((candidate) => (
-          <article className="candidate-card final-candidate-card" key={candidate.id}>
+          <article className="candidate-card final-candidate-card finals-judge-card" key={candidate.id}>
             <div className="candidate-head">
               <div>
                 <span className="candidate-number">Top 3 · Candidate #{candidate.number}</span>
