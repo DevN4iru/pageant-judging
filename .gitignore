@@ -10,3 +10,6 @@ dist
 qa-localhost-logs/
 pageant-db-backups/
 *.dump
+
+# Local audit logs
+/audits/
