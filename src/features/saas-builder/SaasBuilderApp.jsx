@@ -27,6 +27,7 @@ import MiniTable from './components/MiniTable.jsx';
 import EventSettingsPanel from './panels/EventSettingsPanel.jsx';
 import ContestantsPanel from './panels/ContestantsPanel.jsx';
 import JudgesPanel from './panels/JudgesPanel.jsx';
+import AuditLogsPanel from './panels/AuditLogsPanel.jsx';
 
 
 export default function SaasBuilderApp() {
@@ -616,17 +617,7 @@ export default function SaasBuilderApp() {
           </div>
         </Section>
 
-        <Section title="Audit Logs">
-          <MiniTable
-            columns={[
-              { key: 'created_at', label: 'Time', render: (row) => new Date(row.created_at).toLocaleString() },
-              { key: 'action_type', label: 'Action' },
-              { key: 'target_type', label: 'Target' },
-              { key: 'reason', label: 'Reason' }
-            ]}
-            rows={auditLogs}
-          />
-        </Section>
+        <AuditLogsPanel auditLogs={auditLogs} />
 
         <footer style={{ color: '#94a3b8', textAlign: 'center', padding: 20 }}>
           Open legacy app normally. Open builder with <b>?builder=saas</b>.
