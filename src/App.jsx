@@ -538,6 +538,7 @@ function AdminSummaryPrintButtons() {
           ${sections}
 
           <div class="footer">
+            <strong>Prepared by Kirjane Labs × Dev Siris</strong><br />
             Kirch automated judging, tabulation, locking, and audit history system.
           </div>
 
