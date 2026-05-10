@@ -531,8 +531,7 @@ function AdminSummaryPrintButtons() {
           <div class="cover">
             <p class="eyebrow">Miss Poblacion Occidental Automated Judging System</p>
             <h1>${esc(title)}</h1>
-            <p>Generated: ${esc(formatDateTime(new Date()))}</p>
-            <p>Prepared for official tabulation, verification, printing, and PDF saving.</p>
+            <p>Official scoring summary for verification and filing.</p>
           </div>
 
           ${sections}
