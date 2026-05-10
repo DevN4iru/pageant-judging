@@ -133,4 +133,101 @@ router.get('/events/:eventId/builder', async (req, res) => {
   }
 });
 
+
+router.patch('/events/:eventId/settings', async (req, res) => {
+  const client = await pool.connect();
+
+  try {
+    const { eventId } = req.params;
+    const {
+      title,
+      organizationName,
+      logoUrl,
+      themeColor,
+      tvDisplayTitle,
+      pdfFooter,
+      preparedByText,
+      developerCredits,
+      advancingCount,
+      scoreCarryMode
+    } = req.body;
+
+    await client.query('BEGIN');
+
+    const before = await client.query('SELECT * FROM events WHERE id = $1', [eventId]);
+
+    if (before.rows.length === 0) {
+      await client.query('ROLLBACK');
+      return res.status(404).json({ error: 'Event not found' });
+    }
+
+    const current = before.rows[0];
+
+    const updated = await client.query(`
+      UPDATE events
+      SET
+        title = COALESCE($2, title),
+        organization_name = COALESCE($3, organization_name),
+        logo_url = COALESCE($4, logo_url),
+        theme_color = COALESCE($5, theme_color),
+        tv_display_title = COALESCE($6, tv_display_title),
+        pdf_footer = COALESCE($7, pdf_footer),
+        prepared_by_text = COALESCE($8, prepared_by_text),
+        developer_credits = COALESCE($9, developer_credits),
+        advancing_count = COALESCE($10, advancing_count),
+        score_carry_mode = COALESCE($11, score_carry_mode),
+        updated_at = NOW()
+      WHERE id = $1
+      RETURNING *
+    `, [
+      eventId,
+      title ?? null,
+      organizationName ?? null,
+      logoUrl ?? null,
+      themeColor ?? null,
+      tvDisplayTitle ?? null,
+      pdfFooter ?? null,
+      preparedByText ?? null,
+      developerCredits ?? null,
+      advancingCount ?? null,
+      scoreCarryMode ?? null
+    ]);
+
+    await client.query(`
+      INSERT INTO audit_logs (
+        organization_id,
+        event_id,
+        actor_role,
+        action_type,
+        target_type,
+        target_id,
+        old_value,
+        new_value,
+        reason
+      )
+      VALUES ($1, $2, 'admin', 'event_settings_updated', 'event', $3, $4, $5, $6)
+    `, [
+      current.organization_id,
+      eventId,
+      String(eventId),
+      JSON.stringify(current),
+      JSON.stringify(updated.rows[0]),
+      'Updated event settings through SaaS builder API.'
+    ]);
+
+    await client.query('COMMIT');
+
+    res.json({
+      ok: true,
+      event: updated.rows[0]
+    });
+  } catch (err) {
+    await client.query('ROLLBACK').catch(() => {});
+    res.status(500).json({ error: err.message });
+  } finally {
+    client.release();
+  }
+});
+
+
 module.exports = router;
