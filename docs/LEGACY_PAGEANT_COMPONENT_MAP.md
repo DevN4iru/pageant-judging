@@ -6,7 +6,7 @@ Purpose: split the remaining JSX god file without rewriting scoring logic.
 
 ## File Size
 
-- `LegacyPageantApp.jsx`: 1967 lines
+- `LegacyPageantApp.jsx`: 1516 lines
 
 ## Extracted So Far
 
@@ -14,40 +14,32 @@ Purpose: split the remaining JSX god file without rewriting scoring logic.
 - `utils/formatting.js`: `formatDateTime`
 - `components/CriteriaGuide.jsx`: `CRITERIA_GUIDE`, `getCriteriaGuide`, `CriteriaNote`, `CriteriaOverview`
 - `components/SharedUi.jsx`: `LoginCard`, `WinnerAnnouncement`, `DeveloperCredits`, `TVCreditFooter`, `SiteFooter`, `ErrorPanel`, `LoadingPanel`
+- `components/AdminSummaryPrintButtons.jsx`: print/PDF summary component and its internal HTML helpers
 
 ## Top-Level Components and Functions
 
 | Line | Type | Name |
 |---:|---|---|
-| 22 | component/function | `AdminSummaryPrintButtons` |
-| 25 | helper/function | `esc` |
-| 35 | helper/function | `score` |
-| 40 | helper/function | `percent` |
-| 45 | helper/function | `table` |
-| 83 | helper/function | `preliminarySection` |
-| 140 | helper/function | `finalsSection` |
-| 196 | helper/function | `programSection` |
-| 244 | helper/function | `buildPrintableHtml` |
-| 490 | helper/function | `logout` |
-| 572 | component/function | `Home` |
-| 627 | component/function | `JudgePanel` |
-| 670 | helper/function | `candidateSubtotal` |
-| 852 | component/function | `FinalInterviewJudgePanel` |
-| 897 | helper/function | `candidateFinalSubtotal` |
-| 1100 | component/function | `FinalInterviewAdminPanel` |
-| 1359 | component/function | `AdminPanel` |
-| 1360 | helper/function | `openTvMode` |
-| 1743 | component/function | `TVWinnersDisplay` |
-| 1856 | component/function | `TVTop3Display` |
-| 1898 | helper/function | `preFinalScore` |
+| 39 | helper/function | `logout` |
+| 121 | component/function | `Home` |
+| 176 | component/function | `JudgePanel` |
+| 219 | helper/function | `candidateSubtotal` |
+| 401 | component/function | `FinalInterviewJudgePanel` |
+| 446 | helper/function | `candidateFinalSubtotal` |
+| 649 | component/function | `FinalInterviewAdminPanel` |
+| 908 | component/function | `AdminPanel` |
+| 909 | helper/function | `openTvMode` |
+| 1292 | component/function | `TVWinnersDisplay` |
+| 1405 | component/function | `TVTop3Display` |
+| 1447 | helper/function | `preFinalScore` |
 
 ## Suggested Split Order
 
-1. Extract print summary logic.
-2. Extract judge panels.
-3. Extract admin panels.
-4. Extract TV display panels.
-5. Extract API helper once dependencies are clear.
+1. Extract `Home` into a small landing component.
+2. Extract TV display panels.
+3. Extract judge panels.
+4. Extract admin panels.
+5. Extract API helper once panel dependencies are separated.
 
 ## Rule
 
