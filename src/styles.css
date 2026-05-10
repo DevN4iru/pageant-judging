@@ -4679,3 +4679,51 @@ body:has(.tv-stage) {
 }
 /* ===== KIRCH FINAL HEADER OVERLAP FIX END ===== */
 
+
+/* ===== KIRCH ADMIN SUMMARY PRINT PANEL START ===== */
+.summary-print-panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.95rem 1.05rem;
+  border: 1px solid rgba(168, 85, 247, 0.24);
+  background:
+    radial-gradient(circle at 0% 0%, rgba(250, 204, 21, 0.12), transparent 28%),
+    linear-gradient(135deg, rgba(255,255,255,0.88), rgba(250,245,255,0.82));
+}
+
+.summary-print-panel h3 {
+  margin: 0.15rem 0 0.2rem;
+  color: #24133f;
+}
+
+.summary-print-panel p {
+  margin: 0;
+  color: rgba(36, 19, 63, 0.68);
+  font-size: 0.85rem;
+}
+
+.summary-print-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.55rem;
+}
+
+.summary-print-actions .btn {
+  white-space: nowrap;
+}
+
+@media (max-width: 820px) {
+  .summary-print-panel {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .summary-print-actions {
+    justify-content: flex-start;
+  }
+}
+/* ===== KIRCH ADMIN SUMMARY PRINT PANEL END ===== */
+
