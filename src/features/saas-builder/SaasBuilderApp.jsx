@@ -314,6 +314,49 @@ export default function SaasBuilderApp() {
   }
 
 
+
+  function getBalancedWeights(criteria) {
+    const count = criteria.length;
+
+    if (count === 0) {
+      return [];
+    }
+
+    const base = Math.floor((1 / count) * 1000000) / 1000000;
+    const weights = Array(count).fill(base);
+    weights[count - 1] = Number((1 - base * (count - 1)).toFixed(6));
+
+    return weights;
+  }
+
+  async function autoBalanceRound(round, criteria = round.criteria) {
+    const weights = getBalancedWeights(criteria);
+
+    await Promise.all(
+      criteria.map((criterion, index) =>
+        updateCriterion(eventId, round.id, criterion.id, {
+          weight: weights[index]
+        })
+      )
+    );
+  }
+
+  async function autoBalanceRoundFromButton(round) {
+    setSaving(true);
+    setStatus('Auto-calculating weights...');
+
+    try {
+      await autoBalanceRound(round);
+      await refresh(eventId);
+      setStatus('Round weights auto-calculated to 100%');
+    } catch (err) {
+      setStatus(err.message);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+
   function updateCriterionForm(roundId, patch) {
     setCriterionForms((current) => ({
       ...current,
@@ -414,20 +457,26 @@ export default function SaasBuilderApp() {
 
   async function addCriterion(round) {
     const form = criterionForms[round.id] || {};
+    const nextCount = round.criteria.length + 1;
+    const initialWeight = form.weightPercent
+      ? Number(form.weightPercent) / 100
+      : 1 / nextCount;
 
     setSaving(true);
-    setStatus('Adding criterion...');
+    setStatus('Adding criterion and auto-calculating weights...');
 
     try {
-      await createCriterion(eventId, round.id, {
+      const result = await createCriterion(eventId, round.id, {
         name: form.name,
-        weight: Number(form.weightPercent) / 100,
-        sortOrder: Number(form.sortOrder || round.criteria.length + 1)
+        weight: initialWeight,
+        sortOrder: Number(form.sortOrder || nextCount)
       });
+
+      await autoBalanceRound(round, [...round.criteria, result.criterion]);
 
       updateCriterionForm(round.id, { name: '', weightPercent: '', sortOrder: '' });
       await refresh(eventId);
-      setStatus('Criterion added');
+      setStatus('Criterion added and weights auto-calculated to 100%');
     } catch (err) {
       setStatus(err.message);
     } finally {
@@ -646,6 +695,7 @@ export default function SaasBuilderApp() {
 
                     <div className="saas-builder-actions" style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                       <button type="button" onClick={() => renameRound(round)} style={{ border: 0, borderRadius: 10, padding: '8px 10px', fontWeight: 800 }}>Rename</button>
+                      <button type="button" onClick={() => autoBalanceRoundFromButton(round)} style={{ border: 0, borderRadius: 10, padding: '8px 10px', fontWeight: 800, background: '#22c55e', color: 'white' }}>Auto Calculate 100%</button>
                       <button type="button" onClick={() => toggleRoundLock(round)} style={{ border: 0, borderRadius: 10, padding: '8px 10px', fontWeight: 800 }}>{round.is_locked ? 'Unlock' : 'Lock'}</button>
                       <button type="button" onClick={() => removeRound(round)} style={{ border: 0, borderRadius: 10, padding: '8px 10px', fontWeight: 800, background: '#ef4444', color: 'white' }}>Delete</button>
                     </div>
