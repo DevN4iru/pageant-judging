@@ -140,7 +140,7 @@ function CriteriaOverview() {
       </div>
 
       <div className="final-interview-note">
-        <strong>Finals Night 2 for Top 3:</strong>
+        <strong>Finals for Top 3:</strong>
         <span> Beauty and Poise — 60% · Wit, Intelligence, and Quality of Answer — 40%</span>
       </div>
     </details>
@@ -629,7 +629,7 @@ function FinalInterviewJudgePanel({ judge }) {
 
   async function saveFinalScore(contestantId, criteriaKey, score) {
     if (isLocked) {
-      setStatus('Finals Night 2 scores are already locked.');
+      setStatus('Finals scores are already locked.');
       return;
     }
 
@@ -642,7 +642,7 @@ function FinalInterviewJudgePanel({ judge }) {
 
     if (score === '') return;
 
-    setStatus('Saving Finals Night 2 score...');
+    setStatus('Saving Finals score...');
 
     try {
       await api('/api/final/scores', {
@@ -657,7 +657,7 @@ function FinalInterviewJudgePanel({ judge }) {
 
       const currentStatus = await api(`/api/final/judge/${judge.id}/status`).catch(() => judgeStatus);
       setJudgeStatus(currentStatus);
-      setStatus('Finals Night 2 score saved ✓');
+      setStatus('Finals score saved ✓');
     } catch (err) {
       setStatus(err.message);
     }
@@ -665,18 +665,18 @@ function FinalInterviewJudgePanel({ judge }) {
 
   async function finalInterviewSubmit() {
     if (!canSubmit) {
-      setStatus(`Complete all Finals Night 2 scores first. ${filledFields}/${totalFields} fields filled.`);
+      setStatus(`Complete all Finals scores first. ${filledFields}/${totalFields} fields filled.`);
       return;
     }
 
     const yes = window.confirm(
-      'Submit Finals Night 2 scores? After this, your Finals Night 2 scores will be locked.'
+      'Submit Finals scores? After this, your Finals scores will be locked.'
     );
 
     if (!yes) return;
 
     setSubmitting(true);
-    setStatus('Submitting Finals Night 2 scores...');
+    setStatus('Submitting Finals scores...');
 
     try {
       const result = await api(`/api/final/judge/${judge.id}/submit`, {
@@ -689,7 +689,7 @@ function FinalInterviewJudgePanel({ judge }) {
       }));
 
       setJudgeStatus(currentStatus);
-      setStatus(`Finals Night 2 submitted and locked at ${formatDateTime(result.submitted_at)}.`);
+      setStatus(`Finals submitted and locked at ${formatDateTime(result.submitted_at)}.`);
     } catch (err) {
       setStatus(err.message);
     } finally {
@@ -700,8 +700,8 @@ function FinalInterviewJudgePanel({ judge }) {
   if (loading) {
     return (
       <section className="panel final-round-panel">
-        <p className="eyebrow">Finals Night 2</p>
-        <p>Loading Finals Night 2...</p>
+        <p className="eyebrow">Finals</p>
+        <p>Loading Finals...</p>
       </section>
     );
   }
@@ -710,8 +710,8 @@ function FinalInterviewJudgePanel({ judge }) {
     return (
       <section className="panel final-round-panel final-round-locked">
         <div>
-          <p className="eyebrow">Finals Night 2 · Locked</p>
-          <h2>Finals Night 2 opens after the Top 3 are official.</h2>
+          <p className="eyebrow">Finals · Locked</p>
+          <h2>Finals opens after the Top 3 are official.</h2>
           <p>
             Complete and final-submit all Preliminary Round scores first. Current Preliminary Round
             submissions: {readiness?.submitted_judges ?? 0}/{readiness?.total_judges ?? 0} judges.
@@ -726,7 +726,7 @@ function FinalInterviewJudgePanel({ judge }) {
     <section className="panel final-round-panel">
       <div className="final-round-head">
         <div>
-          <p className="eyebrow">Finals Night 2 · Top 3 Only</p>
+          <p className="eyebrow">Finals · Top 3 Only</p>
           <h2>Decisive Final Round</h2>
           <p>
             Final ranking is based on Beauty and Poise 60% plus Wit, Intelligence,
@@ -744,7 +744,7 @@ function FinalInterviewJudgePanel({ judge }) {
 
         <div className="final-submit-card">
           {isLocked ? (
-            <div className="locked-badge">🔒 Finals Night 2 Locked</div>
+            <div className="locked-badge">🔒 Finals Locked</div>
           ) : (
             <>
               <button
@@ -752,9 +752,9 @@ function FinalInterviewJudgePanel({ judge }) {
                 onClick={finalInterviewSubmit}
                 disabled={!canSubmit || submitting}
               >
-                {submitting ? 'Submitting...' : 'Submit Finals Night 2'}
+                {submitting ? 'Submitting...' : 'Submit Finals'}
               </button>
-              <p className="warning-note">Locks Finals Night 2 scores only.</p>
+              <p className="warning-note">Locks Finals scores only.</p>
             </>
           )}
         </div>
@@ -904,10 +904,10 @@ function FinalInterviewAdminPanel() {
       <section className="panel table-panel final-results-panel final-round-locked">
         <div className="table-title">
           <div>
-            <p className="eyebrow">Finals Night 2 Results</p>
+            <p className="eyebrow">Finals Results</p>
             <h3>Waiting for official Top 3</h3>
             <p>
-              Finals Night 2 results are locked until all Preliminary Round judges final-submit.
+              Finals results are locked until all Preliminary Round judges final-submit.
               Current Preliminary Round submissions: {finalReadiness.submitted_judges}/{finalReadiness.total_judges} judges.
             </p>
           </div>
@@ -921,9 +921,9 @@ function FinalInterviewAdminPanel() {
       {winner && (
         <section className="panel final-round-leader-card">
           <div>
-            <p className="eyebrow">Finals Night 2 Leader</p>
+            <p className="eyebrow">Finals Leader</p>
             <h2>#{winner.number} {winner.name}</h2>
-            <p>Highest score after Finals Night 2</p>
+            <p>Highest score after Finals</p>
           </div>
           <strong>{Number(winner.final_score || 0).toFixed(2)}</strong>
         </section>
@@ -932,10 +932,10 @@ function FinalInterviewAdminPanel() {
       <section className="panel table-panel final-results-panel">
       <div className="table-title">
         <div>
-          <p className="eyebrow">Finals Night 2 Results</p>
-          <h3>Finals Night 2 Winners</h3>
+          <p className="eyebrow">Finals Results</p>
+          <h3>Finals Winners</h3>
           <p>
-            {loading ? 'Loading final round...' : `${lockedJudges} of ${judgeStatuses.length} judges submitted Finals Night 2 scores`}
+            {loading ? 'Loading final round...' : `${lockedJudges} of ${judgeStatuses.length} judges submitted Finals scores`}
             {lastUpdated ? ` · Updated ${lastUpdated}` : ''}
           </p>
           {loadWarning && <p className="warning-note">Warning: {loadWarning}</p>}
@@ -991,7 +991,7 @@ function FinalInterviewAdminPanel() {
 
             {ranked.length === 0 && (
               <tr>
-                <td colSpan="7">No Finals Night 2 data yet.</td>
+                <td colSpan="7">No Finals data yet.</td>
               </tr>
             )}
           </tbody>
@@ -1024,7 +1024,7 @@ function FinalInterviewAdminPanel() {
 
               {details.length === 0 && (
                 <tr>
-                  <td colSpan="5">No Finals Night 2 details yet.</td>
+                  <td colSpan="5">No Finals details yet.</td>
                 </tr>
               )}
             </tbody>
@@ -1037,9 +1037,9 @@ function FinalInterviewAdminPanel() {
         <section className="panel table-panel final-status-panel">
           <div className="table-title">
             <div>
-              <p className="eyebrow">Finals Night 2 Completion</p>
-              <h3>Judge Submission Status · Finals Night 2</h3>
-              <p>{lockedJudges} of {judgeStatuses.length} judges submitted Finals Night 2 scores</p>
+              <p className="eyebrow">Finals Completion</p>
+              <h3>Judge Submission Status · Finals</h3>
+              <p>{lockedJudges} of {judgeStatuses.length} judges submitted Finals scores</p>
             </div>
           </div>
 
@@ -1196,7 +1196,7 @@ function AdminPanel() {
         <div>
           <p className="eyebrow">Admin Control</p>
           <h2>Admin Control · Live Tabulation</h2>
-          <p>Admin control screen. Preliminary Round chooses the Top 3 Finalists. Finals Night 2 decides the winners.</p>
+          <p>Admin control screen. Preliminary Round chooses the Top 3 Finalists. Finals decides the winners.</p>
           {loadWarning && <p className="warning-note">Warning: {loadWarning}</p>}
         </div>
 
@@ -1226,7 +1226,7 @@ function AdminPanel() {
           </button>
 
           <button className="btn btn-dark" onClick={() => openTvMode('final')}>
-            TV Finals Night 2
+            TV Finals
           </button>
 
           {declaredWinner && (
@@ -1323,7 +1323,7 @@ function AdminPanel() {
           <div>
             <p className="eyebrow">Preliminary Round Results</p>
             <h3>Preliminary Round Ranking · Top 3 Finalists</h3>
-            <p>{ranked.length} candidates · The Top 3 advance to Finals Night 2</p>
+            <p>{ranked.length} candidates · The Top 3 advance to Finals</p>
           </div>
         </div>
 
@@ -1610,13 +1610,13 @@ function TVWinnersDisplay() {
           <div>
             <p className="eyebrow">Official Final Results</p>
             <h1>Miss Poblacion Occidental 2026</h1>
-            <p>Coronation results will appear once all Finals Night 2 scores are locked.</p>
+            <p>Coronation results will appear once all Finals scores are locked.</p>
           </div>
         </section>
 
         <section className="tv-wait-card">
           <h2>Waiting for coronation results</h2>
-          <p>{error || 'Finals Night 2 submissions are not yet complete.'}</p>
+          <p>{error || 'Finals submissions are not yet complete.'}</p>
         </section>
 
         <TVCreditFooter
@@ -1639,7 +1639,7 @@ function TVWinnersDisplay() {
       </section>
 
       <section className="tv-note-strip">
-        <strong>TV Display · Finals Night 2 Coronation</strong>
+        <strong>TV Display · Finals Coronation</strong>
         <span>Official display for the coronation results.</span>
       </section>
 
@@ -1661,7 +1661,7 @@ function TVWinnersDisplay() {
       </section>
 
       <TVCreditFooter
-        leftLabel="Finals Night 2 results confirmed"
+        leftLabel="Finals results confirmed"
         rightLabel={lastUpdated ? `Updated ${lastUpdated}` : ''}
       />
     </main>
@@ -1725,7 +1725,7 @@ function TVTop3Display() {
           <div>
             <p className="eyebrow">Official Top 3 Finalists</p>
             <h1>Miss Poblacion Occidental 2026</h1>
-            <p>Official display for the candidates advancing to Finals Night 2.</p>
+            <p>Official display for the candidates advancing to Finals.</p>
           </div>
         </section>
 
@@ -1749,13 +1749,13 @@ function TVTop3Display() {
         <div>
           <p className="eyebrow">Official Top 3 Finalists</p>
           <h1>Miss Poblacion Occidental 2026</h1>
-          <p>These candidates advance to Finals Night 2.</p>
+          <p>These candidates advance to Finals.</p>
         </div>
       </section>
 
       <section className="tv-note-strip">
         <strong>TV Display · Top 3 Finalists</strong>
-        <span>These candidates advance to Finals Night 2.</span>
+        <span>These candidates advance to Finals.</span>
       </section>
 
       <section className="tv-winner-card tv-top3-card">

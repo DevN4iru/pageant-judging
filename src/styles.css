@@ -2643,7 +2643,7 @@ footer:not(.tv-credit-footer) {
   order: 90;
 }
 
-/* Finals Night 2 Leader: clean hero */
+/* Finals Leader: clean hero */
 .final-round-leader-card {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -2686,7 +2686,7 @@ footer:not(.tv-credit-footer) {
   font-weight: 1000;
 }
 
-/* Finals Night 2 results: table only, no extra hero feel */
+/* Finals results: table only, no extra hero feel */
 .final-results-panel {
   border: 1px solid rgba(219, 39, 119, 0.20) !important;
   border-left: 6px solid rgba(219, 39, 119, 0.58) !important;
