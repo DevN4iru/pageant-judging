@@ -20,79 +20,11 @@ import {
   updateRound
 } from './saasBuilderApi.js';
 import './saasBuilder.css';
+import { card, input, label } from './saasBuilderStyles.js';
+import Stat from './components/Stat.jsx';
+import Section from './components/Section.jsx';
+import MiniTable from './components/MiniTable.jsx';
 
-const card = {
-  border: '1px solid rgba(148, 163, 184, 0.22)',
-  background: 'rgba(15, 23, 42, 0.72)',
-  borderRadius: 22,
-  padding: 20,
-  boxShadow: '0 22px 70px rgba(0,0,0,0.25)'
-};
-
-const input = {
-  width: '100%',
-  border: '1px solid rgba(148, 163, 184, 0.28)',
-  borderRadius: 14,
-  padding: '12px 14px',
-  background: 'rgba(2, 6, 23, 0.66)',
-  color: '#f8fafc',
-  outline: 'none'
-};
-
-const label = {
-  display: 'grid',
-  gap: 8,
-  color: '#cbd5e1',
-  fontSize: 13,
-  fontWeight: 700
-};
-
-function Stat({ label, value }) {
-  return (
-    <div style={{ ...card, padding: 16 }}>
-      <div style={{ color: '#94a3b8', fontSize: 12, fontWeight: 800, textTransform: 'uppercase' }}>{label}</div>
-      <div style={{ color: '#f8fafc', fontSize: 28, fontWeight: 900, marginTop: 6 }}>{value}</div>
-    </div>
-  );
-}
-
-function Section({ title, children }) {
-  return (
-    <section className="saas-builder-section" style={card}>
-      <h2 style={{ margin: '0 0 16px', color: '#f8fafc', fontSize: 22 }}>{title}</h2>
-      {children}
-    </section>
-  );
-}
-
-function MiniTable({ columns, rows }) {
-  return (
-    <div className="saas-builder-table-wrap" style={{ overflowX: 'auto' }}>
-      <table className="saas-builder-table" style={{ width: '100%', borderCollapse: 'collapse', color: '#e2e8f0' }}>
-        <thead>
-          <tr>
-            {columns.map((column) => (
-              <th key={column.key} style={{ textAlign: 'left', padding: '10px 8px', color: '#94a3b8', fontSize: 12 }}>
-                {column.label}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((row, index) => (
-            <tr key={row.id || index} style={{ borderTop: '1px solid rgba(148, 163, 184, 0.16)' }}>
-              {columns.map((column) => (
-                <td key={column.key} style={{ padding: '12px 8px', fontSize: 14 }}>
-                  {column.render ? column.render(row) : row[column.key]}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
 
 export default function SaasBuilderApp() {
   const [templates, setTemplates] = useState([]);
