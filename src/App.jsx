@@ -391,93 +391,139 @@ function AdminSummaryPrintButtons() {
           <meta charset="utf-8" />
           <title>${esc(title)}</title>
           <style>
-            @page { size: A4 landscape; margin: 10mm; }
-            * { box-sizing: border-box; }
+            @page {
+              size: A4 landscape;
+              margin: 8mm;
+            }
+
+            * {
+              box-sizing: border-box;
+            }
+
+            html,
             body {
               margin: 0;
+              padding: 0;
               font-family: Arial, Helvetica, sans-serif;
               color: #1f1235;
               background: #ffffff;
-              font-size: 10px;
-              line-height: 1.35;
-            }
-            .cover {
-              border: 2px solid #6d28d9;
-              border-radius: 16px;
-              padding: 14px 18px;
-              margin-bottom: 12px;
-              background: linear-gradient(135deg, #fff7ed, #f5f3ff);
-            }
-            .eyebrow {
-              margin: 0 0 3px;
-              color: #7c3aed;
-              font-weight: 800;
-              letter-spacing: 0.16em;
-              text-transform: uppercase;
               font-size: 9px;
+              line-height: 1.22;
             }
-            h1 {
-              margin: 0;
-              font-size: 23px;
-              letter-spacing: -0.03em;
+
+            body {
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
             }
-            h2 {
-              margin: 12px 0 5px;
-              font-size: 15px;
-              color: #4c1d95;
-              border-bottom: 1px solid #ddd6fe;
-              padding-bottom: 4px;
-              page-break-after: avoid;
-            }
-            h3 {
-              margin: 9px 0 4px;
-              font-size: 11px;
-              color: #581c87;
-              page-break-after: avoid;
-            }
-            p {
+
+            .cover {
+              border: 1.4px solid #6d28d9;
+              border-radius: 8px;
+              padding: 7px 10px;
               margin: 0 0 6px;
+              background: #f7f2ff;
             }
+
+            .eyebrow {
+              margin: 0 0 2px;
+              color: #6d28d9;
+              font-weight: 800;
+              letter-spacing: 0.12em;
+              text-transform: uppercase;
+              font-size: 7px;
+            }
+
+            h1 {
+              margin: 0 0 2px;
+              font-size: 16px;
+              line-height: 1.05;
+              letter-spacing: -0.02em;
+            }
+
+            h2 {
+              margin: 7px 0 3px;
+              font-size: 11px;
+              color: #4c1d95;
+              border-bottom: 0.6px solid #ddd6fe;
+              padding-bottom: 2px;
+            }
+
+            h3 {
+              margin: 5px 0 2px;
+              font-size: 9px;
+              color: #581c87;
+            }
+
+            p {
+              margin: 0 0 3px;
+            }
+
             .formula {
-              padding: 7px 9px;
-              border-radius: 10px;
-              border: 1px solid #fde68a;
+              padding: 4px 5px;
+              border-radius: 5px;
+              border: 0.6px solid #fde68a;
               background: #fffbeb;
               font-weight: 700;
               color: #78350f;
+              margin-bottom: 4px;
             }
+
             table {
               width: 100%;
               border-collapse: collapse;
-              margin: 5px 0 9px;
-              page-break-inside: avoid;
+              margin: 3px 0 5px;
+              page-break-inside: auto;
             }
-            th, td {
-              border: 1px solid #d8b4fe;
-              padding: 4px 5px;
+
+            thead {
+              display: table-header-group;
+            }
+
+            tr {
+              page-break-inside: avoid;
+              page-break-after: auto;
+            }
+
+            th,
+            td {
+              border: 0.5px solid #d8b4fe;
+              padding: 2.2px 3px;
               vertical-align: top;
               text-align: left;
             }
+
             th {
               background: #ede9fe;
               color: #2e1065;
               font-weight: 800;
               text-transform: uppercase;
-              font-size: 8px;
-              letter-spacing: 0.04em;
+              font-size: 6.6px;
+              letter-spacing: 0.03em;
             }
+
             td {
-              font-size: 9px;
+              font-size: 7.4px;
             }
+
             section {
-              page-break-inside: avoid;
+              margin: 0;
+              padding: 0;
+              page-break-inside: auto;
             }
+
             .footer {
-              margin-top: 12px;
-              padding-top: 7px;
-              border-top: 1px solid #ddd6fe;
+              margin-top: 6px;
+              padding-top: 4px;
+              border-top: 0.6px solid #ddd6fe;
               color: #6b5875;
-              font-size: 8px;
+              font-size: 7px;
+            }
+
+            @media screen {
+              body {
+                padding: 10px;
+                background: #f4f0f7;
+              }
             }
           </style>
         </head>
