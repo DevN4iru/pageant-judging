@@ -6,59 +6,55 @@ Purpose: split the remaining JSX god file without rewriting scoring logic.
 
 ## File Size
 
-- `LegacyPageantApp.jsx`: 2299 lines
+- `LegacyPageantApp.jsx`: 2169 lines
 
-## Import Lines
+## Extracted So Far
 
-- Import block starts near line 1 and ends near line 1.
+- `utils/session.js`: `getSavedJudge`
+- `utils/formatting.js`: `formatDateTime`
+- `components/CriteriaGuide.jsx`: `CRITERIA_GUIDE`, `getCriteriaGuide`, `CriteriaNote`, `CriteriaOverview`
 
 ## Top-Level Components and Functions
 
 | Line | Type | Name |
 |---:|---|---|
-| 18 | helper/function | `getSavedJudge` |
-| 26 | helper/function | `formatDateTime` |
-| 39 | component/const | `CRITERIA_GUIDE` |
-| 92 | helper/function | `getCriteriaGuide` |
-| 100 | component/function | `CriteriaNote` |
-| 120 | component/function | `CriteriaOverview` |
-| 151 | component/function | `AdminSummaryPrintButtons` |
-| 154 | helper/function | `esc` |
-| 164 | helper/function | `score` |
-| 169 | helper/function | `percent` |
-| 174 | helper/function | `table` |
-| 212 | helper/function | `preliminarySection` |
-| 269 | helper/function | `finalsSection` |
-| 325 | helper/function | `programSection` |
-| 373 | helper/function | `buildPrintableHtml` |
-| 619 | helper/function | `logout` |
-| 701 | component/function | `Home` |
-| 756 | component/function | `LoginCard` |
-| 806 | component/function | `JudgePanel` |
-| 849 | helper/function | `candidateSubtotal` |
-| 1031 | component/function | `FinalInterviewJudgePanel` |
-| 1076 | helper/function | `candidateFinalSubtotal` |
-| 1279 | component/function | `FinalInterviewAdminPanel` |
-| 1538 | component/function | `AdminPanel` |
-| 1539 | helper/function | `openTvMode` |
-| 1922 | component/function | `WinnerAnnouncement` |
-| 1948 | component/function | `DeveloperCredits` |
-| 1990 | component/function | `TVCreditFooter` |
-| 2015 | component/function | `TVWinnersDisplay` |
-| 2128 | component/function | `TVTop3Display` |
-| 2170 | helper/function | `preFinalScore` |
-| 2240 | component/function | `SiteFooter` |
-| 2267 | component/function | `ErrorPanel` |
-| 2290 | component/function | `LoadingPanel` |
+| 21 | component/function | `AdminSummaryPrintButtons` |
+| 24 | helper/function | `esc` |
+| 34 | helper/function | `score` |
+| 39 | helper/function | `percent` |
+| 44 | helper/function | `table` |
+| 82 | helper/function | `preliminarySection` |
+| 139 | helper/function | `finalsSection` |
+| 195 | helper/function | `programSection` |
+| 243 | helper/function | `buildPrintableHtml` |
+| 489 | helper/function | `logout` |
+| 571 | component/function | `Home` |
+| 626 | component/function | `LoginCard` |
+| 676 | component/function | `JudgePanel` |
+| 719 | helper/function | `candidateSubtotal` |
+| 901 | component/function | `FinalInterviewJudgePanel` |
+| 946 | helper/function | `candidateFinalSubtotal` |
+| 1149 | component/function | `FinalInterviewAdminPanel` |
+| 1408 | component/function | `AdminPanel` |
+| 1409 | helper/function | `openTvMode` |
+| 1792 | component/function | `WinnerAnnouncement` |
+| 1818 | component/function | `DeveloperCredits` |
+| 1860 | component/function | `TVCreditFooter` |
+| 1885 | component/function | `TVWinnersDisplay` |
+| 1998 | component/function | `TVTop3Display` |
+| 2040 | helper/function | `preFinalScore` |
+| 2110 | component/function | `SiteFooter` |
+| 2137 | component/function | `ErrorPanel` |
+| 2160 | component/function | `LoadingPanel` |
 
 ## Suggested Split Order
 
-1. Extract pure helpers first: formatting, scoring display helpers, API helpers.
-2. Extract small shared UI components: login, loading, error, footer, header.
+1. Extract pure helpers first.
+2. Extract small shared UI components.
 3. Extract judge panels.
 4. Extract admin panels.
 5. Extract TV display panels.
-6. Extract PDF/print summary logic last because it usually touches many helpers.
+6. Extract PDF/print summary logic last.
 
 ## Rule
 
