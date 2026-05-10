@@ -8,10 +8,6 @@ import {
   deleteCriterion,
   deleteJudge,
   deleteRound,
-  getAuditLogs,
-  getBuilder,
-  getEvents,
-  getTemplates,
   setJudgePin,
   updateContestant,
   updateCriterion,
@@ -20,10 +16,8 @@ import {
   updateRound
 } from './saasBuilderApi.js';
 import './saasBuilder.css';
-import { card, input, label } from './saasBuilderStyles.js';
+import { card } from './saasBuilderStyles.js';
 import Stat from './components/Stat.jsx';
-import Section from './components/Section.jsx';
-import MiniTable from './components/MiniTable.jsx';
 import EventSettingsPanel from './panels/EventSettingsPanel.jsx';
 import ContestantsPanel from './panels/ContestantsPanel.jsx';
 import JudgesPanel from './panels/JudgesPanel.jsx';
@@ -58,7 +52,6 @@ export default function SaasBuilderApp() {
     scoreCarryMode: 'qualifier_only'
   });
   const [criterionForms, setCriterionForms] = useState({});
-  const [status, setStatus] = useState('Loading builder...');
   const [saving, setSaving] = useState(false);
 
   async function saveSettings() {
