@@ -220,4 +220,332 @@ router.get('/events/:eventId/audit-logs', async (req, res) => {
 });
 
 
+router.get('/events/:eventId/monitor', async (req, res) => {
+  try {
+    const { eventId } = req.params;
+
+    const event = await pool.query(`
+      SELECT id, title, status, scoring_started_at, finalized_at, advancing_count, score_carry_mode
+      FROM events
+      WHERE id = $1
+    `, [eventId]);
+
+    if (event.rows.length === 0) {
+      return res.status(404).json({ error: 'Event not found' });
+    }
+
+    const counts = await pool.query(`
+      SELECT
+        (SELECT COUNT(*)::int FROM event_contestants WHERE event_id = $1 AND is_active = TRUE) AS active_contestants,
+        (SELECT COUNT(*)::int FROM event_judges WHERE event_id = $1 AND is_enabled = TRUE AND removed_at IS NULL) AS enabled_judges,
+        (SELECT COUNT(*)::int FROM event_rounds WHERE event_id = $1) AS rounds,
+        (SELECT COUNT(*)::int FROM event_criteria WHERE event_id = $1 AND is_active = TRUE) AS active_criteria,
+        (SELECT COUNT(*)::int FROM event_scores WHERE event_id = $1) AS score_rows,
+        (SELECT COUNT(*)::int FROM event_submissions WHERE event_id = $1) AS submissions
+    `, [eventId]);
+
+    const rounds = await pool.query(`
+      SELECT
+        r.id,
+        r.name,
+        r.sort_order,
+        r.is_locked,
+        r.locked_at,
+        r.unlocked_at,
+        COUNT(DISTINCT c.id)::int AS criteria_count,
+        COUNT(DISTINCT s.id)::int AS submission_count,
+        COUNT(DISTINCT sc.id)::int AS score_count
+      FROM event_rounds r
+      LEFT JOIN event_criteria c ON c.round_id = r.id AND c.is_active = TRUE
+      LEFT JOIN event_submissions s ON s.round_id = r.id
+      LEFT JOIN event_scores sc ON sc.round_id = r.id
+      WHERE r.event_id = $1
+      GROUP BY r.id
+      ORDER BY r.sort_order ASC, r.id ASC
+    `, [eventId]);
+
+    res.json({
+      event: event.rows[0],
+      counts: counts.rows[0],
+      rounds: rounds.rows
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/events/:eventId/result-snapshots', async (req, res) => {
+  try {
+    const { eventId } = req.params;
+
+    const result = await pool.query(`
+      SELECT id, event_id, round_id, snapshot_type, title, data, created_at
+      FROM result_snapshots
+      WHERE event_id = $1
+      ORDER BY created_at DESC, id DESC
+      LIMIT 50
+    `, [eventId]);
+
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.post('/events/:eventId/result-snapshots', async (req, res) => {
+  const client = await pool.connect();
+
+  try {
+    const { eventId } = req.params;
+    const { title, snapshotType, data } = req.body;
+
+    await client.query('BEGIN');
+
+    const event = await client.query('SELECT * FROM events WHERE id = $1', [eventId]);
+
+    if (event.rows.length === 0) {
+      await client.query('ROLLBACK');
+      return res.status(404).json({ error: 'Event not found' });
+    }
+
+    const created = await client.query(`
+      INSERT INTO result_snapshots (event_id, snapshot_type, title, data)
+      VALUES ($1, $2, $3, $4)
+      RETURNING *
+    `, [
+      eventId,
+      snapshotType || 'admin_snapshot',
+      title || 'Admin Result Snapshot',
+      JSON.stringify(data || {})
+    ]);
+
+    await client.query(`
+      INSERT INTO audit_logs (
+        organization_id,
+        event_id,
+        actor_role,
+        action_type,
+        target_type,
+        target_id,
+        new_value,
+        reason
+      )
+      VALUES ($1, $2, 'admin', 'result_snapshot_created', 'result_snapshot', $3, $4, $5)
+    `, [
+      event.rows[0].organization_id,
+      eventId,
+      String(created.rows[0].id),
+      JSON.stringify(created.rows[0]),
+      'Created result snapshot through SaaS builder.'
+    ]);
+
+    await client.query('COMMIT');
+
+    res.json({ ok: true, snapshot: created.rows[0] });
+  } catch (err) {
+    await client.query('ROLLBACK').catch(() => {});
+    res.status(500).json({ error: err.message });
+  } finally {
+    client.release();
+  }
+});
+
+router.get('/events/:eventId/display-settings', async (req, res) => {
+  try {
+    const { eventId } = req.params;
+
+    const result = await pool.query(`
+      SELECT *
+      FROM display_settings
+      WHERE event_id = $1
+    `, [eventId]);
+
+    if (result.rows.length === 0) {
+      return res.json({
+        event_id: eventId,
+        tv_title: '',
+        show_logos: true,
+        show_developer_credits: true,
+        theme_color: '',
+        settings: {}
+      });
+    }
+
+    res.json(result.rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.patch('/events/:eventId/display-settings', async (req, res) => {
+  const client = await pool.connect();
+
+  try {
+    const { eventId } = req.params;
+    const { tvTitle, showLogos, showDeveloperCredits, themeColor, settings } = req.body;
+
+    await client.query('BEGIN');
+
+    const event = await client.query('SELECT * FROM events WHERE id = $1', [eventId]);
+
+    if (event.rows.length === 0) {
+      await client.query('ROLLBACK');
+      return res.status(404).json({ error: 'Event not found' });
+    }
+
+    const updated = await client.query(`
+      INSERT INTO display_settings (
+        event_id,
+        tv_title,
+        show_logos,
+        show_developer_credits,
+        theme_color,
+        settings,
+        updated_at
+      )
+      VALUES ($1, $2, COALESCE($3, TRUE), COALESCE($4, TRUE), $5, COALESCE($6, '{}'::jsonb), NOW())
+      ON CONFLICT (event_id)
+      DO UPDATE SET
+        tv_title = COALESCE(EXCLUDED.tv_title, display_settings.tv_title),
+        show_logos = EXCLUDED.show_logos,
+        show_developer_credits = EXCLUDED.show_developer_credits,
+        theme_color = COALESCE(EXCLUDED.theme_color, display_settings.theme_color),
+        settings = COALESCE(EXCLUDED.settings, display_settings.settings),
+        updated_at = NOW()
+      RETURNING *
+    `, [
+      eventId,
+      tvTitle ?? null,
+      showLogos,
+      showDeveloperCredits,
+      themeColor ?? null,
+      settings ? JSON.stringify(settings) : null
+    ]);
+
+    await client.query(`
+      UPDATE events
+      SET
+        tv_display_title = COALESCE($2, tv_display_title),
+        theme_color = COALESCE($3, theme_color),
+        updated_at = NOW()
+      WHERE id = $1
+    `, [eventId, tvTitle ?? null, themeColor ?? null]);
+
+    await client.query(`
+      INSERT INTO audit_logs (
+        organization_id,
+        event_id,
+        actor_role,
+        action_type,
+        target_type,
+        target_id,
+        new_value,
+        reason
+      )
+      VALUES ($1, $2, 'admin', 'display_settings_updated', 'display_settings', $3, $4, $5)
+    `, [
+      event.rows[0].organization_id,
+      eventId,
+      String(updated.rows[0].id),
+      JSON.stringify(updated.rows[0]),
+      'Updated TV display settings through SaaS builder.'
+    ]);
+
+    await client.query('COMMIT');
+
+    res.json({ ok: true, displaySettings: updated.rows[0] });
+  } catch (err) {
+    await client.query('ROLLBACK').catch(() => {});
+    res.status(500).json({ error: err.message });
+  } finally {
+    client.release();
+  }
+});
+
+router.get('/events/:eventId/pdf-exports', async (req, res) => {
+  try {
+    const { eventId } = req.params;
+
+    const result = await pool.query(`
+      SELECT *
+      FROM pdf_exports
+      WHERE event_id = $1
+      ORDER BY generated_at DESC, id DESC
+      LIMIT 50
+    `, [eventId]);
+
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.post('/events/:eventId/pdf-exports', async (req, res) => {
+  const client = await pool.connect();
+
+  try {
+    const { eventId } = req.params;
+    const { exportType, title, footerText, preparedByText, metadata } = req.body;
+
+    await client.query('BEGIN');
+
+    const event = await client.query('SELECT * FROM events WHERE id = $1', [eventId]);
+
+    if (event.rows.length === 0) {
+      await client.query('ROLLBACK');
+      return res.status(404).json({ error: 'Event not found' });
+    }
+
+    const created = await client.query(`
+      INSERT INTO pdf_exports (
+        event_id,
+        export_type,
+        title,
+        footer_text,
+        prepared_by_text,
+        metadata
+      )
+      VALUES ($1, $2, $3, $4, $5, $6)
+      RETURNING *
+    `, [
+      eventId,
+      exportType || 'builder_export',
+      title || `${event.rows[0].title} Export`,
+      footerText || event.rows[0].pdf_footer || '',
+      preparedByText || event.rows[0].prepared_by_text || '',
+      JSON.stringify(metadata || {})
+    ]);
+
+    await client.query(`
+      INSERT INTO audit_logs (
+        organization_id,
+        event_id,
+        actor_role,
+        action_type,
+        target_type,
+        target_id,
+        new_value,
+        reason
+      )
+      VALUES ($1, $2, 'admin', 'pdf_export_logged', 'pdf_export', $3, $4, $5)
+    `, [
+      event.rows[0].organization_id,
+      eventId,
+      String(created.rows[0].id),
+      JSON.stringify(created.rows[0]),
+      'PDF/export generation was logged through SaaS builder.'
+    ]);
+
+    await client.query('COMMIT');
+
+    res.json({ ok: true, export: created.rows[0] });
+  } catch (err) {
+    await client.query('ROLLBACK').catch(() => {});
+    res.status(500).json({ error: err.message });
+  } finally {
+    client.release();
+  }
+});
+
+
 module.exports = router;

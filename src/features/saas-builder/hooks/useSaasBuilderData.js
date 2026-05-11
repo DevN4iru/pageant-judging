@@ -2,7 +2,11 @@ import { useEffect, useMemo, useState } from 'react';
 import {
   getAuditLogs,
   getBuilder,
+  getDisplaySettings,
   getEvents,
+  getPdfExports,
+  getResultSnapshots,
+  getScoringMonitor,
   getTemplates
 } from '../saasBuilderApi.js';
 
@@ -11,6 +15,10 @@ export default function useSaasBuilderData(initialEventId = '1') {
   const [events, setEvents] = useState([]);
   const [builder, setBuilder] = useState(null);
   const [auditLogs, setAuditLogs] = useState([]);
+  const [monitor, setMonitor] = useState(null);
+  const [resultSnapshots, setResultSnapshots] = useState([]);
+  const [displaySettings, setDisplaySettings] = useState({});
+  const [pdfExports, setPdfExports] = useState([]);
   const [eventId, setEventId] = useState(initialEventId);
   const [settings, setSettings] = useState({});
   const [status, setStatus] = useState('Loading builder...');
@@ -18,17 +26,31 @@ export default function useSaasBuilderData(initialEventId = '1') {
   async function refresh(selectedEventId = eventId) {
     setStatus('Loading builder...');
 
-    const [templateData, eventData, builderData, auditData] = await Promise.all([
+    const [templateData, eventData, builderData, auditData, monitorData, resultData, displayData, exportData] = await Promise.all([
       getTemplates(),
       getEvents(),
       getBuilder(selectedEventId),
-      getAuditLogs(selectedEventId)
+      getAuditLogs(selectedEventId),
+      getScoringMonitor(selectedEventId),
+      getResultSnapshots(selectedEventId),
+      getDisplaySettings(selectedEventId),
+      getPdfExports(selectedEventId)
     ]);
 
     setTemplates(templateData);
     setEvents(eventData);
     setBuilder(builderData);
     setAuditLogs(auditData);
+    setMonitor(monitorData);
+    setResultSnapshots(resultData);
+    setDisplaySettings({
+      tvTitle: displayData.tv_title || '',
+      showLogos: displayData.show_logos !== false,
+      showDeveloperCredits: displayData.show_developer_credits !== false,
+      themeColor: displayData.theme_color || '',
+      settings: displayData.settings || {}
+    });
+    setPdfExports(exportData);
     setSettings({
       title: builderData.event.title || '',
       organizationName: builderData.event.organization_name || '',
@@ -60,6 +82,11 @@ export default function useSaasBuilderData(initialEventId = '1') {
     events,
     builder,
     auditLogs,
+    monitor,
+    resultSnapshots,
+    displaySettings,
+    setDisplaySettings,
+    pdfExports,
     eventId,
     setEventId,
     settings,

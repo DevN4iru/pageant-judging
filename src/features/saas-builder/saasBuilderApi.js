@@ -125,3 +125,40 @@ export function deleteCriterion(eventId, roundId, criterionId) {
     method: 'DELETE'
   });
 }
+
+export function getScoringMonitor(eventId) {
+  return request(`/api/saas/events/${eventId}/monitor`);
+}
+
+export function getResultSnapshots(eventId) {
+  return request(`/api/saas/events/${eventId}/result-snapshots`);
+}
+
+export function createResultSnapshot(eventId, payload) {
+  return request(`/api/saas/events/${eventId}/result-snapshots`, {
+    method: 'POST',
+    body: JSON.stringify(payload)
+  });
+}
+
+export function getDisplaySettings(eventId) {
+  return request(`/api/saas/events/${eventId}/display-settings`);
+}
+
+export function updateDisplaySettings(eventId, payload) {
+  return request(`/api/saas/events/${eventId}/display-settings`, {
+    method: 'PATCH',
+    body: JSON.stringify(payload)
+  });
+}
+
+export function getPdfExports(eventId) {
+  return request(`/api/saas/events/${eventId}/pdf-exports`);
+}
+
+export function createPdfExport(eventId, payload) {
+  return request(`/api/saas/events/${eventId}/pdf-exports`, {
+    method: 'POST',
+    body: JSON.stringify(payload)
+  });
+}

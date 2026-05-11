@@ -174,3 +174,14 @@
     margin-top: 0 !important;
   }
 }
+
+@media (max-width: 700px) {
+  .saas-builder-nav {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+  }
+
+  .saas-builder-nav button {
+    width: 100%;
+  }
+}
