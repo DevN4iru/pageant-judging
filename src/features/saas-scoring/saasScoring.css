@@ -1,0 +1,192 @@
+.saas-scoring-shell {
+  min-height: 100vh;
+  padding: 28px;
+  color: #f8fafc;
+  background: linear-gradient(135deg, #020617, #111827 45%, #3b0764);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.saas-scoring-login,
+.saas-scoring-header,
+.saas-scoring-card {
+  max-width: 1280px;
+  margin: 0 auto 18px;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  background: rgba(15, 23, 42, 0.76);
+  border-radius: 24px;
+  padding: 22px;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.25);
+}
+
+.saas-scoring-login {
+  display: grid;
+  gap: 20px;
+  max-width: 560px;
+  margin-top: 8vh;
+}
+
+.saas-scoring-eyebrow {
+  color: #f9a8d4;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.saas-scoring-login h1,
+.saas-scoring-header h1,
+.saas-scoring-card h2 {
+  margin: 8px 0;
+}
+
+.saas-scoring-login p,
+.saas-scoring-header p,
+.saas-scoring-card p,
+.saas-scoring-status {
+  color: #cbd5e1;
+}
+
+.saas-scoring-form {
+  display: grid;
+  gap: 14px;
+}
+
+.saas-scoring-form label {
+  display: grid;
+  gap: 8px;
+  color: #cbd5e1;
+  font-weight: 800;
+}
+
+.saas-scoring-form input,
+.saas-scoring-form select,
+.saas-scoring-table input {
+  width: 100%;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  border-radius: 14px;
+  padding: 12px 14px;
+  background: rgba(2, 6, 23, 0.72);
+  color: #f8fafc;
+  outline: none;
+}
+
+.saas-scoring-form button,
+.saas-scoring-header-actions button,
+.saas-scoring-round-actions button,
+.saas-scoring-rounds button {
+  border: 0;
+  border-radius: 999px;
+  padding: 11px 16px;
+  font-weight: 900;
+  background: #ec4899;
+  color: #fff;
+}
+
+.saas-scoring-form button:disabled,
+.saas-scoring-round-actions button:disabled {
+  opacity: 0.55;
+}
+
+.saas-scoring-header,
+.saas-scoring-round-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.saas-scoring-header-actions,
+.saas-scoring-round-actions,
+.saas-scoring-rounds {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.saas-scoring-rounds {
+  max-width: 1280px;
+  margin: 0 auto 18px;
+}
+
+.saas-scoring-rounds button {
+  background: rgba(15, 23, 42, 0.82);
+  border: 1px solid rgba(148, 163, 184, 0.24);
+}
+
+.saas-scoring-rounds button.active {
+  background: #ec4899;
+}
+
+.saas-scoring-table-wrap {
+  overflow-x: auto;
+  margin-top: 16px;
+}
+
+.saas-scoring-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.saas-scoring-table th,
+.saas-scoring-table td {
+  text-align: left;
+  padding: 12px;
+  border-top: 1px solid rgba(148, 163, 184, 0.16);
+  min-width: 150px;
+}
+
+.saas-scoring-table th span {
+  display: block;
+  color: #94a3b8;
+  font-size: 12px;
+}
+
+.saas-scoring-results {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.saas-scoring-result-row {
+  display: grid;
+  grid-template-columns: 70px 1fr 120px;
+  gap: 12px;
+  align-items: center;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 14px;
+  padding: 12px;
+}
+
+.saas-scoring-result-row strong {
+  text-align: right;
+  color: #f9a8d4;
+}
+
+@media (max-width: 700px) {
+  .saas-scoring-shell {
+    padding: 14px;
+  }
+
+  .saas-scoring-header-actions,
+  .saas-scoring-round-actions,
+  .saas-scoring-rounds {
+    display: grid;
+    grid-template-columns: 1fr;
+    width: 100%;
+  }
+
+  .saas-scoring-header-actions button,
+  .saas-scoring-round-actions button,
+  .saas-scoring-rounds button {
+    width: 100%;
+  }
+
+  .saas-scoring-result-row {
+    grid-template-columns: 50px 1fr;
+  }
+
+  .saas-scoring-result-row strong {
+    grid-column: 1 / -1;
+    text-align: left;
+  }
+}
