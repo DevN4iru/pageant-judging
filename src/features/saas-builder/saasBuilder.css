@@ -156,3 +156,21 @@
     grid-template-columns: 1fr !important;
   }
 }
+
+@media (max-width: 640px) {
+  .saas-builder-header-controls {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    width: 100%;
+  }
+
+  .saas-builder-header-controls select,
+  .saas-builder-header-controls button {
+    width: 100%;
+    min-width: 0 !important;
+  }
+
+  .saas-builder-header-controls button {
+    margin-top: 0 !important;
+  }
+}

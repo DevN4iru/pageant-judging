@@ -2,8 +2,11 @@ import { card } from '../saasBuilderStyles.js';
 
 export default function SaasBuilderHeader({
   activeEvent,
+  events,
+  eventId,
   status,
   templateSummary,
+  onEventChange,
   onRefresh
 }) {
   return (
@@ -23,13 +26,39 @@ export default function SaasBuilderHeader({
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={onRefresh}
-          style={{ border: 0, borderRadius: 999, padding: '12px 18px', fontWeight: 900, background: '#ec4899', color: 'white', height: 46 }}
-        >
-          Refresh
-        </button>
+        <div className="saas-builder-header-controls" style={{ display: 'flex', gap: 10, alignItems: 'flex-start', flexWrap: 'wrap' }}>
+          <label style={{ display: 'grid', gap: 6, color: '#cbd5e1', fontSize: 12, fontWeight: 800 }}>
+            Active event
+            <select
+              value={String(eventId)}
+              onChange={(event) => onEventChange(event.target.value)}
+              style={{
+                minWidth: 260,
+                border: '1px solid rgba(148, 163, 184, 0.28)',
+                borderRadius: 999,
+                padding: '12px 14px',
+                background: 'rgba(2, 6, 23, 0.78)',
+                color: '#f8fafc',
+                fontWeight: 800,
+                outline: 'none'
+              }}
+            >
+              {events.map((event) => (
+                <option key={event.id} value={String(event.id)}>
+                  {event.title || event.name || `Event #${event.id}`}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <button
+            type="button"
+            onClick={onRefresh}
+            style={{ border: 0, borderRadius: 999, padding: '12px 18px', fontWeight: 900, background: '#ec4899', color: 'white', height: 46, marginTop: 22 }}
+          >
+            Refresh
+          </button>
+        </div>
       </div>
 
       <div style={{ color: '#94a3b8', fontSize: 13 }}>{status}</div>

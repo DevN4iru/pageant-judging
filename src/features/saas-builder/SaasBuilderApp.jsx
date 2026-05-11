@@ -102,6 +102,25 @@ export default function SaasBuilderApp() {
     setStatus
   });
 
+  function handleEventChange(nextEventId) {
+    if (String(nextEventId) === String(eventId)) {
+      return;
+    }
+
+    setEventId(nextEventId);
+    setContestantForm({ contestantNumber: '', name: '', photoUrl: '' });
+    setJudgeForm({ name: '', displayOrder: '', pin: '' });
+    setRoundForm({
+      name: '',
+      sortOrder: '',
+      candidatePoolMode: 'all_contestants',
+      advancingCount: '',
+      scoreCarryMode: 'qualifier_only'
+    });
+
+    refresh(nextEventId).catch((err) => setStatus(err.message));
+  }
+
 
 
 
@@ -122,8 +141,11 @@ export default function SaasBuilderApp() {
       <div className="saas-builder-page" style={{ maxWidth: 1280, margin: '0 auto', display: 'grid', gap: 22 }}>
         <SaasBuilderHeader
           activeEvent={activeEvent}
+          events={events}
+          eventId={eventId}
           status={status}
           templateSummary={templateSummary}
+          onEventChange={handleEventChange}
           onRefresh={() => refresh(eventId)}
         />
 
