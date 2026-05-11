@@ -1,7 +1,4 @@
 import React, { useState } from 'react';
-import {
-  updateEventSettings,
-} from './saasBuilderApi.js';
 import './saasBuilder.css';
 import { card } from './saasBuilderStyles.js';
 import Stat from './components/Stat.jsx';
@@ -11,6 +8,7 @@ import JudgesPanel from './panels/JudgesPanel.jsx';
 import AuditLogsPanel from './panels/AuditLogsPanel.jsx';
 import RoundsCriteriaPanel from './panels/RoundsCriteriaPanel.jsx';
 import useSaasBuilderData from './hooks/useSaasBuilderData.js';
+import useEventSettingsActions from './hooks/useEventSettingsActions.js';
 import useContestantActions from './hooks/useContestantActions.js';
 import useJudgeActions from './hooks/useJudgeActions.js';
 import useRoundCriteriaActions from './hooks/useRoundCriteriaActions.js';
@@ -42,6 +40,16 @@ export default function SaasBuilderApp() {
     scoreCarryMode: 'qualifier_only'
   });
   const [saving, setSaving] = useState(false);
+
+  const {
+    saveSettings
+  } = useEventSettingsActions({
+    eventId,
+    settings,
+    refresh,
+    setSaving,
+    setStatus
+  });
 
   const {
     addContestant,
@@ -93,23 +101,7 @@ export default function SaasBuilderApp() {
   });
 
 
-  async function saveSettings() {
-    setSaving(true);
-    setStatus('Saving settings...');
 
-    try {
-      await updateEventSettings(eventId, {
-        ...settings,
-        advancingCount: Number(settings.advancingCount)
-      });
-      await refresh(eventId);
-      setStatus('Event settings saved');
-    } catch (err) {
-      setStatus(err.message);
-    } finally {
-      setSaving(false);
-    }
-  }
 
 
 
