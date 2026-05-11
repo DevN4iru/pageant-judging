@@ -162,3 +162,7 @@ export function createPdfExport(eventId, payload) {
     body: JSON.stringify(payload)
   });
 }
+
+export function getSaasScoringResults(eventId) {
+  return request(`/api/saas/events/${eventId}/scoring-results`);
+}

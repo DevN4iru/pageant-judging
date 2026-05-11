@@ -37,6 +37,7 @@ export default function SaasBuilderApp() {
     displaySettings,
     setDisplaySettings,
     pdfExports,
+    scoringResults,
     eventId,
     setEventId,
     settings,
@@ -175,7 +176,8 @@ export default function SaasBuilderApp() {
           eventId,
           title: activeEvent?.title,
           advancingCount: activeEvent?.advancing_count,
-          createdFrom: 'saas-builder'
+          createdFrom: 'saas-builder',
+          scoringResults
         }
       });
       await refresh(eventId);
@@ -306,6 +308,7 @@ export default function SaasBuilderApp() {
             snapshots={resultSnapshots}
             createSnapshot={createSnapshot}
             activeEvent={activeEvent}
+            scoringResults={scoringResults}
           />
         )}
 

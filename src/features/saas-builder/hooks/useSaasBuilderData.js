@@ -7,6 +7,7 @@ import {
   getPdfExports,
   getResultSnapshots,
   getScoringMonitor,
+  getSaasScoringResults,
   getTemplates
 } from '../saasBuilderApi.js';
 
@@ -19,6 +20,7 @@ export default function useSaasBuilderData(initialEventId = '1') {
   const [resultSnapshots, setResultSnapshots] = useState([]);
   const [displaySettings, setDisplaySettings] = useState({});
   const [pdfExports, setPdfExports] = useState([]);
+  const [scoringResults, setScoringResults] = useState(null);
   const [eventId, setEventId] = useState(initialEventId);
   const [settings, setSettings] = useState({});
   const [status, setStatus] = useState('Loading builder...');
@@ -26,7 +28,7 @@ export default function useSaasBuilderData(initialEventId = '1') {
   async function refresh(selectedEventId = eventId) {
     setStatus('Loading builder...');
 
-    const [templateData, eventData, builderData, auditData, monitorData, resultData, displayData, exportData] = await Promise.all([
+    const [templateData, eventData, builderData, auditData, monitorData, resultData, displayData, exportData, scoringData] = await Promise.all([
       getTemplates(),
       getEvents(),
       getBuilder(selectedEventId),
@@ -34,7 +36,8 @@ export default function useSaasBuilderData(initialEventId = '1') {
       getScoringMonitor(selectedEventId),
       getResultSnapshots(selectedEventId),
       getDisplaySettings(selectedEventId),
-      getPdfExports(selectedEventId)
+      getPdfExports(selectedEventId),
+      getSaasScoringResults(selectedEventId)
     ]);
 
     setTemplates(templateData);
@@ -51,6 +54,7 @@ export default function useSaasBuilderData(initialEventId = '1') {
       settings: displayData.settings || {}
     });
     setPdfExports(exportData);
+    setScoringResults(scoringData);
     setSettings({
       title: builderData.event.title || '',
       organizationName: builderData.event.organization_name || '',
@@ -87,6 +91,7 @@ export default function useSaasBuilderData(initialEventId = '1') {
     displaySettings,
     setDisplaySettings,
     pdfExports,
+    scoringResults,
     eventId,
     setEventId,
     settings,

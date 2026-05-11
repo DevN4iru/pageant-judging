@@ -1,0 +1,126 @@
+.saas-tv-shell {
+  min-height: 100vh;
+  padding: 34px;
+  color: #f8fafc;
+  background:
+    radial-gradient(circle at top left, rgba(236, 72, 153, 0.28), transparent 32%),
+    radial-gradient(circle at bottom right, rgba(124, 58, 237, 0.36), transparent 38%),
+    linear-gradient(135deg, #020617, #111827 50%, #3b0764);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.saas-tv-stage {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: grid;
+  gap: 22px;
+}
+
+.saas-tv-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: flex-start;
+  border: 1px solid rgba(248, 250, 252, 0.18);
+  border-radius: 28px;
+  padding: 26px;
+  background: rgba(15, 23, 42, 0.72);
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.28);
+}
+
+.saas-tv-eyebrow {
+  color: #f9a8d4;
+  font-size: 15px;
+  letter-spacing: 1px;
+  font-weight: 1000;
+  text-transform: uppercase;
+}
+
+.saas-tv-header h1 {
+  margin: 8px 0;
+  font-size: clamp(38px, 5vw, 76px);
+  line-height: 0.95;
+}
+
+.saas-tv-header p,
+.saas-tv-status,
+.saas-tv-sub,
+.saas-tv-footer {
+  color: #cbd5e1;
+}
+
+.saas-tv-leaderboard {
+  display: grid;
+  gap: 14px;
+}
+
+.saas-tv-row {
+  display: grid;
+  grid-template-columns: 110px 1fr 170px;
+  gap: 18px;
+  align-items: center;
+  border: 1px solid rgba(248, 250, 252, 0.14);
+  border-radius: 24px;
+  padding: 20px 24px;
+  background: rgba(15, 23, 42, 0.68);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.22);
+}
+
+.saas-tv-row.rank-1 {
+  background: linear-gradient(135deg, rgba(250, 204, 21, 0.24), rgba(15, 23, 42, 0.72));
+}
+
+.saas-tv-row.rank-2 {
+  background: linear-gradient(135deg, rgba(203, 213, 225, 0.18), rgba(15, 23, 42, 0.72));
+}
+
+.saas-tv-row.rank-3 {
+  background: linear-gradient(135deg, rgba(251, 146, 60, 0.20), rgba(15, 23, 42, 0.72));
+}
+
+.saas-tv-rank {
+  font-size: 42px;
+  font-weight: 1000;
+  color: #f9a8d4;
+}
+
+.saas-tv-name {
+  font-size: clamp(24px, 3vw, 44px);
+  font-weight: 1000;
+}
+
+.saas-tv-score {
+  text-align: right;
+  font-size: clamp(30px, 4vw, 58px);
+  font-weight: 1000;
+}
+
+.saas-tv-empty {
+  border: 1px dashed rgba(248, 250, 252, 0.22);
+  border-radius: 24px;
+  padding: 40px;
+  text-align: center;
+  color: #cbd5e1;
+}
+
+.saas-tv-footer {
+  text-align: center;
+  padding: 14px;
+  font-weight: 800;
+}
+
+@media (max-width: 760px) {
+  .saas-tv-shell {
+    padding: 16px;
+  }
+
+  .saas-tv-header,
+  .saas-tv-row {
+    grid-template-columns: 1fr;
+    display: grid;
+  }
+
+  .saas-tv-score {
+    text-align: left;
+  }
+}
