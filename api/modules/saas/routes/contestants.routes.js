@@ -40,9 +40,21 @@ router.post('/events/:eventId/contestants', async (req, res) => {
       [eventId]
     );
 
-    if (currentCount.rows[0].count >= event.rows[0].contestant_limit) {
+    const organization = await client.query(
+      'SELECT plan_key, contestant_limit FROM organizations WHERE id = $1',
+      [event.rows[0].organization_id]
+    );
+
+    const planKey = organization.rows[0]?.plan_key || 'basic';
+    const orgLimit = Number(organization.rows[0]?.contestant_limit || 10);
+    const eventLimit = Number(event.rows[0].contestant_limit || orgLimit);
+    const enforcedLimit = planKey === 'enterprise'
+      ? eventLimit
+      : Math.min(eventLimit, planKey === 'pro' ? 20 : 10);
+
+    if (currentCount.rows[0].count >= enforcedLimit) {
       await client.query('ROLLBACK');
-      return res.status(400).json({ error: `Contestant limit reached: ${event.rows[0].contestant_limit}` });
+      return res.status(400).json({ error: `Contestant limit reached for ${planKey} plan: ${enforcedLimit}` });
     }
 
     const created = await client.query(`

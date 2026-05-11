@@ -1,5 +1,7 @@
 const express = require('express');
 const pool = require('../../../db');
+const { writeAudit } = require('../lib/audit');
+const { assertJudgeLoginAllowed, hashSecret, verifySecret } = require('../lib/security');
 
 const router = express.Router();
 
@@ -33,7 +35,7 @@ router.post('/events/:eventId/judges/:judgeId/credentials', async (req, res) => 
       return res.status(404).json({ error: 'Judge not found' });
     }
 
-    const pinHash = Buffer.from(String(pin).trim()).toString('base64');
+    const pinHash = hashSecret(String(pin).trim());
 
     const credential = await client.query(`
       INSERT INTO judge_credentials (
@@ -52,29 +54,22 @@ router.post('/events/:eventId/judges/:judgeId/credentials', async (req, res) => 
       RETURNING id, event_id, judge_id, reset_required, last_reset_at, created_at
     `, [eventId, judgeId, pinHash]);
 
-    await client.query(`
-      INSERT INTO audit_logs (
-        organization_id,
-        event_id,
-        actor_role,
-        action_type,
-        target_type,
-        target_id,
-        new_value,
-        reason
-      )
-      VALUES ($1, $2, 'admin', 'judge_credential_reset', 'judge', $3, $4, $5)
-    `, [
-      event.rows[0].organization_id,
+    await writeAudit(client, {
+      organizationId: event.rows[0].organization_id,
       eventId,
-      String(judgeId),
-      JSON.stringify({
+      actorRole: 'admin',
+      actionType: 'judge_credential_reset',
+      targetType: 'judge',
+      targetId: judgeId,
+      newValue: {
         judge_id: judgeId,
         credential_id: credential.rows[0].id,
-        reset_required: false
-      }),
-      'Set or reset judge credential through SaaS builder API.'
-    ]);
+        reset_required: false,
+        hash_type: 'pbkdf2_sha256'
+      },
+      reason: 'Set or reset judge credential through SaaS builder API.',
+      req
+    });
 
     await client.query('COMMIT');
 
@@ -99,7 +94,11 @@ router.post('/events/:eventId/judge-login', async (req, res) => {
       return res.status(400).json({ error: 'PIN is required.' });
     }
 
-    const pinHash = Buffer.from(String(pin).trim()).toString('base64');
+    assertJudgeLoginAllowed({
+      eventId,
+      ip: req.ip,
+      pin
+    });
 
     const result = await pool.query(`
       SELECT
@@ -107,24 +106,29 @@ router.post('/events/:eventId/judge-login', async (req, res) => {
         j.event_id,
         j.name,
         j.display_order,
-        j.is_enabled
+        j.is_enabled,
+        c.pin_hash
       FROM event_judges j
       JOIN judge_credentials c
         ON c.judge_id = j.id
        AND c.event_id = j.event_id
       WHERE j.event_id = $1
-        AND c.pin_hash = $2
         AND j.is_enabled = TRUE
-      LIMIT 1
-    `, [eventId, pinHash]);
+        AND j.removed_at IS NULL
+    `, [eventId]);
 
-    if (result.rows.length === 0) {
+    const judge = result.rows.find((row) => verifySecret(String(pin).trim(), row.pin_hash));
+
+    if (!judge) {
       return res.status(401).json({ error: 'Invalid judge PIN for this event.' });
     }
 
-    res.json({ judge: result.rows[0] });
+    delete judge.pin_hash;
+
+    res.json({ judge });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(err.statusCode || 500).json({ error: err.message });
   }
 });
+
 module.exports = router;

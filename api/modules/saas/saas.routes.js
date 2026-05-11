@@ -8,6 +8,7 @@ router.use('/', require('./routes/contestants.routes'));
 router.use('/', require('./routes/judges.routes'));
 router.use('/', require('./routes/credentials.routes'));
 router.use('/', require('./routes/rounds.routes'));
+router.use('/', require('./routes/hardening.routes'));
 router.use('/', require('./routes/scoring.routes'));
 
 module.exports = router;

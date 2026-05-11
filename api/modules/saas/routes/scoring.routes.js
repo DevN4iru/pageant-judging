@@ -1,148 +1,31 @@
 const express = require('express');
 const pool = require('../../../db');
+const { writeAudit } = require('../lib/audit');
+const {
+  buildContestantPool,
+  buildOverallResults,
+  buildRoundResults,
+  idEquals,
+  loadEventContext,
+  missingScoresForRound
+} = require('../lib/scoring-engine');
 
 const router = express.Router();
 
-function idEquals(a, b) {
-  return String(a) === String(b);
-}
-
-function toNumber(value, fallback = 0) {
-  const next = Number(value);
-  return Number.isFinite(next) ? next : fallback;
-}
-
-function rankRows(rows) {
-  const sorted = [...rows].sort((a, b) => b.total - a.total || Number(a.contestant_number) - Number(b.contestant_number));
-  let lastScore = null;
-  let lastRank = 0;
-
-  return sorted.map((row, index) => {
-    const rank = lastScore === row.total ? lastRank : index + 1;
-    lastScore = row.total;
-    lastRank = rank;
-    return { ...row, rank };
-  });
-}
-
-function calculateRoundResults({ contestants, criteria, scores, roundId }) {
-  const roundCriteria = criteria.filter((criterion) => idEquals(criterion.round_id, roundId));
-
-  const rows = contestants.map((contestant) => {
-    const criterionBreakdown = roundCriteria.map((criterion) => {
-      const criterionScores = scores.filter((score) =>
-        idEquals(score.round_id, roundId) &&
-        idEquals(score.criterion_id, criterion.id) &&
-        idEquals(score.contestant_id, contestant.id)
-      );
-
-      const average = criterionScores.length
-        ? criterionScores.reduce((sum, score) => sum + toNumber(score.score), 0) / criterionScores.length
-        : 0;
-
-      const weighted = average * toNumber(criterion.weight);
-
-      return {
-        criterion_id: criterion.id,
-        name: criterion.name,
-        weight: toNumber(criterion.weight),
-        average: Number(average.toFixed(2)),
-        weighted: Number(weighted.toFixed(2)),
-        score_count: criterionScores.length
-      };
-    });
-
-    const total = criterionBreakdown.reduce((sum, item) => sum + item.weighted, 0);
-
-    return {
-      contestant_id: contestant.id,
-      contestant_number: contestant.contestant_number,
-      name: contestant.name,
-      photo_url: contestant.photo_url,
-      total: Number(total.toFixed(2)),
-      criteria: criterionBreakdown
-    };
-  });
-
-  return rankRows(rows);
-}
-
-function buildContestantPool({ round, roundIndex, rounds, contestants, criteria, scores }) {
-  if (round.candidate_pool_mode !== 'previous_round_advancers' || roundIndex === 0) {
-    return contestants;
+function requireReason(req) {
+  const reason = req.body?.reason || req.query?.reason;
+  if (!reason || !String(reason).trim()) {
+    const err = new Error('Reason is required.');
+    err.statusCode = 400;
+    throw err;
   }
-
-  const previousRound = rounds[roundIndex - 1];
-  const advancingCount = Number(previousRound.advancing_count || round.advancing_count || 3);
-  const previousResults = calculateRoundResults({
-    contestants,
-    criteria,
-    scores,
-    roundId: previousRound.id
-  });
-
-  const allowedIds = new Set(previousResults.slice(0, advancingCount).map((row) => String(row.contestant_id)));
-  return contestants.filter((contestant) => allowedIds.has(String(contestant.id)));
-}
-
-async function loadEventContext(eventId) {
-  const [event, contestants, judges, rounds, criteria, scores, submissions] = await Promise.all([
-    pool.query('SELECT * FROM events WHERE id = $1', [eventId]),
-    pool.query(`
-      SELECT *
-      FROM event_contestants
-      WHERE event_id = $1 AND is_active = TRUE
-      ORDER BY sort_order ASC, contestant_number ASC, id ASC
-    `, [eventId]),
-    pool.query(`
-      SELECT id, event_id, name, display_order, is_enabled, removed_at
-      FROM event_judges
-      WHERE event_id = $1
-      ORDER BY display_order ASC, id ASC
-    `, [eventId]),
-    pool.query(`
-      SELECT *
-      FROM event_rounds
-      WHERE event_id = $1
-      ORDER BY sort_order ASC, id ASC
-    `, [eventId]),
-    pool.query(`
-      SELECT *
-      FROM event_criteria
-      WHERE event_id = $1 AND is_active = TRUE
-      ORDER BY round_id ASC, sort_order ASC, id ASC
-    `, [eventId]),
-    pool.query(`
-      SELECT *
-      FROM event_scores
-      WHERE event_id = $1
-    `, [eventId]),
-    pool.query(`
-      SELECT *
-      FROM event_submissions
-      WHERE event_id = $1
-    `, [eventId])
-  ]);
-
-  if (event.rows.length === 0) {
-    return null;
-  }
-
-  return {
-    event: event.rows[0],
-    contestants: contestants.rows,
-    judges: judges.rows,
-    rounds: rounds.rows,
-    criteria: criteria.rows,
-    scores: scores.rows,
-    submissions: submissions.rows
-  };
+  return String(reason).trim();
 }
 
 router.get('/events/:eventId/scoring/:judgeId/desk', async (req, res) => {
   try {
     const { eventId, judgeId } = req.params;
-    const context = await loadEventContext(eventId);
+    const context = await loadEventContext(pool, eventId);
 
     if (!context) {
       return res.status(404).json({ error: 'Event not found' });
@@ -161,12 +44,14 @@ router.get('/events/:eventId/scoring/:judgeId/desk', async (req, res) => {
         rounds: context.rounds,
         contestants: context.contestants,
         criteria: context.criteria,
-        scores: context.scores
+        scores: context.scores,
+        candidatePools: context.candidatePools
       });
 
       const submission = context.submissions.find((item) =>
         idEquals(item.round_id, round.id) &&
-        idEquals(item.judge_id, judgeId)
+        idEquals(item.judge_id, judgeId) &&
+        !item.reopened_at
       );
 
       return {
@@ -178,7 +63,8 @@ router.get('/events/:eventId/scoring/:judgeId/desk', async (req, res) => {
           idEquals(score.judge_id, judgeId)
         ),
         submission: submission || null,
-        is_submitted: Boolean(submission)
+        is_submitted: Boolean(submission),
+        event_finalized: Boolean(context.event.finalized_at)
       };
     });
 
@@ -217,6 +103,11 @@ router.post('/events/:eventId/scoring/:judgeId/scores', async (req, res) => {
       return res.status(404).json({ error: 'Event not found' });
     }
 
+    if (event.rows[0].finalized_at) {
+      await client.query('ROLLBACK');
+      return res.status(423).json({ error: 'Event is finalized. Scoring is frozen.' });
+    }
+
     const judge = await client.query(`
       SELECT *
       FROM event_judges
@@ -247,7 +138,7 @@ router.post('/events/:eventId/scoring/:judgeId/scores', async (req, res) => {
     const submission = await client.query(`
       SELECT id
       FROM event_submissions
-      WHERE event_id = $1 AND round_id = $2 AND judge_id = $3
+      WHERE event_id = $1 AND round_id = $2 AND judge_id = $3 AND reopened_at IS NULL
     `, [eventId, roundId, judgeId]);
 
     if (submission.rows.length > 0) {
@@ -309,28 +200,24 @@ router.post('/events/:eventId/scoring/:judgeId/scores', async (req, res) => {
     `, [eventId, roundId, criterionId, contestantId, judgeId, numericScore]);
 
     await client.query(`
-      INSERT INTO audit_logs (
-        organization_id,
-        event_id,
-        actor_judge_id,
-        actor_role,
-        action_type,
-        target_type,
-        target_id,
-        old_value,
-        new_value,
-        reason
-      )
-      VALUES ($1, $2, $3, 'judge', 'judge_score_edit', 'score', $4, $5, $6, $7)
-    `, [
-      event.rows[0].organization_id,
+      UPDATE events
+      SET scoring_started_at = COALESCE(scoring_started_at, NOW()), updated_at = NOW()
+      WHERE id = $1
+    `, [eventId]);
+
+    await writeAudit(client, {
+      organizationId: event.rows[0].organization_id,
       eventId,
-      judgeId,
-      String(updated.rows[0].id),
-      before.rows[0] ? JSON.stringify(before.rows[0]) : null,
-      JSON.stringify(updated.rows[0]),
-      'Judge score saved through SaaS scoring engine.'
-    ]);
+      actorJudgeId: judgeId,
+      actorRole: 'judge',
+      actionType: 'judge_score_edit',
+      targetType: 'score',
+      targetId: updated.rows[0].id,
+      oldValue: before.rows[0] || null,
+      newValue: updated.rows[0],
+      reason: 'Judge score saved through SaaS scoring engine.',
+      req
+    });
 
     await client.query('COMMIT');
 
@@ -351,33 +238,58 @@ router.post('/events/:eventId/scoring/:judgeId/rounds/:roundId/submit', async (r
 
     await client.query('BEGIN');
 
-    const event = await client.query('SELECT * FROM events WHERE id = $1', [eventId]);
+    const context = await loadEventContext({ query: client.query.bind(client) }, eventId);
 
-    if (event.rows.length === 0) {
+    if (!context) {
       await client.query('ROLLBACK');
       return res.status(404).json({ error: 'Event not found' });
     }
 
-    const judge = await client.query(`
-      SELECT *
-      FROM event_judges
-      WHERE id = $1 AND event_id = $2 AND is_enabled = TRUE AND removed_at IS NULL
-    `, [judgeId, eventId]);
+    if (context.event.finalized_at) {
+      await client.query('ROLLBACK');
+      return res.status(423).json({ error: 'Event is finalized. Submissions are frozen.' });
+    }
 
-    if (judge.rows.length === 0) {
+    const judge = context.judges.find((item) => idEquals(item.id, judgeId) && item.is_enabled && !item.removed_at);
+
+    if (!judge) {
       await client.query('ROLLBACK');
       return res.status(404).json({ error: 'Judge not found or disabled.' });
     }
 
-    const round = await client.query(`
-      SELECT *
-      FROM event_rounds
-      WHERE id = $1 AND event_id = $2
-    `, [roundId, eventId]);
+    const roundIndex = context.rounds.findIndex((item) => idEquals(item.id, roundId));
+    const round = context.rounds[roundIndex];
 
-    if (round.rows.length === 0) {
+    if (!round) {
       await client.query('ROLLBACK');
       return res.status(404).json({ error: 'Round not found.' });
+    }
+
+    const contestants = buildContestantPool({
+      round,
+      roundIndex,
+      rounds: context.rounds,
+      contestants: context.contestants,
+      criteria: context.criteria,
+      scores: context.scores,
+      candidatePools: context.candidatePools
+    });
+
+    const missing = missingScoresForRound({
+      round,
+      contestants,
+      criteria: context.criteria,
+      scores: context.scores,
+      judgeId
+    });
+
+    if (missing.length > 0) {
+      await client.query('ROLLBACK');
+      return res.status(400).json({
+        error: `Cannot submit incomplete round. Missing ${missing.length} score(s).`,
+        missing_count: missing.length,
+        missing
+      });
     }
 
     const created = await client.query(`
@@ -385,35 +297,31 @@ router.post('/events/:eventId/scoring/:judgeId/rounds/:roundId/submit', async (r
         event_id,
         round_id,
         judge_id,
-        submitted_at
+        submitted_at,
+        reopened_at,
+        reopen_reason
       )
-      VALUES ($1, $2, $3, NOW())
+      VALUES ($1, $2, $3, NOW(), NULL, NULL)
       ON CONFLICT (round_id, judge_id)
-      DO UPDATE SET submitted_at = event_submissions.submitted_at
+      DO UPDATE SET
+        submitted_at = NOW(),
+        reopened_at = NULL,
+        reopen_reason = NULL
       RETURNING *
     `, [eventId, roundId, judgeId]);
 
-    await client.query(`
-      INSERT INTO audit_logs (
-        organization_id,
-        event_id,
-        actor_judge_id,
-        actor_role,
-        action_type,
-        target_type,
-        target_id,
-        new_value,
-        reason
-      )
-      VALUES ($1, $2, $3, 'judge', 'judge_round_submitted', 'submission', $4, $5, $6)
-    `, [
-      event.rows[0].organization_id,
+    await writeAudit(client, {
+      organizationId: context.event.organization_id,
       eventId,
-      judgeId,
-      String(created.rows[0].id),
-      JSON.stringify(created.rows[0]),
-      'Judge submitted round through SaaS scoring engine.'
-    ]);
+      actorJudgeId: judgeId,
+      actorRole: 'judge',
+      actionType: 'judge_round_submitted',
+      targetType: 'submission',
+      targetId: created.rows[0].id,
+      newValue: created.rows[0],
+      reason: 'Judge submitted complete round through SaaS scoring engine.',
+      req
+    });
 
     await client.query('COMMIT');
 
@@ -426,64 +334,196 @@ router.post('/events/:eventId/scoring/:judgeId/rounds/:roundId/submit', async (r
   }
 });
 
+router.post('/events/:eventId/rounds/:roundId/judges/:judgeId/reopen', async (req, res) => {
+  const client = await pool.connect();
+
+  try {
+    const { eventId, roundId, judgeId } = req.params;
+    const reason = requireReason(req);
+
+    await client.query('BEGIN');
+
+    const event = await client.query('SELECT * FROM events WHERE id = $1', [eventId]);
+
+    if (event.rows.length === 0) {
+      await client.query('ROLLBACK');
+      return res.status(404).json({ error: 'Event not found' });
+    }
+
+    const before = await client.query(`
+      SELECT *
+      FROM event_submissions
+      WHERE event_id = $1 AND round_id = $2 AND judge_id = $3
+    `, [eventId, roundId, judgeId]);
+
+    if (before.rows.length === 0) {
+      await client.query('ROLLBACK');
+      return res.status(404).json({ error: 'Submission not found.' });
+    }
+
+    const updated = await client.query(`
+      UPDATE event_submissions
+      SET reopened_at = NOW(), reopen_reason = $4
+      WHERE event_id = $1 AND round_id = $2 AND judge_id = $3
+      RETURNING *
+    `, [eventId, roundId, judgeId, reason]);
+
+    await writeAudit(client, {
+      organizationId: event.rows[0].organization_id,
+      eventId,
+      actorRole: 'admin',
+      actionType: 'judge_submission_reopened',
+      targetType: 'submission',
+      targetId: updated.rows[0].id,
+      oldValue: before.rows[0],
+      newValue: updated.rows[0],
+      reason,
+      req
+    });
+
+    await client.query('COMMIT');
+
+    res.json({ ok: true, submission: updated.rows[0] });
+  } catch (err) {
+    await client.query('ROLLBACK').catch(() => {});
+    res.status(err.statusCode || 500).json({ error: err.message });
+  } finally {
+    client.release();
+  }
+});
+
 router.get('/events/:eventId/scoring-results', async (req, res) => {
   try {
     const { eventId } = req.params;
-    const context = await loadEventContext(eventId);
+    const context = await loadEventContext(pool, eventId);
 
     if (!context) {
       return res.status(404).json({ error: 'Event not found' });
     }
 
-    const roundResults = context.rounds.map((round, index) => {
-      const pool = buildContestantPool({
-        round,
-        roundIndex: index,
-        rounds: context.rounds,
-        contestants: context.contestants,
-        criteria: context.criteria,
-        scores: context.scores
-      });
-
-      return {
-        round,
-        results: calculateRoundResults({
-          contestants: pool,
-          criteria: context.criteria,
-          scores: context.scores,
-          roundId: round.id
-        })
-      };
-    });
-
-    const carryRounds = roundResults.filter(({ round }) => round.score_carry_mode === 'carry_over');
-
-    const overallSource = carryRounds.length ? carryRounds : roundResults;
-    const totals = new Map();
-
-    overallSource.forEach(({ results }) => {
-      results.forEach((row) => {
-        const key = String(row.contestant_id);
-        const current = totals.get(key) || {
-          contestant_id: row.contestant_id,
-          contestant_number: row.contestant_number,
-          name: row.name,
-          photo_url: row.photo_url,
-          total: 0
-        };
-
-        current.total = Number((current.total + row.total).toFixed(2));
-        totals.set(key, current);
-      });
-    });
+    const rounds = buildRoundResults(context);
+    const overall = buildOverallResults(rounds);
 
     res.json({
       event: context.event,
-      rounds: roundResults,
-      overall: rankRows([...totals.values()])
+      rounds,
+      overall
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+router.post('/events/:eventId/finalize', async (req, res) => {
+  const client = await pool.connect();
+
+  try {
+    const { eventId } = req.params;
+    const reason = requireReason(req);
+
+    await client.query('BEGIN');
+
+    const context = await loadEventContext({ query: client.query.bind(client) }, eventId);
+
+    if (!context) {
+      await client.query('ROLLBACK');
+      return res.status(404).json({ error: 'Event not found' });
+    }
+
+    const rounds = buildRoundResults(context);
+    const overall = buildOverallResults(rounds);
+
+    const snapshot = await client.query(`
+      INSERT INTO result_snapshots (
+        event_id,
+        snapshot_type,
+        title,
+        data,
+        created_at
+      )
+      VALUES ($1, 'final_declaration', $2, $3, NOW())
+      RETURNING *
+    `, [
+      eventId,
+      `${context.event.title} Final Declaration`,
+      JSON.stringify({ event: context.event, rounds, overall })
+    ]);
+
+    const updatedEvent = await client.query(`
+      UPDATE events
+      SET finalized_at = COALESCE(finalized_at, NOW()), updated_at = NOW()
+      WHERE id = $1
+      RETURNING *
+    `, [eventId]);
+
+    await writeAudit(client, {
+      organizationId: context.event.organization_id,
+      eventId,
+      actorRole: 'admin',
+      actionType: 'final_declaration_created',
+      targetType: 'event',
+      targetId: eventId,
+      oldValue: context.event,
+      newValue: updatedEvent.rows[0],
+      reason,
+      req
+    });
+
+    await client.query('COMMIT');
+
+    res.json({ ok: true, event: updatedEvent.rows[0], snapshot: snapshot.rows[0] });
+  } catch (err) {
+    await client.query('ROLLBACK').catch(() => {});
+    res.status(err.statusCode || 500).json({ error: err.message });
+  } finally {
+    client.release();
+  }
+});
+
+router.post('/events/:eventId/reopen-finalized', async (req, res) => {
+  const client = await pool.connect();
+
+  try {
+    const { eventId } = req.params;
+    const reason = requireReason(req);
+
+    await client.query('BEGIN');
+
+    const before = await client.query('SELECT * FROM events WHERE id = $1', [eventId]);
+
+    if (before.rows.length === 0) {
+      await client.query('ROLLBACK');
+      return res.status(404).json({ error: 'Event not found' });
+    }
+
+    const updated = await client.query(`
+      UPDATE events
+      SET finalized_at = NULL, updated_at = NOW()
+      WHERE id = $1
+      RETURNING *
+    `, [eventId]);
+
+    await writeAudit(client, {
+      organizationId: before.rows[0].organization_id,
+      eventId,
+      actorRole: 'admin',
+      actionType: 'final_declaration_reopened',
+      targetType: 'event',
+      targetId: eventId,
+      oldValue: before.rows[0],
+      newValue: updated.rows[0],
+      reason,
+      req
+    });
+
+    await client.query('COMMIT');
+
+    res.json({ ok: true, event: updated.rows[0] });
+  } catch (err) {
+    await client.query('ROLLBACK').catch(() => {});
+    res.status(err.statusCode || 500).json({ error: err.message });
+  } finally {
+    client.release();
   }
 });
 
