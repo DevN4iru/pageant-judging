@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import './saasBuilder.css';
-import { card } from './saasBuilderStyles.js';
-import Stat from './components/Stat.jsx';
+import LoadingState from './components/LoadingState.jsx';
+import SaasBuilderHeader from './components/SaasBuilderHeader.jsx';
+import StatsGrid from './components/StatsGrid.jsx';
+import BuilderFooter from './components/BuilderFooter.jsx';
 import EventSettingsPanel from './panels/EventSettingsPanel.jsx';
 import ContestantsPanel from './panels/ContestantsPanel.jsx';
 import JudgesPanel from './panels/JudgesPanel.jsx';
@@ -112,46 +114,23 @@ export default function SaasBuilderApp() {
 
 
   if (!builder) {
-    return (
-      <main style={{ minHeight: '100vh', background: '#020617', color: '#f8fafc', padding: 32 }}>
-        <h1>SaaS Event Builder</h1>
-        <p>{status}</p>
-      </main>
-    );
+    return <LoadingState status={status} />;
   }
 
   return (
     <main className="saas-builder-shell" style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #020617, #111827 45%, #3b0764)', color: '#f8fafc', padding: 28 }}>
       <div className="saas-builder-page" style={{ maxWidth: 1280, margin: '0 auto', display: 'grid', gap: 22 }}>
-        <header style={{ ...card, display: 'grid', gap: 14 }}>
-          <div className="saas-builder-header-row" style={{ display: 'flex', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
-            <div>
-              <div style={{ color: '#f9a8d4', fontWeight: 900, textTransform: 'uppercase', letterSpacing: 1 }}>
-                SaaS Event Builder
-              </div>
-              <h1 style={{ margin: '8px 0 0', fontSize: 34 }}>{activeEvent.title}</h1>
-              <p style={{ color: '#cbd5e1', margin: '8px 0 0' }}>
-                Event-builder dashboard powered by customizable SaaS tables. Legacy scoring is untouched.
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={() => refresh(eventId)}
-              style={{ border: 0, borderRadius: 999, padding: '12px 18px', fontWeight: 900, background: '#ec4899', color: 'white', height: 46 }}
-            >
-              Refresh
-            </button>
-          </div>
-          <div style={{ color: '#94a3b8', fontSize: 13 }}>{status}</div>
-          <div style={{ color: '#94a3b8', fontSize: 13 }}>{templateSummary}</div>
-        </header>
+        <SaasBuilderHeader
+          activeEvent={activeEvent}
+          status={status}
+          templateSummary={templateSummary}
+          onRefresh={() => refresh(eventId)}
+        />
 
-        <div className="saas-builder-stats" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: 16 }}>
-          <Stat label="Contestants" value={builder.contestants.length} />
-          <Stat label="Judges" value={builder.judges.length} />
-          <Stat label="Rounds" value={builder.rounds.length} />
-          <Stat label="Templates" value={templates.length} />
-        </div>
+        <StatsGrid
+          builder={builder}
+          templates={templates}
+        />
 
         <EventSettingsPanel
           settings={settings}
@@ -200,9 +179,7 @@ export default function SaasBuilderApp() {
 
         <AuditLogsPanel auditLogs={auditLogs} />
 
-        <footer style={{ color: '#94a3b8', textAlign: 'center', padding: 20 }}>
-          Open legacy app normally. Open builder with <b>?builder=saas</b>.
-        </footer>
+        <BuilderFooter />
       </div>
     </main>
   );
