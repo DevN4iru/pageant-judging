@@ -1,18 +1,276 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
-async function api(path, options = {}) {
-  const res = await fetch(path, {
-    headers: { 'Content-Type': 'application/json' },
-    ...options
+const SCORYN_PREVIEW_ONLY = import.meta.env.VITE_SCORYN_PREVIEW_ONLY === '1';
+
+const previewCriteria = [
+  { id: 1, name: 'Production Number', weight: 10 },
+  { id: 2, name: 'Fun Wear', weight: 15 },
+  { id: 3, name: 'Preliminary Interview', weight: 20 },
+  { id: 4, name: 'Advocacy Interview', weight: 25 },
+  { id: 5, name: 'Long Gown', weight: 30 },
+];
+
+const previewContestants = Array.from({ length: 12 }, (_, index) => ({
+  id: index + 1,
+  number: index + 1,
+  name: `Candidate ${index + 1}`,
+}));
+
+const previewJudges = Array.from({ length: 5 }, (_, index) => ({
+  id: index + 1,
+  name: `Judge ${index + 1}`,
+}));
+
+const previewPrelimScores = [70, 74, 78, 82, 86, 91, 95, 99, 0, 0, 0, 0];
+
+const previewResults = previewContestants
+  .map((candidate, index) => {
+    const total = previewPrelimScores[index] || 0;
+    return {
+      ...candidate,
+      total_score: total,
+      judges_submitted: total > 0 ? 5 : 0,
+      criteria_breakdown: Object.fromEntries(
+        previewCriteria.map((criterion) => [
+          criterion.name,
+          Number(((total * criterion.weight) / 100).toFixed(2)),
+        ])
+      ),
+    };
+  })
+  .sort((a, b) => b.total_score - a.total_score);
+
+const previewTopThree = previewResults.slice(0, 3).map((candidate) => ({
+  id: candidate.id,
+  number: candidate.number,
+  name: candidate.name,
+  pre_final_score: candidate.total_score,
+  total_score: candidate.total_score,
+}));
+
+const previewFinalResults = [
+  {
+    id: 6,
+    number: 6,
+    name: 'Candidate 6',
+    beauty_and_poise: 60,
+    qa: 40,
+    final_score: 100,
+    preliminary_score: 91,
+    judges_submitted: 5,
+    rank_label: 'Winner',
+  },
+  {
+    id: 7,
+    number: 7,
+    name: 'Candidate 7',
+    beauty_and_poise: 55.2,
+    qa: 36,
+    final_score: 91.2,
+    preliminary_score: 95,
+    judges_submitted: 5,
+    rank_label: '1st Runner-Up',
+  },
+  {
+    id: 8,
+    number: 8,
+    name: 'Candidate 8',
+    beauty_and_poise: 52.8,
+    qa: 34.4,
+    final_score: 87.2,
+    preliminary_score: 99,
+    judges_submitted: 5,
+    rank_label: '2nd Runner-Up',
+  },
+];
+
+function previewJudgeScores() {
+  return previewContestants.flatMap((candidate, index) => {
+    const raw = previewPrelimScores[index] || '';
+    return previewCriteria.map((criterion) => ({
+      contestant_id: candidate.id,
+      criterion_id: criterion.id,
+      raw_score: raw,
+      score: raw,
+    }));
   });
+}
 
-  const data = await res.json().catch(() => ({}));
+function previewFinalScores() {
+  return previewFinalResults.flatMap((candidate) => [
+    {
+      contestant_id: candidate.id,
+      criterion_id: 1,
+      raw_score: Number((candidate.beauty_and_poise / 0.6).toFixed(2)),
+      score: Number(candidate.beauty_and_poise.toFixed(2)),
+    },
+    {
+      contestant_id: candidate.id,
+      criterion_id: 2,
+      raw_score: Number((candidate.qa / 0.4).toFixed(2)),
+      score: Number(candidate.qa.toFixed(2)),
+    },
+  ]);
+}
 
-  if (!res.ok) {
-    throw new Error(data.error || 'Request failed');
+async function previewApi(path, options = {}) {
+  const method = String(options.method || 'GET').toUpperCase();
+
+  if (method !== 'GET') {
+    if (path === '/api/judge/login') {
+      const body = options.body ? JSON.parse(options.body) : {};
+      const pinText = String(body.pin || body.password || '').trim();
+      const judgeNumber = Math.max(1, Math.min(5, Number(pinText[0]) || 1));
+      return { id: judgeNumber, name: `Judge ${judgeNumber}` };
+    }
+
+    if (path === '/api/admin/login') {
+      return { ok: true, role: 'admin' };
+    }
+
+    if (path.includes('/submit')) {
+      return { ok: true, locked: true, submitted: true };
+    }
+
+    if (path === '/api/winner') {
+      return { ok: true, winner_name: 'Candidate 6', declared_at: new Date().toISOString() };
+    }
+
+    return { ok: true };
   }
 
-  return data;
+  if (path === '/api/health') {
+    return { ok: true, app: 'Scoryn Preview Demo API' };
+  }
+
+  if (path === '/api/setup') {
+    return {
+      contestants: previewContestants,
+      criteria: previewCriteria,
+      judges: previewJudges,
+    };
+  }
+
+  if (path === '/api/results') {
+    return previewResults;
+  }
+
+  if (path === '/api/results/details') {
+    return previewResults;
+  }
+
+  if (path === '/api/history') {
+    return [];
+  }
+
+  if (path === '/api/judges/status') {
+    return previewJudges.map((judge) => ({
+      ...judge,
+      status: 'Locked',
+      score_entries: 60,
+      submitted_at: 'Preview mode',
+      submitted: true,
+    }));
+  }
+
+  if (path === '/api/winner') {
+    return {
+      winner_name: 'Candidate 6',
+      declared_at: 'Preview mode',
+    };
+  }
+
+  if (path.match(/^\/api\/judge\/\d+\/scores$/)) {
+    return previewJudgeScores();
+  }
+
+  if (path.match(/^\/api\/judge\/\d+\/status$/)) {
+    return {
+      submitted: true,
+      locked: true,
+      score_entries: 60,
+      total_fields: 60,
+      filled_fields: 40,
+      submitted_at: 'Preview mode',
+    };
+  }
+
+  if (path === '/api/final/readiness') {
+    return {
+      ready: true,
+      total_judges: 5,
+      submitted_judges: 5,
+      top_three_count: 3,
+      top_three: previewTopThree,
+    };
+  }
+
+  if (path === '/api/final/setup') {
+    return {
+      contestants: previewTopThree,
+      criteria: [
+        { id: 1, name: 'Beauty and Poise', weight: 60 },
+        { id: 2, name: 'Wit, Intelligence, and Quality of Answer', weight: 40 },
+      ],
+    };
+  }
+
+  if (path === '/api/final/results') {
+    return previewFinalResults;
+  }
+
+  if (path === '/api/final/details') {
+    return previewFinalResults;
+  }
+
+  if (path === '/api/final/judges/status') {
+    return previewJudges.map((judge) => ({
+      ...judge,
+      status: 'Locked',
+      score_entries: 6,
+      submitted_at: 'Preview mode',
+      submitted: true,
+    }));
+  }
+
+  if (path.match(/^\/api\/final\/judge\/\d+\/scores$/)) {
+    return previewFinalScores();
+  }
+
+  if (path.match(/^\/api\/final\/judge\/\d+\/status$/)) {
+    return {
+      submitted: true,
+      locked: true,
+      score_entries: 6,
+      total_fields: 6,
+      filled_fields: 6,
+      submitted_at: 'Preview mode',
+    };
+  }
+
+  console.warn('[Scoryn preview] Unhandled mock API path:', path);
+  return {};
+}
+
+async function api(path, options = {}) {
+  if (SCORYN_PREVIEW_ONLY) {
+    return previewApi(path, options);
+  }
+
+  const res = await fetch(path, {
+    headers: {
+      'Content-Type': 'application/json',
+      ...(options.headers || {}),
+    },
+    ...options,
+  });
+
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({ error: 'Request failed' }));
+    throw new Error(error.error || 'Request failed');
+  }
+
+  return res.json();
 }
 
 function getSavedJudge() {
