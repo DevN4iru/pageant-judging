@@ -1517,3 +1517,52 @@ body:has(.tv-stage) {
     flex-direction: column;
   }
 }
+
+/* ===== ScorynProposalBanner runtime safety ===== */
+.scoryn-proposal-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 1rem auto;
+  padding: 1rem 1.15rem;
+  border: 1px solid rgba(230, 190, 90, 0.34);
+  border-radius: 1.15rem;
+  background:
+    radial-gradient(circle at left, rgba(207, 165, 60, 0.13), transparent 34%),
+    rgba(16, 12, 5, 0.92);
+  color: rgba(255, 248, 220, 0.88);
+}
+
+.scoryn-proposal-banner h2 {
+  margin: 0.12rem 0 0.35rem;
+  color: #fff4c7;
+  font-size: clamp(1.05rem, 2vw, 1.35rem);
+  line-height: 1.12;
+}
+
+.scoryn-proposal-banner p {
+  margin: 0;
+  max-width: 850px;
+  line-height: 1.45;
+}
+
+.scoryn-proposal-banner .preview-badge {
+  flex: 0 0 auto;
+  border: 1px solid rgba(230, 190, 90, 0.42);
+  border-radius: 999px;
+  padding: 0.55rem 0.85rem;
+  background: rgba(230, 190, 90, 0.1);
+  color: #f9dd82;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 760px) {
+  .scoryn-proposal-banner {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
