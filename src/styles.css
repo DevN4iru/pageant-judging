@@ -5397,3 +5397,339 @@ main::after,
 }
 
 /* ===== SCORYN TYCA WHITEBAR/RING FIX END ===== */
+
+/* ===== SCORYN JUDGE ADMIN PREMIUM UI START ===== */
+/* Visual-only. No scoring/API/database changes. */
+
+/* Shared app surface for logged-in screens */
+.admin-shell,
+.app-shell:has(.judge-panel),
+.app-shell:has(.finals-judge-panel) {
+  width: min(1240px, calc(100% - 32px)) !important;
+}
+
+/* Shared dark premium cards */
+.admin-shell .panel,
+.admin-shell section.panel,
+.admin-shell .dashboard-hero,
+.admin-shell .summary-print-panel,
+.admin-shell .admin-control-card,
+.admin-shell .leader-card,
+.admin-shell .table-panel,
+.admin-shell .final-results-panel,
+.admin-shell .top3-finalists-panel,
+.admin-shell .prelim-ranking-panel,
+.admin-shell .final-status-panel,
+.admin-shell .judge-status-panel,
+.admin-shell .history-panel,
+.admin-shell .score-history-panel,
+.judge-panel,
+.finals-judge-panel,
+.judge-panel .candidate-card,
+.finals-judge-panel .final-candidate-card,
+.judge-panel .score-field,
+.finals-judge-panel .score-field,
+.judge-panel .progress-card,
+.finals-judge-panel .final-progress-card,
+.judge-panel .final-submit-card,
+.finals-judge-panel .final-submit-card {
+  color: #fffaf0 !important;
+  border: 1px solid rgba(246, 215, 122, 0.26) !important;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(246, 215, 122, 0.08), transparent 28%),
+    linear-gradient(135deg, rgba(12, 10, 7, 0.96), rgba(25, 20, 12, 0.92)) !important;
+  box-shadow: 0 18px 46px rgba(0, 0, 0, 0.34) !important;
+  backdrop-filter: blur(12px) !important;
+}
+
+/* remove old white/purple inset glass */
+.admin-shell .panel::before,
+.admin-shell .panel::after,
+.judge-panel::before,
+.judge-panel::after,
+.finals-judge-panel::before,
+.finals-judge-panel::after,
+.candidate-card::before,
+.candidate-card::after,
+.score-field::before,
+.score-field::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* typography */
+.admin-shell h2,
+.admin-shell h3,
+.admin-shell h4,
+.admin-shell strong,
+.judge-panel h2,
+.judge-panel h3,
+.judge-panel h4,
+.judge-panel strong,
+.finals-judge-panel h2,
+.finals-judge-panel h3,
+.finals-judge-panel h4,
+.finals-judge-panel strong {
+  color: #fffaf0 !important;
+}
+
+.admin-shell p,
+.admin-shell small,
+.judge-panel p,
+.judge-panel small,
+.finals-judge-panel p,
+.finals-judge-panel small,
+.warning-note {
+  color: rgba(255, 250, 240, 0.64) !important;
+}
+
+.admin-shell .eyebrow,
+.judge-panel .eyebrow,
+.finals-judge-panel .eyebrow {
+  color: #f3d987 !important;
+  letter-spacing: 0.13em !important;
+}
+
+/* judge panel layout: cleaner candidate cards */
+.judge-panel,
+.finals-judge-panel {
+  display: grid !important;
+  gap: 1rem !important;
+}
+
+.judge-panel .candidate-card,
+.finals-judge-panel .final-candidate-card {
+  border-radius: 24px !important;
+  padding: 1rem !important;
+}
+
+.judge-panel .candidate-head,
+.finals-judge-panel .candidate-head {
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: 1rem !important;
+  margin-bottom: 0.9rem !important;
+}
+
+.judge-panel .candidate-number,
+.finals-judge-panel .candidate-number {
+  color: #f3d987 !important;
+  background: rgba(246, 215, 122, 0.10) !important;
+  border: 1px solid rgba(246, 215, 122, 0.30) !important;
+  border-radius: 999px !important;
+  padding: 0.35rem 0.55rem !important;
+  font-weight: 950 !important;
+  letter-spacing: 0.08em !important;
+}
+
+/* score grids */
+.judge-panel .score-grid,
+.finals-judge-panel .final-score-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)) !important;
+  gap: 0.75rem !important;
+}
+
+.judge-panel .score-field,
+.finals-judge-panel .score-field {
+  border-radius: 18px !important;
+  padding: 0.82rem !important;
+  background: rgba(0, 0, 0, 0.24) !important;
+}
+
+.judge-panel .score-field label,
+.finals-judge-panel .score-field label,
+.judge-panel .score-field span,
+.finals-judge-panel .score-field span {
+  color: #fffaf0 !important;
+  font-weight: 850 !important;
+}
+
+.judge-panel input,
+.finals-judge-panel input {
+  width: 100% !important;
+  min-height: 42px !important;
+  border-radius: 14px !important;
+  background: #f8efd7 !important;
+  color: #1b1406 !important;
+  border: 1px solid rgba(246, 215, 122, 0.48) !important;
+  font-weight: 850 !important;
+}
+
+.judge-panel input:focus,
+.finals-judge-panel input:focus {
+  outline: 2px solid rgba(246, 215, 122, 0.46) !important;
+}
+
+/* progress / final submit */
+.progress-bar {
+  background: rgba(255, 243, 196, 0.12) !important;
+  border-radius: 999px !important;
+  overflow: hidden !important;
+}
+
+.progress-bar > span,
+.progress-fill {
+  background: linear-gradient(90deg, #8a5f12, #d6b454, #fff3c4) !important;
+}
+
+.final-submit-card,
+.finals-judge-panel .final-submit-card {
+  align-self: stretch !important;
+}
+
+.locked-badge,
+.submitted-pill,
+.status-badge,
+.pill {
+  color: #fff3c4 !important;
+  background: rgba(246, 215, 122, 0.12) !important;
+  border: 1px solid rgba(246, 215, 122, 0.34) !important;
+  box-shadow: none !important;
+}
+
+/* admin dashboard structure */
+.admin-dashboard-view {
+  display: grid !important;
+  gap: 0.9rem !important;
+  margin-top: 0.9rem !important;
+}
+
+.admin-shell .dashboard-hero {
+  border-radius: 26px !important;
+  padding: 1rem !important;
+}
+
+.admin-shell .dashboard-actions {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 0.6rem !important;
+  align-items: center !important;
+}
+
+.admin-shell .dashboard-actions .btn,
+.admin-shell .dashboard-actions button {
+  min-height: 40px !important;
+}
+
+/* admin control section */
+.admin-control-card,
+.summary-print-panel {
+  border-radius: 24px !important;
+}
+
+.admin-control-card .btn,
+.summary-print-panel .btn {
+  border-radius: 14px !important;
+}
+
+/* automatic insights / leader cards */
+.criteria-leaders-panel,
+.leader-card,
+.final-round-leader-card,
+.top3-finalists-panel {
+  border-color: rgba(246, 215, 122, 0.32) !important;
+}
+
+.criteria-leaders-grid,
+.leader-grid,
+.top3-grid,
+.finalist-grid {
+  gap: 0.75rem !important;
+}
+
+.criteria-leader-card,
+.top3-finalist-card,
+.final-round-leader-card article,
+.leader-card article {
+  background: rgba(0, 0, 0, 0.28) !important;
+  border: 1px solid rgba(246, 215, 122, 0.22) !important;
+  border-radius: 18px !important;
+}
+
+/* tables: calm and readable */
+.admin-shell table {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  overflow: hidden !important;
+}
+
+.admin-shell .table-wrap {
+  border: 1px solid rgba(246, 215, 122, 0.22) !important;
+  border-radius: 18px !important;
+  overflow: auto !important;
+  background: rgba(0, 0, 0, 0.20) !important;
+}
+
+.admin-shell th {
+  color: #fff3c4 !important;
+  background: rgba(246, 215, 122, 0.11) !important;
+  border-color: rgba(246, 215, 122, 0.18) !important;
+}
+
+.admin-shell td {
+  color: rgba(255, 250, 240, 0.84) !important;
+  background: rgba(0, 0, 0, 0.18) !important;
+  border-color: rgba(246, 215, 122, 0.14) !important;
+}
+
+/* buttons */
+.admin-shell .btn-primary,
+.judge-panel .btn-primary,
+.finals-judge-panel .btn-primary,
+.admin-shell button[type="submit"],
+.judge-panel button[type="submit"],
+.finals-judge-panel button[type="submit"] {
+  background: linear-gradient(135deg, #735015, #d6b454, #fff3c4) !important;
+  color: #171006 !important;
+  border: 1px solid rgba(246, 215, 122, 0.44) !important;
+  font-weight: 950 !important;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.20) !important;
+}
+
+.admin-shell .btn-light,
+.judge-panel .btn-light,
+.finals-judge-panel .btn-light {
+  background: rgba(255, 243, 196, 0.09) !important;
+  color: #fffaf0 !important;
+  border: 1px solid rgba(246, 215, 122, 0.24) !important;
+}
+
+.admin-shell .btn-warning {
+  background: linear-gradient(135deg, #d6b454, #f3d987) !important;
+  color: #171006 !important;
+}
+
+/* login card also match */
+.login-wrap .login-card {
+  max-width: 460px !important;
+  margin: 0 auto !important;
+  border-radius: 26px !important;
+}
+
+.login-wrap .lock-icon {
+  background: rgba(246, 215, 122, 0.10) !important;
+  color: #f3d987 !important;
+  border: 1px solid rgba(246, 215, 122, 0.30) !important;
+}
+
+/* responsive */
+@media (max-width: 760px) {
+  .judge-panel .score-grid,
+  .finals-judge-panel .final-score-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .admin-shell .dashboard-actions {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  .admin-shell .dashboard-actions .btn,
+  .admin-shell .dashboard-actions button {
+    width: 100% !important;
+  }
+}
+
+/* ===== SCORYN JUDGE ADMIN PREMIUM UI END ===== */
