@@ -878,6 +878,60 @@ function Home({ setMode }) {
     </main>
   );
 }
+) {
+  return (
+    <main className="hero-grid">
+      <section className="hero-card">
+        <img
+          src="/tyca.jpg"
+          alt="Miss TYCA 2026 Logo"
+          className="hero-logo"
+        />
+
+        <p className="eyebrow">Pageant Night Ready</p>
+        <h2>Fast, clean, automatic, and traceable tabulation.</h2>
+        <p>
+          Judges can edit while scoring, then click Final Submit. After that, their
+          scores are locked and the admin can see score history with exact timestamps.
+        </p>
+
+        <div className="role-grid">
+          <button className="role-card" onClick={() => setMode('judge-login')}>
+            <span className="role-icon">📝</span>
+            <strong>Judge Device</strong>
+            <small>Score, review, and final submit</small>
+          </button>
+
+          <button className="role-card dark" onClick={() => setMode('admin-login')}>
+            <span className="role-icon">📊</span>
+            <strong>Admin Dashboard</strong>
+            <small>Live ranking, lock status, and audit logs</small>
+          </button>
+        </div>
+
+        <CriteriaOverview />
+        <DeveloperCredits />
+      </section>
+
+      <section className="info-panel">
+        <div className="mini-stat">
+          <span>Lock</span>
+          <p>Final submit prevents score edits</p>
+        </div>
+
+        <div className="mini-stat">
+          <span>Audit</span>
+          <p>Every score edit has a timestamp</p>
+        </div>
+
+        <div className="mini-stat">
+          <span>Live</span>
+          <p>Admin dashboard auto-refreshes</p>
+        </div>
+      </section>
+    </main>
+  );
+}
 
 function LoginCard({ title, description, placeholder, buttonText, onSubmit, onBack }) {
   const [pin, setPin] = useState('');

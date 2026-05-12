@@ -1,0 +1,1079 @@
+===== DEEP ROOT CAUSE UI AUDIT — NO PATCHING =====
+Tue May 12 12:31:02 PM PST 2026
+
+===== 1. BRANCH / GIT STATE =====
+## miss-tyca-scoryn-clean-preview
+?? .safety/
+?? audits/tyca-proposal/
+miss-tyca-scoryn-clean-preview
+0af51db Create clean Scoryn Miss TYCA proposal preview
+8cd4b65 Final polish audit fixes
+1a3e650 Simplify printable summary cover text
+e23aa60 Add prepared by credit to printable summaries
+3e10540 Fix printable summary PDF layout
+d14314d Add admin printable PDF summary buttons
+f7bfa9c Fix finals header status overlap
+db57025 Fix finals judge panel scoped layout
+e3898de Audit finals panel layout state
+02fd205 Rename visible final round labels to finals
+ac163db Match TV credit banner exactly to compact footer
+6822c02 Match TV credit banner to main footer
+
+===== 2. RUNNING PORTS / PROCESS STATE =====
+LISTEN 0      511                        0.0.0.0:5174       0.0.0.0:*    users:(("node",pid=13700,fd=21))          
+LISTEN 0      511                              *:3001             *:*    users:(("node",pid=13698,fd=21))          
+kirch       2504  0.0  0.0   2672  1756 ?        S    11:42   0:00 sh -c vite --host 127.0.0.1
+kirch       2505  0.1  1.3 14522960 213896 ?     Sl   11:42   0:03 node /home/kirch/kirch-dashboard/v2/node_modules/.bin/vite --host 127.0.0.1
+kirch      13689  0.0  0.0   2676  1776 pts/3    S+   12:26   0:00 sh -c concurrently "node api/index.js" "vite --host 0.0.0.0" --host 0.0.0.0 --port 5174 --strictPort
+kirch      13690  0.1  0.3 1014184 61484 pts/3   Sl+  12:26   0:00 node /home/kirch/pageant-judging/node_modules/.bin/concurrently node api/index.js vite --host 0.0.0.0 --host 0.0.0.0 --port 5174 --strictPort
+kirch      13697  0.0  0.0   2676  1760 pts/3    S+   12:26   0:00 /bin/sh -c node api/index.js
+kirch      13698  0.1  0.3 11502208 64648 pts/3  Sl+  12:26   0:00 node api/index.js
+kirch      13699  0.0  0.0   2676  1844 pts/3    S+   12:26   0:00 /bin/sh -c vite --host 0.0.0.0
+kirch      13700  0.7  0.6 11858252 114252 pts/3 Sl+  12:26   0:02 node /home/kirch/pageant-judging/node_modules/.bin/vite --host 0.0.0.0
+
+===== 3. HOME COMPONENT SOURCE =====
+792:function Home({ setMode }) {
+
+      {judge && <JudgePanel judge={judge} />}
+      {admin && <ScorynProposalBanner />}
+      {admin && <CriteriaLeadersPanel />}
+      {admin && <AdminSummaryPrintButtons />}
+      {admin && <AdminPanel />}
+
+      <SiteFooter />
+    </div>
+  );
+}
+
+function Home({ setMode }) {
+  return (
+    <main className="hero-grid">
+      <section className="hero-card">
+        <img
+          src="/tyca.jpg"
+          alt="Miss TYCA 2026 Logo"
+          className="hero-logo"
+        />
+
+        <p className="eyebrow">Pageant Night Ready</p>
+        <h2>Fast, clean, automatic, and traceable tabulation.</h2>
+        <p>
+          Judges can edit while scoring, then click Final Submit. After that, their
+          scores are locked and the admin can see score history with exact timestamps.
+        </p>
+
+        <div className="role-grid">
+          <button className="role-card" onClick={() => setMode('judge-login')}>
+            <span className="role-icon">📝</span>
+            <strong>Judge Device</strong>
+            <small>Score, review, and final submit</small>
+          </button>
+
+          <button className="role-card dark" onClick={() => setMode('admin-login')}>
+            <span className="role-icon">📊</span>
+            <strong>Admin Dashboard</strong>
+            <small>Live ranking, lock status, and audit logs</small>
+          </button>
+        </div>
+
+        <CriteriaOverview />
+        <DeveloperCredits />
+      </section>
+
+      <section className="info-panel">
+        <div className="mini-stat">
+          <span>Lock</span>
+          <p>Final submit prevents score edits</p>
+        </div>
+
+        <div className="mini-stat">
+          <span>Audit</span>
+          <p>Every score edit has a timestamp</p>
+        </div>
+
+        <div className="mini-stat">
+          <span>Live</span>
+          <p>Admin dashboard auto-refreshes</p>
+        </div>
+      </section>
+    </main>
+  );
+}
+
+function LoginCard({ title, description, placeholder, buttonText, onSubmit, onBack }) {
+  const [pin, setPin] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  async function submit(e) {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+
+    try {
+      await onSubmit(pin.trim());
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <main className="login-wrap">
+      <section className="panel login-card">
+        <div className="lock-icon">🔐</div>
+        <h2>{title}</h2>
+        <p>{description}</p>
+
+        <form onSubmit={submit}>
+          <input
+            value={pin}
+            onChange={(e) => setPin(e.target.value)}
+            placeholder={placeholder}
+            inputMode="numeric"
+            autoFocus
+          />
+
+===== 4. APP RENDER TREE AROUND HOME / ADMIN =====
+    rawTvMode === 'top3' || rawTvMode === 'search'
+      ? 'top3'
+      : 'final';
+
+  if (wantsTvMode) {
+    return tvMode === 'top3' ? <TVTop3Display /> : <TVWinnersDisplay />;
+  }
+
+  function logout() {
+    localStorage.clear();
+    setJudge(null);
+    setAdmin(false);
+    setMode('home');
+  }
+
+  return (
+    <div className={admin ? 'app-shell admin-shell' : 'app-shell'}>
+      <header className="topbar">
+        <div className="brand-block">
+          <img
+            src="/tyca.jpg"
+            alt="Miss TYCA 2026 Logo"
+            className="brand-logo"
+          />
+
+          <div>
+            <p className="eyebrow">Proposal Preview</p>
+            <h1>Miss TYCA 2026 <span className="powered-text">powered by Scoryn</span></h1>
+            <p className="subtitle">Scoryn online tabulation for pageants, competitions, and judged events</p>
+          </div>
+        </div>
+
+        {(judge || admin) && (
+          <button className="btn btn-light" onClick={logout}>
+            Logout
+          </button>
+        )}
+      </header>
+
+      {mode === 'home' && !judge && !admin && <Home setMode={setMode} />}
+
+      {mode === 'judge-login' && !judge && (
+        <LoginCard
+          title="Judge Login"
+          description="Enter your assigned judge PIN to start scoring."
+          placeholder="Judge PIN"
+          buttonText="Enter Judge Panel"
+          onBack={() => setMode('home')}
+          onSubmit={async (pin) => {
+            const data = await api('/api/judge/login', {
+              method: 'POST',
+              body: JSON.stringify({ pin })
+            });
+
+            localStorage.setItem('judge', JSON.stringify(data.judge));
+            localStorage.setItem('mode', 'judge');
+            setJudge(data.judge);
+          }}
+        />
+      )}
+
+      {mode === 'admin-login' && !admin && (
+        <LoginCard
+          title="Admin Login"
+          description="Use this on the tabulator laptop for live results and audit logs."
+          placeholder="Admin PIN"
+          buttonText="Open Dashboard"
+          onBack={() => setMode('home')}
+          onSubmit={async (pin) => {
+            await api('/api/admin/login', {
+              method: 'POST',
+              body: JSON.stringify({ pin })
+            });
+
+            localStorage.setItem('admin', 'true');
+            localStorage.setItem('mode', 'admin');
+            setAdmin(true);
+          }}
+        />
+      )}
+
+      {judge && <JudgePanel judge={judge} />}
+      {admin && <ScorynProposalBanner />}
+      {admin && <CriteriaLeadersPanel />}
+      {admin && <AdminSummaryPrintButtons />}
+      {admin && <AdminPanel />}
+
+      <SiteFooter />
+    </div>
+  );
+}
+
+function Home({ setMode }) {
+  return (
+    <main className="hero-grid">
+      <section className="hero-card">
+        <img
+          src="/tyca.jpg"
+          alt="Miss TYCA 2026 Logo"
+          className="hero-logo"
+        />
+
+        <p className="eyebrow">Pageant Night Ready</p>
+        <h2>Fast, clean, automatic, and traceable tabulation.</h2>
+        <p>
+          Judges can edit while scoring, then click Final Submit. After that, their
+          scores are locked and the admin can see score history with exact timestamps.
+        </p>
+
+        <div className="role-grid">
+          <button className="role-card" onClick={() => setMode('judge-login')}>
+            <span className="role-icon">📝</span>
+            <strong>Judge Device</strong>
+            <small>Score, review, and final submit</small>
+          </button>
+
+          <button className="role-card dark" onClick={() => setMode('admin-login')}>
+            <span className="role-icon">📊</span>
+            <strong>Admin Dashboard</strong>
+            <small>Live ranking, lock status, and audit logs</small>
+          </button>
+
+===== 5. DEVELOPER CREDITS / FOOTER COMPONENTS =====
+                  <tr>
+                    <td colSpan="7">No score history yet.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      )}
+    </main>
+  );
+}
+
+function WinnerAnnouncement({ winnerName, declaredAt }) {
+  return (
+    <section className="winner-announcement">
+      <div className="winner-sparkle">👑</div>
+
+      <p className="eyebrow">Official Congratulations</p>
+      <h2>Congratulations, {winnerName}!</h2>
+      <p className="winner-message">
+        Warmest congratulations from <strong>Kirjane Labs</strong> and <strong>Dev Siris</strong>.
+        Your grace, confidence, and excellence shine brightly as part of
+        <strong> Miss TYCA 2026</strong>.
+      </p>
+
+      <div className="winner-dev-note">
+        <span>With appreciation from the system developers:</span>
+        <strong>Kirch Ivan A. Balite</strong>
+        <strong>Osiris Kedigadash Palac</strong>
+      </div>
+
+      {declaredAt && (
+        <p className="winner-time">Declared at {formatDateTime(declaredAt)}</p>
+      )}
+    </section>
+  );
+}
+
+function DeveloperCredits() {
+  return (
+    <section className="proposal-mini-credit">
+      <span>Proposal preview by Kirjane Labs × Dev Siris</span>
+      <strong>Scoryn for Miss TYCA 2026</strong>
+    </section>
+  );
+}
+
+
+
+function TVCreditFooter() {
+  return (
+    <footer className="tv-credit-footer site-footer compact-footer">
+      <div className="compact-footer-inner">
+        <strong>Miss TYCA 2026 powered by Scoryn</strong>
+        <p>© 2026 All rights reserved. Proposal preview by Kirjane Labs × Dev Siris.</p>
+
+        <div className="compact-dev-lines">
+          <p>
+            <strong>Kirjane Labs</strong> — Kirch Ivan A. Balite · 094863238533 ·{' '}
+            <a href="mailto:kirchbalite.careers@gmail.com">kirchbalite.careers@gmail.com</a>
+            {' '}· Facebook: Kirch Ivan
+          </p>
+
+          <p>
+            <strong>Dev Siris</strong> — Osiris Kedgidagash Palac · 09694213824 ·{' '}
+            <a href="mailto:palac.osiriskedgidagash@gmail.com">palac.osiriskedgidagash@gmail.com</a>
+            {' '}· Facebook: Siris Palac
+          </p>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+function TVWinnersDisplay() {
+  const [results, setResults] = useState([]);
+  const [judgeStatuses, setJudgeStatuses] = useState([]);
+  const [lastUpdated, setLastUpdated] = useState('');
+  const [error, setError] = useState('');
+
+  async function loadTvResults() {
+    try {
+      const [finalResults, finalJudges] = await Promise.all([
+        api('/api/final/results'),
+        api('/api/final/judges/status')
+      ]);
+
+      setResults(finalResults || []);
+      setJudgeStatuses(finalJudges || []);
+      setLastUpdated(new Date().toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      }));
+      setError('');
+    } catch (err) {
+      setError(err.message);
+    }
+  }
+
+  useEffect(() => {
+    loadTvResults();
+    const timer = setInterval(loadTvResults, 3000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const ranked = results.map((result, index) => ({
+    ...result,
+    rank: index + 1
+  }));
+
+  const submittedFinalJudges = judgeStatuses.filter((judge) => judge.submitted_at).length;
+  const allFinalSubmitted = judgeStatuses.length > 0 && submittedFinalJudges === judgeStatuses.length;
+
+  const winner = ranked[0];
+  const firstRunnerUp = ranked[1];
+  const secondRunnerUp = ranked[2];
+
+  if (error || !allFinalSubmitted || ranked.length < 3) {
+    return (
+      <main className="tv-stage tv-waiting">
+        <section className="tv-header">
+          <img src="/tyca.jpg" alt="Miss TYCA 2026 Logo" />
+          <div>
+            <p className="eyebrow">Official Final Results</p>
+            <h1>Miss TYCA 2026</h1>
+            <p>Coronation results will appear once all Finals scores are locked.</p>
+          </div>
+        </section>
+
+        <section className="tv-wait-card">
+          <h2>Waiting for coronation results</h2>
+          <p>{error || 'Finals submissions are not yet complete.'}</p>
+        </section>
+
+        <TVCreditFooter
+          leftLabel="Awaiting official confirmation"
+          rightLabel={lastUpdated ? `Updated ${lastUpdated}` : ''}
+        />
+      </main>
+    );
+  }
+
+  return (
+    <main className="tv-stage">
+      <section className="tv-header">
+        <img src="/tyca.jpg" alt="Miss TYCA 2026 Logo" />
+        <div>
+          <p className="eyebrow">Official Final Results</p>
+          <h1>Miss TYCA 2026</h1>
+          <p>Official coronation results.</p>
+        </div>
+      </section>
+
+      <section className="tv-note-strip">
+        <strong>TV Display · Finals Coronation</strong>
+        <span>Official display for the coronation results.</span>
+      </section>
+
+      <section className="tv-winner-card">
+        <p>👑 Miss TYCA 2026</p>
+        <h2>#{winner.number} {winner.name}</h2>
+      </section>
+
+      <section className="tv-runner-grid">
+        <article>
+          <span>🥈 First Runner-Up</span>
+          <h3>#{firstRunnerUp.number} {firstRunnerUp.name}</h3>
+        </article>
+
+        <article>
+          <span>🥉 Second Runner-Up</span>
+          <h3>#{secondRunnerUp.number} {secondRunnerUp.name}</h3>
+        </article>
+      </section>
+
+      <TVCreditFooter
+        leftLabel="Finals results confirmed"
+        rightLabel={lastUpdated ? `Updated ${lastUpdated}` : ''}
+      />
+    </main>
+  );
+}
+
+
+
+
+function TVTop3Display() {
+  const [results, setResults] = useState([]);
+  const [judgeStatuses, setJudgeStatuses] = useState([]);
+  const [lastUpdated, setLastUpdated] = useState('');
+  const [error, setError] = useState('');
+
+  async function loadTvTop3() {
+    try {
+      const [rankingResults, judgeData] = await Promise.all([
+        api('/api/results'),
+        api('/api/judges/status')
+      ]);
+
+      setResults(rankingResults || []);
+      setJudgeStatuses(judgeData || []);
+      setLastUpdated(new Date().toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      }));
+      setError('');
+    } catch (err) {
+      setError(err.message);
+    }
+  }
+
+  useEffect(() => {
+    loadTvTop3();
+    const timer = setInterval(loadTvTop3, 3000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const ranked = (results || []).slice(0, 3).map((result, index) => ({
+    ...result,
+    rank: index + 1
+  }));
+
+  const submittedJudges = judgeStatuses.filter((judge) => judge.submitted_at).length;
+  const top1 = ranked[0];
+  const top2 = ranked[1];
+  const top3 = ranked[2];
+
+  function preFinalScore(row) {
+    return Number(row.total || row.total_score || row.final_score || 0).toFixed(2);
+  }
+
+  if (error || ranked.length < 3) {
+    return (
+      <main className="tv-stage tv-waiting">
+        <section className="tv-header">
+          <img src="/tyca.jpg" alt="Miss TYCA 2026 Logo" />
+          <div>
+            <p className="eyebrow">Official Top 3 Finalists</p>
+            <h1>Miss TYCA 2026</h1>
+            <p>Official display for the candidates advancing to Finals.</p>
+          </div>
+        </section>
+
+        <section className="tv-wait-card">
+          <h2>Waiting for Top 3 data</h2>
+          <p>{error || 'Preliminary Round ranking is not ready yet.'}</p>
+        </section>
+
+        <TVCreditFooter
+          leftLabel="Awaiting official confirmation"
+          rightLabel={lastUpdated ? `Updated ${lastUpdated}` : ''}
+        />
+      </main>
+    );
+  }
+
+  return (
+    <main className="tv-stage">
+      <section className="tv-header">
+        <img src="/tyca.jpg" alt="Miss TYCA 2026 Logo" />
+        <div>
+          <p className="eyebrow">Official Top 3 Finalists</p>
+          <h1>Miss TYCA 2026</h1>
+          <p>These candidates advance to Finals.</p>
+        </div>
+      </section>
+
+      <section className="tv-note-strip">
+        <strong>TV Display · Top 3 Finalists</strong>
+        <span>These candidates advance to Finals.</span>
+      </section>
+
+      <section className="tv-winner-card tv-top3-card">
+        <p>✨ Top 3 Finalist</p>
+        <h2>#{top1.number} {top1.name}</h2>
+      </section>
+
+      <section className="tv-runner-grid">
+        <article>
+          <span>✨ Top 3 Finalist</span>
+          <h3>#{top2.number} {top2.name}</h3>
+        </article>
+
+        <article>
+          <span>✨ Top 3 Finalist</span>
+          <h3>#{top3.number} {top3.name}</h3>
+        </article>
+      </section>
+
+      <TVCreditFooter
+        leftLabel="Top 3 Finalists confirmed"
+        rightLabel={lastUpdated ? `Updated ${lastUpdated}` : ''}
+      />
+    </main>
+  );
+}
+
+function SiteFooter() {
+  const year = new Date().getFullYear();
+
+  return (
+    <footer className="site-footer compact-footer">
+      <div className="compact-footer-inner">
+        <strong>Miss TYCA 2026 powered by Scoryn</strong>
+        <p>© {year} All rights reserved. Proposal preview by Kirjane Labs × Dev Siris.</p>
+
+        <div className="compact-dev-lines">
+          <p>
+            <strong>Kirjane Labs</strong> — Kirch Ivan A. Balite · 09486328353 ·
+            <a href="mailto:kirchbalite.careers@gmail.com"> kirchbalite.careers@gmail.com</a> ·
+            Facebook: Kirch Ivan
+          </p>
+
+          <p>
+            <strong>Dev Siris</strong> — Osiris Kedigadash Palac · 09694213824 ·
+            <a href="mailto:palac.osiriskedigadash@gmail.com"> palac.osiriskedigadash@gmail.com</a> ·
+            Facebook: Siris Palac
+          </p>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+function ErrorPanel({ title, message }) {
+  return (
+    <main className="login-wrap">
+      <section className="panel login-card error-panel">
+        <h2>{title}</h2>
+        <p>{message || 'Something went wrong while loading this page.'}</p>
+        <button className="btn btn-primary full" onClick={() => window.location.reload()}>
+          Reload
+        </button>
+        <button
+          className="btn btn-light full"
+          onClick={() => {
+            localStorage.clear();
+            window.location.href = '/';
+          }}
+        >
+          Clear Login and Go Home
+        </button>
+      </section>
+
+===== 6. EXACT OLD COPY STILL IN APP =====
+62:    note: 'Live interview during coronation night.',
+152:function ScorynProposalBanner() {
+156:        <p className="eyebrow">Proposal Preview Only</p>
+157:        <h3>Miss TYCA 2026 powered by Scoryn</h3>
+159:          Scoryn is a modern online tabulation platform designed for pageants, competitions, and judged events.
+329:      judge.submitted_at ? 'Submitted / Locked' : 'Editing',
+377:      judge.submitted_at ? 'Submitted / Locked' : 'Editing',
+621:            <p class="eyebrow">Miss TYCA 2026 powered by Scoryn</p>
+721:            alt="Miss TYCA 2026 Logo"
+726:            <p className="eyebrow">Proposal Preview</p>
+727:            <h1>Miss TYCA 2026 <span className="powered-text">powered by Scoryn</span></h1>
+728:            <p className="subtitle">Scoryn online tabulation for pageants, competitions, and judged events</p>
+782:      {admin && <ScorynProposalBanner />}
+798:          alt="Miss TYCA 2026 Logo"
+802:        <p className="eyebrow">Pageant Night Ready</p>
+803:        <h2>Fast, clean, automatic, and traceable tabulation.</h2>
+812:            <strong>Judge Device</strong>
+818:            <strong>Admin Dashboard</strong>
+819:            <small>Live ranking, lock status, and audit logs</small>
+829:          <span>Lock</span>
+834:          <span>Audit</span>
+839:          <span>Live</span>
+934:  const isLocked = Boolean(judgeStatus?.submitted);
+938:  const canFinalSubmit = !isLocked && totalFields > 0 && filledFields >= totalFields;
+949:    if (isLocked) {
+1031:            {isLocked
+1046:          {isLocked ? (
+1055:                {submitting ? 'Submitting...' : 'Final Submit & Lock'}
+1103:                      disabled={isLocked}
+1161:  const isLocked = Boolean(judgeStatus?.submitted);
+1165:  const canSubmit = !isLocked && totalFields > 0 && filledFields >= totalFields;
+1176:    if (isLocked) {
+1258:          <p className="eyebrow">Finals · Locked</p>
+1291:          {isLocked ? (
+1292:            <div className="locked-badge">🔒 Finals Locked</div>
+1302:              <p className="warning-note">Locks Finals scores only.</p>
+1349:                      disabled={isLocked}
+1608:                        <span className="submitted-pill">🔒 Locked</span>
+1743:          <h2>Admin Control · Live Tabulation</h2>
+1797:              <h3>Top 3 Live Leaderboard</h3>
+1851:                        <span className="submitted-pill">🔒 Locked</span>
+1968:              <p>Audit trail with exact date, hour, minute, and second</p>
+2023:        <strong> Miss TYCA 2026</strong>.
+2043:      <strong>Scoryn for Miss TYCA 2026</strong>
+2054:        <strong>Miss TYCA 2026 powered by Scoryn</strong>
+2123:          <img src="/tyca.jpg" alt="Miss TYCA 2026 Logo" />
+2126:            <h1>Miss TYCA 2026</h1>
+2147:        <img src="/tyca.jpg" alt="Miss TYCA 2026 Logo" />
+2150:          <h1>Miss TYCA 2026</h1>
+2161:        <p>👑 Miss TYCA 2026</p>
+2238:          <img src="/tyca.jpg" alt="Miss TYCA 2026 Logo" />
+2241:            <h1>Miss TYCA 2026</h1>
+2262:        <img src="/tyca.jpg" alt="Miss TYCA 2026 Logo" />
+2265:          <h1>Miss TYCA 2026</h1>
+2306:        <strong>Miss TYCA 2026 powered by Scoryn</strong>
+
+===== 7. CLASSNAMES USED IN HOME AREA =====
+className="eyebrow"
+className="hero-card"
+className="hero-grid"
+className="hero-logo"
+className="info-panel"
+className="lock-icon"
+className="login-wrap"
+className="mini-stat"
+className="panel login-card"
+className="role-card"
+className="role-card dark"
+className="role-grid"
+className="role-icon"
+
+===== 8. ALL CSS SELECTORS MATCHING HOME CLASSNAMES =====
+
+----- .dark -----
+259:.role-card.dark {
+1591:.role-card.dark {
+1714:.role-card.dark,
+
+----- .eyebrow -----
+83:.eyebrow {
+1930:.final-round-locked .eyebrow {
+2041:.tv-header .eyebrow {
+2267:.final-round-leader-card .eyebrow {
+2280:.final-round-leader-card p:not(.eyebrow) {
+2304:.final-results-panel .eyebrow {
+2338:.final-status-panel .eyebrow,
+2339:.judge-status-panel .eyebrow {
+2348:.final-status-panel .table-title p:not(.eyebrow),
+2349:.judge-status-panel .table-title p:not(.eyebrow) {
+2392:.top3-finalists-panel .eyebrow {
+2401:.top3-finalists-panel .table-title p:not(.eyebrow) {
+2662:.final-round-leader-card .eyebrow {
+2675:.final-round-leader-card p:not(.eyebrow) {
+2699:.final-results-panel .eyebrow {
+2718:.top3-finalists-panel .eyebrow {
+2727:.top3-finalists-panel .table-title p:not(.eyebrow) {
+2837:.final-status-panel .eyebrow,
+2838:.judge-status-panel .eyebrow {
+3043:.admin-dashboard-view .eyebrow {
+3065:.dashboard-hero p:not(.eyebrow):not(.warning-note) {
+3137:.final-round-leader-card .eyebrow {
+3149:.final-round-leader-card p:not(.eyebrow) {
+3186:.final-results-panel .table-title p:not(.eyebrow),
+3187:.top3-finalists-panel .table-title p:not(.eyebrow),
+3188:.prelim-ranking-panel .table-title p:not(.eyebrow),
+3189:.final-status-panel .table-title p:not(.eyebrow),
+3190:.judge-status-panel .table-title p:not(.eyebrow) {
+3395:.final-status-panel .eyebrow,
+3396:.judge-status-panel .eyebrow {
+3639:.tv-header .eyebrow {
+4478:.finals-judge-panel .final-round-head p:not(.eyebrow) {
+4840:.eyebrow,
+
+----- .hero-card -----
+122:.hero-card p,
+195:.hero-card,
+215:.hero-card {
+231:.hero-card h2 {
+236:.hero-card > p {
+931:  .hero-card h2 {
+1533:.hero-card,
+1560:.hero-card {
+1670:.hero-card,
+1687:.hero-card {
+1757:  .hero-card,
+4796:.hero-card,
+4816:.hero-card::before,
+4817:.hero-card::after,
+
+----- .hero-grid -----
+208:.hero-grid {
+894:  .hero-grid,
+
+----- .hero-logo -----
+219:.hero-logo {
+1311:.hero-logo {
+1326:  .hero-logo {
+1600:.hero-logo {
+1740:.hero-logo {
+
+----- .info-panel -----
+123:.info-panel p,
+196:.info-panel,
+285:.info-panel {
+1534:.info-panel,
+1567:.info-panel {
+1671:.info-panel,
+1759:  .info-panel,
+
+----- .lock-icon -----
+427:.lock-icon {
+
+----- .login-card -----
+421:.login-card {
+1537:.login-card,
+1674:.login-card,
+4791:.login-card,
+4814:.login-card::before,
+4815:.login-card::after,
+4828:.login-card strong,
+
+----- .login-wrap -----
+415:.login-wrap {
+
+----- .mini-stat -----
+291:.mini-stat {
+299:.mini-stat span {
+307:.mini-stat p {
+1574:.mini-stat,
+1700:.mini-stat,
+
+----- .panel -----
+121:.panel p,
+194:.panel,
+1532:.panel,
+1669:.panel,
+1758:  .panel,
+2935:.admin-dashboard-view > .panel,
+2936:.admin-dashboard-view > section.panel {
+3038:.admin-dashboard-view .panel,
+3039:.admin-dashboard-view section.panel {
+3506:.admin-dashboard-view > .panel {
+4790:.panel,
+4812:.panel::before,
+4813:.panel::after,
+4827:.panel strong,
+
+----- .role-card -----
+136:.role-card {
+143:.role-card:hover {
+249:.role-card {
+259:.role-card.dark {
+275:.role-card strong,
+276:.role-card small {
+280:.role-card small {
+1573:.role-card,
+1591:.role-card.dark {
+1699:.role-card,
+1714:.role-card.dark,
+
+----- .role-grid -----
+242:.role-grid {
+902:  .role-grid,
+
+----- .role-icon -----
+264:.role-icon {
+
+===== 9. THEME BLOCK ORDER =====
+4731:/* ===== SCORYN TYCA CLEAN PREMIUM THEME START ===== */
+4768:  content: "PROPOSAL PREVIEW ONLY · MISS TYCA 2026 POWERED BY SCORYN";
+5029:/* ===== SCORYN TYCA CLEAN PREMIUM THEME END ===== */
+
+===== 10. PURPLE / GREEN / GLASS LEFTOVERS =====
+4:  --soft-card: rgba(255, 255, 255, 0.86);
+7:  --primary: #7c3aed;
+12:  --green: #16a34a;
+60:  background: rgba(255, 255, 255, 0.78);
+155:  background: linear-gradient(135deg, var(--primary), #db2777);
+172:  background: linear-gradient(135deg, #16a34a, #059669);
+261:  background: linear-gradient(135deg, #211136, #4c1d95);
+320:    linear-gradient(135deg, rgba(124, 58, 237, 0.07), rgba(245, 158, 11, 0.12)),
+321:    rgba(255, 255, 255, 0.86);
+343:  background: linear-gradient(135deg, #2e1065, #7c3aed);
+531:  background: linear-gradient(90deg, var(--primary), #db2777);
+683:    linear-gradient(135deg, rgba(245, 158, 11, 0.13), rgba(124, 58, 237, 0.06)),
+684:    rgba(255, 255, 255, 0.88);
+813:  color: rgba(255, 255, 255, 0.72);
+844:  background: rgba(255, 255, 255, 0.07);
+845:  border: 1px solid rgba(255, 255, 255, 0.11);
+968:  color: rgba(255, 255, 255, 0.72);
+1079:  color: rgba(255, 255, 255, 0.78);
+1091:  color: rgba(255, 255, 255, 0.88);
+1279:  color: rgba(255, 255, 255, 0.78);
+1291:  color: rgba(255, 255, 255, 0.9);
+1336:  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+1361:  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+1396:  color: rgba(255, 255, 255, 0.68);
+1497:  --card: rgba(255, 255, 255, 0.72);
+1498:  --soft-card: rgba(255, 255, 255, 0.66);
+1501:  --primary: #6d28d9;
+1514:    linear-gradient(135deg, #e8ddfb 0%, #f5efff 46%, #f7eadf 100%);
+1524:    linear-gradient(rgba(255,255,255,0.18) 1px, transparent 1px),
+1525:    linear-gradient(90deg, rgba(255,255,255,0.16) 1px, transparent 1px);
+1544:    linear-gradient(135deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.48)),
+1546:  border: 1px solid rgba(255, 255, 255, 0.54);
+1549:    inset 0 1px 0 rgba(255, 255, 255, 0.72);
+1562:    linear-gradient(135deg, rgba(255, 255, 255, 0.70), rgba(248, 242, 255, 0.50)),
+1569:    linear-gradient(180deg, rgba(255, 255, 255, 0.62), rgba(255, 255, 255, 0.42)),
+1582:  background: rgba(255, 255, 255, 0.54);
+1583:  border: 1px solid rgba(255, 255, 255, 0.62);
+1586:    inset 0 1px 0 rgba(255, 255, 255, 0.74);
+1594:    linear-gradient(135deg, rgba(33, 17, 54, 0.92), rgba(76, 29, 149, 0.82)),
+1596:  border-color: rgba(255, 255, 255, 0.24);
+1601:  background: rgba(255, 255, 255, 0.66);
+1602:  border: 1px solid rgba(255, 255, 255, 0.76);
+1605:    inset 0 1px 0 rgba(255, 255, 255, 0.86);
+1612:    linear-gradient(135deg, rgba(255, 255, 255, 0.54), rgba(245, 238, 255, 0.42)),
+1618:  background: linear-gradient(135deg, #5b21b6, #7c3aed 52%, #db2777);
+1623:  background: rgba(255, 255, 255, 0.58);
+1624:  border: 1px solid rgba(255, 255, 255, 0.70);
+1625:  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.68);
+1637:  background: rgba(255, 255, 255, 0.56);
+1644:    linear-gradient(135deg, rgba(23, 16, 34, 0.88), rgba(76, 29, 149, 0.62)),
+1646:  border-color: rgba(255, 255, 255, 0.16);
+1661:/* More visible card edges while keeping the glass/acrylic style. */
+1683:    0 0 0 1px rgba(255, 255, 255, 0.58) inset,
+1684:    0 1px 0 rgba(255, 255, 255, 0.78) inset !important;
+1691:    0 0 0 1px rgba(255, 255, 255, 0.68) inset,
+1711:    0 0 0 1px rgba(255, 255, 255, 0.66) inset !important;
+1717:  border: 1px solid rgba(255, 255, 255, 0.32) !important;
+1720:    0 0 0 1px rgba(255, 255, 255, 0.18) inset !important;
+1744:    0 0 0 1px rgba(255, 255, 255, 0.76) inset !important;
+1819:    linear-gradient(135deg, rgba(76, 29, 149, 0.95), rgba(219, 39, 119, 0.82)),
+1821:  border: 1px solid rgba(255, 255, 255, 0.22);
+1875:    linear-gradient(135deg, rgba(255, 255, 255, 0.58), rgba(250, 245, 255, 0.42)),
+1914:    linear-gradient(135deg, rgba(255, 255, 255, 0.70), rgba(250, 245, 255, 0.50)),
+1919:    0 0 0 1px rgba(255, 255, 255, 0.70) inset !important;
+1927:  background: linear-gradient(90deg, transparent, rgba(124, 58, 237, 0.35), transparent);
+1959:    linear-gradient(135deg, rgba(220, 252, 231, 0.95), rgba(187, 247, 208, 0.82));
+1990:    0 0 0 1px rgba(255, 255, 255, 0.82) inset !important;
+2014:    linear-gradient(135deg, #fff7ed, #f3e8ff 46%, #fdf2f8);
+2027:  background: rgba(255, 255, 255, 0.76);
+2037:  background: rgba(255, 255, 255, 0.86);
+2069:  background: rgba(255, 255, 255, 0.76);
+2089:    radial-gradient(circle at 18% 20%, rgba(255, 255, 255, 0.20), transparent 26%),
+2090:    linear-gradient(135deg, #581c87, #7e22ce 42%, #db2777);
+2092:  border: 1px solid rgba(255, 255, 255, 0.30);
+2097:    radial-gradient(circle at 18% 20%, rgba(255, 255, 255, 0.18), transparent 26%),
+2098:    linear-gradient(135deg, #1d4ed8, #7c3aed 46%, #db2777);
+2129:  background: rgba(255, 255, 255, 0.80);
+2135:  color: #6d28d9;
+2156:  background: rgba(255, 255, 255, 0.80);
+2175:  background: linear-gradient(135deg, rgba(34, 18, 55, 0.96), rgba(96, 55, 137, 0.94));
+2243:   Final = pink/purple.
+2260:    linear-gradient(90deg, rgba(236, 72, 153, 0.055), transparent 45%),
+2261:    rgba(255, 255, 255, 0.80) !important;
+2264:    0 0 0 1px rgba(255,255,255,0.88) inset !important;
+2299:    linear-gradient(90deg, rgba(236, 72, 153, 0.040), transparent 42%),
+2300:    rgba(255, 255, 255, 0.78) !important;
+2326:  background: rgba(255, 237, 213, 0.62) !important;
+2334:  background: rgba(255, 255, 255, 0.76) !important;
+2362:  background: rgba(255,255,255,0.72) !important;
+2388:    rgba(255, 255, 255, 0.78) !important;
+2393:  color: #6d28d9 !important;
+2436:    linear-gradient(135deg, rgba(254, 243, 199, 0.95), rgba(255,255,255,0.74));
+2446:    linear-gradient(135deg, rgba(241, 245, 249, 0.98), rgba(255,255,255,0.76));
+2456:    linear-gradient(135deg, rgba(255, 237, 213, 0.95), rgba(255,255,255,0.76));
+2495:  color: #6d28d9;
+2505:  background: rgba(255,255,255,0.76) !important;
+2523:  background: rgba(255, 237, 213, 0.60) !important;
+2527:  background: rgba(255,255,255,0.72) !important;
+2658:    rgba(255, 255, 255, 0.80) !important;
+2694:    linear-gradient(90deg, rgba(236, 72, 153, 0.035), transparent 42%),
+2695:    rgba(255, 255, 255, 0.78) !important;
+2714:    rgba(255, 255, 255, 0.80) !important;
+2719:  color: #6d28d9 !important;
+2762:    linear-gradient(135deg, rgba(254, 243, 199, 0.98), rgba(255,255,255,0.76));
+2772:    linear-gradient(135deg, rgba(241, 245, 249, 0.98), rgba(255,255,255,0.78));
+2782:    linear-gradient(135deg, rgba(255, 237, 213, 0.98), rgba(255,255,255,0.78));
+2823:  color: #6d28d9;
+2833:  background: rgba(255, 255, 255, 0.76) !important;
+2851:  background: rgba(255,255,255,0.76) !important;
+2864:  background: rgba(255, 237, 213, 0.56) !important;
+2895:    radial-gradient(circle at 82% 12%, rgba(255, 180, 215, 0.30), transparent 32%),
+2896:    radial-gradient(circle at 92% 72%, rgba(255, 219, 228, 0.38), transparent 34%),
+2897:    linear-gradient(135deg, #f7edff 0%, #fff4fa 48%, #fff8fb 100%);
+2913:    radial-gradient(circle at 6% 57%, rgba(255, 255, 255, 0.55) 0 42px, transparent 43px),
+2914:    radial-gradient(circle at 12% 19%, rgba(255, 255, 255, 0.38) 0 3px, transparent 4px),
+2915:    radial-gradient(circle at 97% 18%, rgba(255, 255, 255, 0.60) 0 4px, transparent 5px),
+2916:    linear-gradient(90deg, rgba(124, 58, 237, 0.06), transparent 26%, transparent 76%, rgba(219, 39, 119, 0.06));
+2938:    linear-gradient(135deg, rgba(255, 255, 255, 0.88), rgba(255, 250, 253, 0.72)),
+2939:    rgba(255, 255, 255, 0.76);
+2943:    inset 0 1px 0 rgba(255, 255, 255, 0.75);
+2986:  background: rgba(255, 255, 255, 0.56);
+3086:  background: linear-gradient(135deg, #7c3aed, #5b21b6);
+3090:  background: linear-gradient(135deg, #331c59, #1e1238);
+3095:  background: linear-gradient(135deg, #facc15, #fb923c);
+3116:    linear-gradient(110deg, rgba(255, 255, 255, 0.90), rgba(255, 239, 248, 0.78)),
+3117:    rgba(255, 255, 255, 0.78) !important;
+3131:  background: linear-gradient(135deg, #fff9db, #ffe4bd);
+3199:  background: rgba(255, 255, 255, 0.66);
+3204:  background: rgba(255, 255, 255, 0.80);
+3222:  background: linear-gradient(90deg, rgba(254, 243, 199, 0.82), rgba(255, 250, 235, 0.62));
+3226:  background: linear-gradient(90deg, rgba(237, 233, 254, 0.72), rgba(255, 255, 255, 0.52));
+3230:  background: linear-gradient(90deg, rgba(255, 237, 213, 0.72), rgba(255, 255, 255, 0.52));
+3283:  background: linear-gradient(135deg, rgba(255, 248, 214, 0.96), rgba(255, 243, 195, 0.66));
+3289:  background: rgba(255, 247, 211, 0.92);
+3299:  background: linear-gradient(135deg, rgba(243, 240, 255, 0.98), rgba(236, 233, 254, 0.66));
+3315:  background: linear-gradient(135deg, rgba(255, 237, 225, 0.96), rgba(255, 228, 214, 0.68));
+3321:  background: rgba(255, 241, 232, 0.94);
+3383:  background: rgba(255, 237, 213, 0.36);
+3390:    linear-gradient(135deg, rgba(255, 255, 255, 0.78), rgba(250, 247, 255, 0.58)),
+3391:    rgba(255, 255, 255, 0.68) !important;
+3535:    linear-gradient(135deg, #f4e9ff 0%, #fff1f7 46%, #fff6ed 100%);
+3557:    radial-gradient(circle at 11% 60%, rgba(255, 255, 255, 0.62) 0 38px, transparent 40px),
+3558:    radial-gradient(circle at 97% 25%, rgba(255, 255, 255, 0.70) 0 4px, transparent 5px),
+3559:    radial-gradient(circle at 22% 31%, rgba(255, 255, 255, 0.52) 0 4px, transparent 5px),
+3560:    linear-gradient(90deg, rgba(124, 58, 237, 0.06), transparent 30%, transparent 72%, rgba(219, 39, 119, 0.06));
+3590:    linear-gradient(135deg, rgba(255, 255, 255, 0.90), rgba(255, 247, 253, 0.72)),
+3591:    rgba(255, 255, 255, 0.72);
+3594:    inset 0 1px 0 rgba(255, 255, 255, 0.82);
+3604:    linear-gradient(90deg, rgba(124, 58, 237, 0.10), transparent 34%);
+3616:  background: rgba(255, 255, 255, 0.66);
+3634:  background: rgba(255, 255, 255, 0.92);
+3641:  color: #6d28d9;
+3677:    linear-gradient(90deg, rgba(255, 255, 255, 0.90), rgba(255, 247, 253, 0.74)),
+3678:    rgba(255, 255, 255, 0.70);
+3682:    inset 0 1px 0 rgba(255, 255, 255, 0.80);
+3692:  background: linear-gradient(180deg, #7c3aed, #ec4899, #f59e0b);
+3719:    radial-gradient(circle at 16% 18%, rgba(255, 255, 255, 0.26), transparent 22%),
+3721:    linear-gradient(135deg, #2459e8 0%, #7c3aed 47%, #db2777 100%);
+3724:    inset 0 1px 0 rgba(255, 255, 255, 0.30);
+3732:  color: rgba(255, 255, 255, 0.12);
+3744:  border: 1px solid rgba(255, 255, 255, 0.25);
+3775:    radial-gradient(circle at 18% 16%, rgba(255, 255, 255, 0.26), transparent 22%),
+3777:    linear-gradient(135deg, #2563eb 0%, #7c3aed 46%, #db2777 100%);
+3795:    linear-gradient(135deg, rgba(255, 255, 255, 0.91), rgba(255, 247, 253, 0.72)),
+3796:    rgba(255, 255, 255, 0.70);
+3800:    inset 0 1px 0 rgba(255, 255, 255, 0.82);
+3820:  color: #6d28d9;
+3850:    linear-gradient(135deg, rgba(34, 17, 61, 0.96), rgba(91, 50, 132, 0.94));
+3851:  border: 1px solid rgba(255, 255, 255, 0.13);
+3863:  color: rgba(255, 255, 255, 0.88);
+3882:  color: rgba(255, 255, 255, 0.80);
+3895:    linear-gradient(135deg, rgba(255, 255, 255, 0.90), rgba(255, 247, 253, 0.72)),
+3896:    rgba(255, 255, 255, 0.70);
+3975:    linear-gradient(135deg, #251448 0%, #4b2a73 48%, #865ab1 100%);
+3976:  border: 1px solid rgba(255, 255, 255, 0.14);
+3979:    inset 0 1px 0 rgba(255, 255, 255, 0.16);
+3987:    linear-gradient(90deg, rgba(255, 255, 255, 0.08), transparent 32%, rgba(255, 255, 255, 0.06)),
+3988:    radial-gradient(circle at 94% 50%, rgba(255, 255, 255, 0.12), transparent 22%);
+3998:  color: rgba(255, 255, 255, 0.075);
+4021:  color: rgba(255, 255, 255, 0.78);
+4072:    linear-gradient(135deg, #251448 0%, #4b2a73 48%, #865ab1 100%);
+4073:  border: 1px solid rgba(255, 255, 255, 0.14);
+4076:    inset 0 1px 0 rgba(255, 255, 255, 0.16);
+4084:    linear-gradient(90deg, rgba(255, 255, 255, 0.08), transparent 32%, rgba(255, 255, 255, 0.06)),
+4085:    radial-gradient(circle at 94% 50%, rgba(255, 255, 255, 0.12), transparent 22%);
+4095:  color: rgba(255, 255, 255, 0.075);
+4121:  color: rgba(255, 255, 255, 0.80);
+4148:  color: rgba(255, 255, 255, 0.82);
+4198:    linear-gradient(135deg, #251448 0%, #4b2a73 48%, #865ab1 100%) !important;
+4199:  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+4202:    inset 0 1px 0 rgba(255, 255, 255, 0.16) !important;
+4210:    linear-gradient(90deg, rgba(255, 255, 255, 0.08), transparent 32%, rgba(255, 255, 255, 0.06)),
+4211:    radial-gradient(circle at 94% 50%, rgba(255, 255, 255, 0.12), transparent 22%);
+4221:  color: rgba(255, 255, 255, 0.075);
+4254:  color: rgba(255, 255, 255, 0.78) !important;
+4322:    linear-gradient(135deg, #251448 0%, #4b2a73 48%, #865ab1 100%) !important;
+4323:  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+4326:    inset 0 1px 0 rgba(255, 255, 255, 0.16) !important;
+4335:    linear-gradient(90deg, rgba(255, 255, 255, 0.08), transparent 32%, rgba(255, 255, 255, 0.06)),
+4336:    radial-gradient(circle at 94% 50%, rgba(255, 255, 255, 0.12), transparent 22%);
+4346:  color: rgba(255, 255, 255, 0.075);
+4381:  color: rgba(255, 255, 255, 0.78) !important;
+4455:    linear-gradient(135deg, rgba(255,255,255,0.96), rgba(250,245,255,0.90)) !important;
+4467:  background: rgba(255,255,255,0.76) !important;
+4490:  background: rgba(255,255,255,0.86) !important;
+4510:  background: linear-gradient(135deg, rgba(187,247,208,0.96), rgba(220,252,231,0.86)) !important;
+4527:    linear-gradient(180deg, rgba(255,255,255,0.94), rgba(253,248,255,0.88)) !important;
+4548:  color: #6d28d9 !important;
+4571:  background: rgba(255,251,235,0.88) !important;
+4580:  background: rgba(255,255,255,0.92) !important;
+4592:  color: #7c3aed !important;
+4606:  background: rgba(255,255,255,0.84) !important;
+4693:    linear-gradient(135deg, rgba(255,255,255,0.88), rgba(250,245,255,0.82));
+4732:/* One final UI layer only. No green. No purple. Footer stays. */
+4744:  --scoryn-muted: rgba(255, 250, 240, 0.66);
+4752:    linear-gradient(135deg, #000 0%, #080706 52%, #18130a 100%) !important;
+4807:  background: linear-gradient(135deg, var(--scoryn-card), var(--scoryn-card-soft)) !important;
+4875:  background: linear-gradient(135deg, #6d4c12, #d6b454, #fff3c4) !important;
+4883:  background: rgba(255,243,196,0.10) !important;
+4889:  background: linear-gradient(135deg, #d6b454, #f3d987) !important;
+5003:  background: linear-gradient(135deg, #050505, #1a1408 60%, #080705) !important;
+5013:    linear-gradient(135deg, #000, #18130a) !important;
+
+===== 11. LOGO FILE AND REFERENCES =====
+-rw-rw-r-- 1 kirch kirch 253K May 12 12:05 /home/kirch/tyca.jpg
+-rw-rw-r-- 1 kirch kirch 139K May  6 20:23 public/pageant-logo.jpg
+-rw-rw-r-- 1 kirch kirch 253K May 12 12:25 public/tyca.jpg
+src/App.jsx:720:            src="/tyca.jpg"
+src/App.jsx:797:          src="/tyca.jpg"
+src/App.jsx:2123:          <img src="/tyca.jpg" alt="Miss TYCA 2026 Logo" />
+src/App.jsx:2147:        <img src="/tyca.jpg" alt="Miss TYCA 2026 Logo" />
+src/App.jsx:2238:          <img src="/tyca.jpg" alt="Miss TYCA 2026 Logo" />
+src/App.jsx:2262:        <img src="/tyca.jpg" alt="Miss TYCA 2026 Logo" />
+
+===== 12. API SETUP COUNTS =====
+contestants: 12
+judges: 0
+criteria: 5
+contestants: ['Candidate 1', 'Candidate 2', 'Candidate 3', 'Candidate 4', 'Candidate 5', 'Candidate 6', 'Candidate 7', 'Candidate 8', 'Candidate 9', 'Candidate 10', 'Candidate 11', 'Candidate 12']
+judges: []
+
+===== 13. BUILD OUTPUT CHECK =====
+
+> pageant-judging@1.0.0 build
+> vite build
+
+vite v5.4.21 building for production...
+transforming...
+✓ 34 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.42 kB │ gzip:  0.28 kB
+dist/assets/index-_uzozRJ2.css   76.00 kB │ gzip: 13.79 kB
+dist/assets/index-BsXxe-gk.js   244.51 kB │ gzip: 72.46 kB
+✓ built in 1.22s
+
+===== AUDIT COMPLETE =====

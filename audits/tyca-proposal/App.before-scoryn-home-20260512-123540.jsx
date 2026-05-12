@@ -791,89 +791,54 @@ export default function App() {
 
 function Home({ setMode }) {
   return (
-    <main className="scoryn-landing">
-      <section className="scoryn-hero-panel">
-        <div className="scoryn-hero-copy">
-          <div className="scoryn-preview-pill">
-            <span>Proposal Preview Only</span>
-            <strong>Miss TYCA 2026</strong>
-          </div>
+    <main className="hero-grid">
+      <section className="hero-card">
+        <img
+          src="/tyca.jpg"
+          alt="Miss TYCA 2026 Logo"
+          className="hero-logo"
+        />
 
-          <div className="scoryn-title-row">
-            <img
-              src="/tyca.jpg"
-              alt="Miss TYCA 2026 Logo"
-              className="scoryn-hero-logo"
-            />
+        <p className="eyebrow">Pageant Night Ready</p>
+        <h2>Fast, clean, automatic, and traceable tabulation.</h2>
+        <p>
+          Judges can edit while scoring, then click Final Submit. After that, their
+          scores are locked and the admin can see score history with exact timestamps.
+        </p>
 
-            <div>
-              <p className="eyebrow">Powered by Scoryn</p>
-              <h2>Premium real-time tabulation for Miss TYCA 2026.</h2>
-            </div>
-          </div>
+        <div className="role-grid">
+          <button className="role-card" onClick={() => setMode('judge-login')}>
+            <span className="role-icon">📝</span>
+            <strong>Judge Device</strong>
+            <small>Score, review, and final submit</small>
+          </button>
 
-          <p className="scoryn-lead">
-            Scoryn is a modern online tabulation platform designed for pageants,
-            competitions, and judged events. This clickable proposal preview shows
-            judge scoring, live rankings, locked submissions, TV displays, and
-            PDF-ready summaries.
-          </p>
-
-          <div className="scoryn-action-grid">
-            <button className="scoryn-action-card" onClick={() => setMode('judge-login')}>
-              <span>Judge</span>
-              <strong>Open Judge Panel</strong>
-              <small>Score 12 candidate placeholders and submit locked scores.</small>
-            </button>
-
-            <button className="scoryn-action-card primary" onClick={() => setMode('admin-login')}>
-              <span>Admin</span>
-              <strong>Open Live Dashboard</strong>
-              <small>Monitor rankings, submissions, criteria leaders, and PDF summaries.</small>
-            </button>
-          </div>
-
-          <div className="scoryn-demo-note">
-            <span>Demo scope</span>
-            <p>
-              This is not official TYCA results. Final contestant names, judge count,
-              criteria, weights, and branding can still be customized before deployment.
-            </p>
-          </div>
+          <button className="role-card dark" onClick={() => setMode('admin-login')}>
+            <span className="role-icon">📊</span>
+            <strong>Admin Dashboard</strong>
+            <small>Live ranking, lock status, and audit logs</small>
+          </button>
         </div>
 
-        <aside className="scoryn-value-panel">
-          <article>
-            <span>01</span>
-            <strong>Live scoring</strong>
-            <p>Judges score from their own device while the admin monitors progress.</p>
-          </article>
-
-          <article>
-            <span>02</span>
-            <strong>Locked submissions</strong>
-            <p>Final submit protects results and prevents casual score changes.</p>
-          </article>
-
-          <article>
-            <span>03</span>
-            <strong>Audit-ready</strong>
-            <p>Rankings, timestamps, and summaries are easier to review and defend.</p>
-          </article>
-
-          <article>
-            <span>04</span>
-            <strong>Stage-ready</strong>
-            <p>TV displays and PDF reports help make the event look more professional.</p>
-          </article>
-        </aside>
+        <CriteriaOverview />
+        <DeveloperCredits />
       </section>
 
-      <section className="scoryn-microbar">
-        <span>12 contestant placeholders</span>
-        <span>Default 5 judges</span>
-        <span>Top finalists + finals flow</span>
-        <span>Prepared by Kirjane Labs × Dev Siris</span>
+      <section className="info-panel">
+        <div className="mini-stat">
+          <span>Lock</span>
+          <p>Final submit prevents score edits</p>
+        </div>
+
+        <div className="mini-stat">
+          <span>Audit</span>
+          <p>Every score edit has a timestamp</p>
+        </div>
+
+        <div className="mini-stat">
+          <span>Live</span>
+          <p>Admin dashboard auto-refreshes</p>
+        </div>
       </section>
     </main>
   );
