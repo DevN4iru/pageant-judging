@@ -6229,3 +6229,428 @@ main::after,
 }
 
 /* ===== SCORYN ADMIN JUDGE READABILITY FINAL FIX END ===== */
+
+/* ===== SCORYN EXACT ADMIN JUDGE OVERRIDE START ===== */
+/* This is intentionally last. It targets actual visible admin/judge problem areas. */
+
+/* Page width for logged-in views */
+.app-shell.admin-shell,
+.app-shell:has(.judge-panel),
+.app-shell:has(.finals-judge-panel) {
+  width: min(1320px, calc(100% - 28px)) !important;
+  max-width: 1320px !important;
+}
+
+/* Kill light glass leftovers inside logged-in pages */
+.admin-shell .panel,
+.admin-shell section.panel,
+.admin-shell .dashboard-hero,
+.admin-shell .summary-print-panel,
+.admin-shell .admin-control-card,
+.admin-shell .table-panel,
+.admin-shell .final-results-panel,
+.admin-shell .top3-finalists-panel,
+.admin-shell .prelim-ranking-panel,
+.admin-shell .judge-status-panel,
+.admin-shell .final-status-panel,
+.admin-shell .final-round-leader-card,
+.judge-panel,
+.finals-judge-panel,
+.judge-panel .candidate-card,
+.finals-judge-panel .candidate-card,
+.judge-panel .score-field,
+.finals-judge-panel .score-field,
+.judge-panel .progress-card,
+.finals-judge-panel .progress-card,
+.judge-panel .final-submit-card,
+.finals-judge-panel .final-submit-card {
+  color: #fff8e7 !important;
+  background:
+    linear-gradient(135deg, rgba(9, 8, 6, 0.98), rgba(20, 16, 9, 0.96)) !important;
+  border: 1px solid rgba(214, 180, 84, 0.30) !important;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.28) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.admin-shell .panel::before,
+.admin-shell .panel::after,
+.admin-shell section.panel::before,
+.admin-shell section.panel::after,
+.judge-panel::before,
+.judge-panel::after,
+.finals-judge-panel::before,
+.finals-judge-panel::after,
+.candidate-card::before,
+.candidate-card::after,
+.score-field::before,
+.score-field::after,
+.top3-finalist-card::before,
+.top3-finalist-card::after,
+.final-round-leader-card::before,
+.final-round-leader-card::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* Text contrast */
+.admin-shell h1,
+.admin-shell h2,
+.admin-shell h3,
+.admin-shell h4,
+.admin-shell strong,
+.admin-shell th,
+.admin-shell td,
+.judge-panel h1,
+.judge-panel h2,
+.judge-panel h3,
+.judge-panel h4,
+.judge-panel strong,
+.finals-judge-panel h1,
+.finals-judge-panel h2,
+.finals-judge-panel h3,
+.finals-judge-panel h4,
+.finals-judge-panel strong {
+  color: #fff8e7 !important;
+  text-shadow: none !important;
+}
+
+.admin-shell p,
+.admin-shell small,
+.admin-shell .table-title p,
+.judge-panel p,
+.judge-panel small,
+.finals-judge-panel p,
+.finals-judge-panel small {
+  color: rgba(255, 248, 231, 0.68) !important;
+  text-shadow: none !important;
+}
+
+.admin-shell .eyebrow,
+.judge-panel .eyebrow,
+.finals-judge-panel .eyebrow {
+  color: #f6d77a !important;
+}
+
+/* Judge screen: make cards readable and non-overlapping */
+.judge-panel,
+.finals-judge-panel {
+  display: grid !important;
+  gap: 1rem !important;
+  padding: 1rem !important;
+  border-radius: 26px !important;
+}
+
+.judge-panel .candidate-card,
+.finals-judge-panel .candidate-card {
+  display: grid !important;
+  gap: 0.85rem !important;
+  padding: 1rem !important;
+  border-radius: 24px !important;
+  overflow: visible !important;
+  min-height: auto !important;
+}
+
+.judge-panel .candidate-head,
+.finals-judge-panel .candidate-head {
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: 1rem !important;
+}
+
+.judge-panel .candidate-head h3,
+.finals-judge-panel .candidate-head h3 {
+  margin: 0 !important;
+  font-size: 1.08rem !important;
+  line-height: 1.2 !important;
+}
+
+.judge-panel .score-grid,
+.finals-judge-panel .score-grid,
+.finals-judge-panel .final-score-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(245px, 1fr)) !important;
+  gap: 0.85rem !important;
+  align-items: start !important;
+}
+
+.judge-panel .score-field,
+.finals-judge-panel .score-field {
+  display: grid !important;
+  gap: 0.45rem !important;
+  padding: 0.9rem !important;
+  border-radius: 18px !important;
+  min-height: auto !important;
+  background: rgba(0, 0, 0, 0.34) !important;
+}
+
+.judge-panel .score-field span,
+.finals-judge-panel .score-field span {
+  color: #fff8e7 !important;
+  font-size: 0.86rem !important;
+  line-height: 1.25 !important;
+  font-weight: 900 !important;
+}
+
+.judge-panel .score-field small,
+.finals-judge-panel .score-field small {
+  color: rgba(255, 248, 231, 0.56) !important;
+  font-size: 0.72rem !important;
+  line-height: 1.3 !important;
+}
+
+/* Notes/details: block layout, never absolute overlap */
+.judge-panel details,
+.finals-judge-panel details {
+  position: static !important;
+  display: block !important;
+  width: 100% !important;
+  margin: 0 !important;
+  z-index: auto !important;
+}
+
+.judge-panel summary,
+.finals-judge-panel summary {
+  display: inline-flex !important;
+  width: fit-content !important;
+  padding: 0.26rem 0.5rem !important;
+  border-radius: 999px !important;
+  background: rgba(214, 180, 84, 0.12) !important;
+  color: #f6d77a !important;
+  border: 1px solid rgba(214, 180, 84, 0.24) !important;
+  font-size: 0.66rem !important;
+  font-weight: 950 !important;
+  letter-spacing: 0.04em !important;
+}
+
+.judge-panel details[open],
+.finals-judge-panel details[open] {
+  padding: 0.65rem !important;
+  border-radius: 14px !important;
+  background: rgba(0, 0, 0, 0.42) !important;
+  border: 1px solid rgba(214, 180, 84, 0.18) !important;
+}
+
+.judge-panel details[open] *,
+.finals-judge-panel details[open] * {
+  color: rgba(255, 248, 231, 0.76) !important;
+  font-size: 0.72rem !important;
+  line-height: 1.35 !important;
+}
+
+/* Inputs less painful */
+.judge-panel input,
+.finals-judge-panel input {
+  height: 42px !important;
+  border-radius: 13px !important;
+  padding: 0.55rem 0.7rem !important;
+  background: #f1e2bd !important;
+  color: #1a1204 !important;
+  border: 1px solid rgba(246, 215, 122, 0.42) !important;
+  font-size: 0.92rem !important;
+  font-weight: 900 !important;
+}
+
+.judge-panel input:disabled,
+.finals-judge-panel input:disabled {
+  opacity: 0.82 !important;
+  background: #d8ccb4 !important;
+  color: #2b2110 !important;
+}
+
+/* Admin dashboard: spacing */
+.admin-dashboard-view {
+  display: grid !important;
+  gap: 1rem !important;
+}
+
+.admin-shell .dashboard-actions {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 0.6rem !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+}
+
+.admin-shell .dashboard-actions .last-updated {
+  margin-left: auto !important;
+  color: rgba(255, 248, 231, 0.58) !important;
+}
+
+/* Fix final leader overlap */
+.admin-shell .final-round-leader-card {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  gap: 1rem !important;
+  align-items: center !important;
+  padding: 1rem !important;
+  min-height: auto !important;
+  overflow: hidden !important;
+}
+
+.admin-shell .final-round-leader-card h2 {
+  font-size: clamp(1.1rem, 2.2vw, 1.7rem) !important;
+  line-height: 1.08 !important;
+  word-break: break-word !important;
+}
+
+.admin-shell .final-round-leader-card > strong {
+  position: static !important;
+  justify-self: end !important;
+  margin: 0 !important;
+  font-size: clamp(1.8rem, 4vw, 3rem) !important;
+  line-height: 1 !important;
+  color: #fff3c4 !important;
+}
+
+/* Fix top 3 cards */
+.admin-shell .top3-finalists-panel .top3-grid,
+.admin-shell .top3-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)) !important;
+  gap: 0.75rem !important;
+}
+
+.admin-shell .top3-finalist-card {
+  display: grid !important;
+  grid-template-columns: auto minmax(0, 1fr) !important;
+  gap: 0.75rem !important;
+  align-items: center !important;
+  padding: 0.9rem !important;
+  border-radius: 18px !important;
+  background: rgba(0, 0, 0, 0.34) !important;
+  border: 1px solid rgba(214, 180, 84, 0.24) !important;
+}
+
+/* Dark readable tables */
+.admin-shell .table-wrap,
+.admin-shell .final-results-panel .table-wrap,
+.admin-shell .prelim-ranking-panel .table-wrap,
+.admin-shell .judge-status-panel .table-wrap,
+.admin-shell .final-status-panel .table-wrap {
+  background: #0b0906 !important;
+  border: 1px solid rgba(214, 180, 84, 0.26) !important;
+  border-radius: 18px !important;
+  overflow: auto !important;
+}
+
+.admin-shell table {
+  width: 100% !important;
+  background: #0b0906 !important;
+  color: #fff8e7 !important;
+  border-collapse: collapse !important;
+}
+
+.admin-shell table thead,
+.admin-shell table thead tr,
+.admin-shell table thead th {
+  background: #1e180d !important;
+  color: #f6d77a !important;
+  border-color: rgba(214, 180, 84, 0.22) !important;
+  font-size: 0.68rem !important;
+  letter-spacing: 0.08em !important;
+}
+
+.admin-shell table tbody,
+.admin-shell table tbody tr,
+.admin-shell table tbody tr:nth-child(1),
+.admin-shell table tbody tr:nth-child(2),
+.admin-shell table tbody tr:nth-child(3),
+.admin-shell table tbody tr:nth-child(even),
+.admin-shell .final-results-panel table tbody tr:first-child,
+.admin-shell .final-results-panel table tbody tr:nth-child(2),
+.admin-shell .final-results-panel table tbody tr:nth-child(3),
+.admin-shell .prelim-ranking-panel table tbody tr:nth-child(1),
+.admin-shell .prelim-ranking-panel table tbody tr:nth-child(2),
+.admin-shell .prelim-ranking-panel table tbody tr:nth-child(3),
+.admin-shell .prelim-ranking-panel table tbody tr:nth-child(n+4),
+.admin-shell .prelim-ranking-panel table tbody tr:nth-child(n+4):nth-child(even) {
+  background: #100d08 !important;
+}
+
+.admin-shell table tbody td,
+.admin-shell .final-results-panel table tbody tr:first-child td,
+.admin-shell .final-results-panel table tbody tr:nth-child(2) td,
+.admin-shell .final-results-panel table tbody tr:nth-child(3) td,
+.admin-shell .prelim-ranking-panel table tbody tr:nth-child(1) td,
+.admin-shell .prelim-ranking-panel table tbody tr:nth-child(2) td,
+.admin-shell .prelim-ranking-panel table tbody tr:nth-child(3) td,
+.admin-shell .prelim-ranking-panel table tbody tr:nth-child(n+4) td,
+.admin-shell .prelim-ranking-panel table tbody tr:nth-child(n+4):nth-child(even) td {
+  background: transparent !important;
+  color: rgba(255, 248, 231, 0.86) !important;
+  border-color: rgba(214, 180, 84, 0.14) !important;
+  font-size: 0.76rem !important;
+}
+
+/* Kill purple buttons */
+.admin-shell .btn-dark,
+.admin-shell .btn-primary,
+.admin-shell .btn-winner,
+.admin-shell button[type="submit"],
+.judge-panel .btn-primary,
+.judge-panel button[type="submit"],
+.finals-judge-panel .btn-primary,
+.finals-judge-panel button[type="submit"] {
+  background: linear-gradient(135deg, #765414, #d6b454, #fff3c4) !important;
+  color: #161005 !important;
+  border: 1px solid rgba(246, 215, 122, 0.42) !important;
+  font-weight: 950 !important;
+  box-shadow: none !important;
+}
+
+.admin-shell .btn-light,
+.admin-shell .btn-secondary,
+.admin-shell button:not(.btn-primary):not(.btn-winner):not([type="submit"]),
+.judge-panel .btn-light,
+.finals-judge-panel .btn-light {
+  background: rgba(255, 243, 196, 0.08) !important;
+  color: #fff8e7 !important;
+  border: 1px solid rgba(214, 180, 84, 0.24) !important;
+  box-shadow: none !important;
+}
+
+/* Badges */
+.admin-shell .rank-pill,
+.admin-shell .submitted-pill,
+.admin-shell .locked-badge,
+.admin-shell .status-badge,
+.admin-shell .pill,
+.judge-panel .rank-pill,
+.judge-panel .submitted-pill,
+.judge-panel .locked-badge,
+.judge-panel .status-badge,
+.judge-panel .pill,
+.finals-judge-panel .rank-pill,
+.finals-judge-panel .submitted-pill,
+.finals-judge-panel .locked-badge,
+.finals-judge-panel .status-badge,
+.finals-judge-panel .pill {
+  color: #fff3c4 !important;
+  background: rgba(214, 180, 84, 0.12) !important;
+  border: 1px solid rgba(214, 180, 84, 0.28) !important;
+  box-shadow: none !important;
+}
+
+/* Responsive */
+@media (max-width: 820px) {
+  .admin-shell .final-round-leader-card {
+    grid-template-columns: 1fr !important;
+  }
+
+  .admin-shell .final-round-leader-card > strong {
+    justify-self: start !important;
+  }
+
+  .admin-shell .dashboard-actions {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  .admin-shell .dashboard-actions .last-updated {
+    margin-left: 0 !important;
+  }
+}
+
+/* ===== SCORYN EXACT ADMIN JUDGE OVERRIDE END ===== */
