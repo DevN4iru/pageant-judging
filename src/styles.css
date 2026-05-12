@@ -8483,3 +8483,86 @@ footer a,
 }
 
 /* ===== SCORYN TV FOOTER NO PURPLE OVERRIDE END ===== */
+
+/* ===== SCORYN HARD PROGRESS PURPLE FIX START ===== */
+/* Final forced override for purple/magenta progress bars. */
+
+.progress-card .progress-bar,
+.progress-card [class*="progress"],
+.admin-shell .progress-bar,
+.judge-panel .progress-bar,
+.finals-judge-panel .progress-bar,
+[class*="progress-bar"],
+[class*="progressTrack"],
+[class*="progress-track"] {
+  background: rgba(255, 244, 199, 0.12) !important;
+  border: 1px solid rgba(214, 180, 84, 0.28) !important;
+  box-shadow: none !important;
+  overflow: hidden !important;
+}
+
+/* Cover span/div/fill children */
+.progress-card .progress-bar > *,
+.progress-card [class*="progress"] > *,
+.admin-shell .progress-bar > *,
+.judge-panel .progress-bar > *,
+.finals-judge-panel .progress-bar > *,
+[class*="progress-bar"] > *,
+[class*="progressFill"],
+[class*="progress-fill"],
+[class*="fill"] {
+  background: linear-gradient(90deg, #7a5716 0%, #d6b454 55%, #fff4c7 100%) !important;
+  background-color: #d6b454 !important;
+  box-shadow: none !important;
+  border: 0 !important;
+}
+
+/* Cover inline style gradient remnants */
+.admin-shell [style*="#7c3aed"],
+.admin-shell [style*="#db2777"],
+.admin-shell [style*="#ec4899"],
+.admin-shell [style*="rgb(124"],
+.admin-shell [style*="rgb(219"],
+.admin-shell [style*="magenta"],
+.admin-shell [style*="purple"],
+.judge-panel [style*="#7c3aed"],
+.judge-panel [style*="#db2777"],
+.judge-panel [style*="#ec4899"],
+.judge-panel [style*="rgb(124"],
+.judge-panel [style*="rgb(219"],
+.judge-panel [style*="magenta"],
+.judge-panel [style*="purple"],
+.finals-judge-panel [style*="#7c3aed"],
+.finals-judge-panel [style*="#db2777"],
+.finals-judge-panel [style*="#ec4899"],
+.finals-judge-panel [style*="rgb(124"],
+.finals-judge-panel [style*="rgb(219"],
+.finals-judge-panel [style*="magenta"],
+.finals-judge-panel [style*="purple"] {
+  background: linear-gradient(90deg, #7a5716 0%, #d6b454 55%, #fff4c7 100%) !important;
+  background-color: #d6b454 !important;
+  color: #fff4c7 !important;
+  border-color: rgba(214, 180, 84, 0.34) !important;
+}
+
+/* HTML progress element, if used */
+progress,
+.admin-shell progress,
+.judge-panel progress,
+.finals-judge-panel progress {
+  accent-color: #d6b454 !important;
+}
+
+progress::-webkit-progress-bar {
+  background-color: rgba(255, 244, 199, 0.12) !important;
+}
+
+progress::-webkit-progress-value {
+  background: linear-gradient(90deg, #7a5716, #d6b454, #fff4c7) !important;
+}
+
+progress::-moz-progress-bar {
+  background: linear-gradient(90deg, #7a5716, #d6b454, #fff4c7) !important;
+}
+
+/* ===== SCORYN HARD PROGRESS PURPLE FIX END ===== */
