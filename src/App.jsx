@@ -1,6 +1,39 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
 
+
+const getCriterionMaxScore = (criterion) => {
+  const raw =
+    criterion?.max_score ??
+    criterion?.maxScore ??
+    criterion?.score_max ??
+    criterion?.scoreMax ??
+    100;
+
+  const value = Number(raw);
+  return Number.isFinite(value) && value > 0 ? value : 100;
+};
+
+const getCriterionWeightPercent = (criterion) => {
+  const raw =
+    criterion?.weight ??
+    criterion?.percentage ??
+    criterion?.percent ??
+    0;
+
+  const value = Number(raw);
+  if (!Number.isFinite(value) || value <= 0) return 0;
+
+  return value <= 1 ? value * 100 : value;
+};
+
+const formatCriterionMeta = (criterion) => {
+  const maxScore = getCriterionMaxScore(criterion);
+  const weightPercent = getCriterionWeightPercent(criterion);
+
+  return `Input / ${maxScore} · Counts as ${weightPercent.toFixed(0)}%`;
+};
+
 const formatDateTime = (value) => {
   if (!value) return "—";
 
@@ -955,7 +988,7 @@ function JudgePanel({ judge }) {
                   <label className="score-field" key={cr.id}>
                     <span>{cr.name}</span>
                     <small>
-                      Input / {Number(cr.max_score).toFixed(0)} · Counts as {(Number(cr.weight || 0) * 100).toFixed(0)}%
+                      {formatCriterionMeta(criterion)}
                     </small>
 
                     <CriteriaNote name={cr.name} />
@@ -1203,7 +1236,7 @@ function FinalInterviewJudgePanel({ judge }) {
                   <label className="score-field" key={cr.key}>
                     <span>{cr.name}</span>
                     <small>
-                      Input / {Number(cr.max_score).toFixed(0)} · Counts as {(Number(cr.weight || 0) * 100).toFixed(0)}%
+                      {formatCriterionMeta(criterion)}
                     </small>
 
                     <input
