@@ -1,0 +1,1143 @@
+===== WHITE BAR / RING ROOT CAUSE AUDIT =====
+Tue May 12 12:41:02 PM PST 2026
+
+===== GIT STATE =====
+## miss-tyca-scoryn-clean-preview
+?? .safety/
+?? audits/tyca-proposal/white-bar-ring-audit-20260512-124102.log
+miss-tyca-scoryn-clean-preview
+cf3c5c5 Fix Scoryn landing Home replacement
+0af51db Create clean Scoryn Miss TYCA proposal preview
+8cd4b65 Final polish audit fixes
+1a3e650 Simplify printable summary cover text
+e23aa60 Add prepared by credit to printable summaries
+
+===== HEADER JSX =====
+717:      <header className="topbar">
+718:        <div className="brand-block">
+722:            className="brand-logo"
+727:            <h1>Miss TYCA 2026 <span className="powered-text">powered by Scoryn</span></h1>
+728:            <p className="subtitle">Scoryn online tabulation for pageants, competitions, and judged events</p>
+
+    setJudge(null);
+    setAdmin(false);
+    setMode('home');
+  }
+
+  return (
+    <div className={admin ? 'app-shell admin-shell' : 'app-shell'}>
+      <header className="topbar">
+        <div className="brand-block">
+          <img
+            src="/tyca.jpg"
+            alt="Miss TYCA 2026 Logo"
+            className="brand-logo"
+          />
+
+          <div>
+            <p className="eyebrow">Proposal Preview</p>
+            <h1>Miss TYCA 2026 <span className="powered-text">powered by Scoryn</span></h1>
+            <p className="subtitle">Scoryn online tabulation for pageants, competitions, and judged events</p>
+          </div>
+        </div>
+
+        {(judge || admin) && (
+          <button className="btn btn-light" onClick={logout}>
+            Logout
+          </button>
+        )}
+      </header>
+
+      {mode === 'home' && !judge && !admin && <Home setMode={setMode} />}
+
+      {mode === 'judge-login' && !judge && (
+        <LoginCard
+          title="Judge Login"
+          description="Enter your assigned judge PIN to start scoring."
+          placeholder="Judge PIN"
+          buttonText="Enter Judge Panel"
+          onBack={() => setMode('home')}
+          onSubmit={async (pin) => {
+            const data = await api('/api/judge/login', {
+              method: 'POST',
+
+===== SCORYN HOME JSX =====
+794:    <main className="scoryn-landing">
+795:      <section className="scoryn-hero-panel">
+802:          <div className="scoryn-title-row">
+872:      <section className="scoryn-microbar">
+
+}
+
+function Home({ setMode }) {
+  return (
+    <main className="scoryn-landing">
+      <section className="scoryn-hero-panel">
+        <div className="scoryn-hero-copy">
+          <div className="scoryn-preview-pill">
+            <span>Proposal Preview Only</span>
+            <strong>Miss TYCA 2026</strong>
+          </div>
+
+          <div className="scoryn-title-row">
+            <img
+              src="/tyca.jpg"
+              alt="Miss TYCA 2026 Logo"
+              className="scoryn-hero-logo"
+            />
+
+            <div>
+              <p className="eyebrow">Powered by Scoryn</p>
+              <h2>Premium real-time tabulation for Miss TYCA 2026.</h2>
+            </div>
+          </div>
+
+          <p className="scoryn-lead">
+            Scoryn is a modern online tabulation platform designed for pageants,
+            competitions, and judged events. This clickable proposal preview shows
+            judge scoring, live rankings, locked submissions, TV displays, and
+            PDF-ready summaries.
+          </p>
+
+          <div className="scoryn-action-grid">
+            <button className="scoryn-action-card" onClick={() => setMode('judge-login')}>
+              <span>Judge</span>
+              <strong>Open Judge Panel</strong>
+              <small>Score 12 candidate placeholders and submit locked scores.</small>
+            </button>
+
+            <button className="scoryn-action-card primary" onClick={() => setMode('admin-login')}>
+              <span>Admin</span>
+              <strong>Open Live Dashboard</strong>
+              <small>Monitor rankings, submissions, criteria leaders, and PDF summaries.</small>
+            </button>
+          </div>
+
+          <div className="scoryn-demo-note">
+            <span>Demo scope</span>
+            <p>
+              This is not official TYCA results. Final contestant names, judge count,
+              criteria, weights, and branding can still be customized before deployment.
+            </p>
+          </div>
+        </div>
+
+        <aside className="scoryn-value-panel">
+          <article>
+            <span>01</span>
+            <strong>Live scoring</strong>
+            <p>Judges score from their own device while the admin monitors progress.</p>
+          </article>
+
+          <article>
+            <span>02</span>
+            <strong>Locked submissions</strong>
+            <p>Final submit protects results and prevents casual score changes.</p>
+          </article>
+
+          <article>
+            <span>03</span>
+            <strong>Audit-ready</strong>
+            <p>Rankings, timestamps, and summaries are easier to review and defend.</p>
+          </article>
+
+          <article>
+            <span>04</span>
+            <strong>Stage-ready</strong>
+            <p>TV displays and PDF reports help make the event look more professional.</p>
+          </article>
+        </aside>
+      </section>
+
+      <section className="scoryn-microbar">
+        <span>12 contestant placeholders</span>
+        <span>Default 5 judges</span>
+        <span>Top finalists + finals flow</span>
+        <span>Prepared by Kirjane Labs × Dev Siris</span>
+      </section>
+    </main>
+  );
+}
+
+function LoginCard({ title, description, placeholder, buttonText, onSubmit, onBack }) {
+  const [pin, setPin] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  async function submit(e) {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+
+===== TOPBAR / HEADER CSS =====
+52:.topbar {
+66:.brand-block {
+72:.brand-logo {
+120:.subtitle,
+128:.subtitle {
+919:  .topbar,
+920:  .brand-block,
+1302:.brand-logo {
+1321:  .brand-logo {
+1531:.topbar,
+1554:.topbar {
+1599:.brand-logo,
+1650:  .topbar {
+1668:.topbar,
+1695:.topbar {
+1739:.brand-logo,
+1756:  .topbar,
+2934:.admin-shell > .topbar,
+2947:.admin-shell > .topbar {
+2954:.admin-shell .brand-block {
+2958:.admin-shell .brand-logo {
+2974:.admin-shell .subtitle {
+2982:.admin-shell > .topbar .btn-light {
+3466:  .admin-shell > .topbar {
+3470:  .admin-shell .brand-logo {
+3490:.admin-shell > .topbar {
+3497:.admin-shell .topbar {
+4847:.powered-text {
+4857:.brand-logo,
+
+===== POSSIBLE WHITE BAR / BORDER / SHADOW SOURCES =====
+4742:  --scoryn-champagne: #fff3c4;
+4743:  --scoryn-text: #fffaf0;
+4744:  --scoryn-muted: rgba(255, 250, 240, 0.66);
+4807:  background: linear-gradient(135deg, var(--scoryn-card), var(--scoryn-card-soft)) !important;
+
+===== PSEUDO ELEMENT SOURCES =====
+1517:body::before {
+1654:  body::before {
+3598:.tv-header::before {
+3608:.tv-header::after {
+3926:  .tv-header::after {
+4756:body::after,
+4757:.app-shell::before,
+4758:.app-shell::after,
+4759:.page-shell::before,
+4760:.page-shell::after,
+4761:main::before,
+4762:main::after {
+4767:body::before {
+
+===== HUGE CIRCLE / RING SOURCES =====
+
+===== SCORYN CSS BLOCK =====
+4731:/* ===== SCORYN TYCA CLEAN PREMIUM THEME START ===== */
+5029:/* ===== SCORYN TYCA CLEAN PREMIUM THEME END ===== */
+5031:/* ===== SCORYN LANDING SURGICAL UI START ===== */
+5298:/* ===== SCORYN LANDING SURGICAL UI END ===== */
+
+===== CSS AROUND TOPBAR DEFINITIONS =====
+
+----- styles.css lines 40-87 around .topbar at 52 -----
+.app-shell {
+  width: min(1040px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 18px 0 26px;
+}
+
+.bg-glow {
+  display: none;
+}
+
+/* Header */
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+  padding: 14px 18px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(14px);
+}
+
+.brand-block {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.brand-logo {
+  width: 58px;
+  height: 58px;
+  object-fit: contain;
+  border-radius: 50%;
+  background: white;
+  padding: 4px;
+  border: 1px solid var(--line);
+  flex: 0 0 auto;
+}
+
+.eyebrow {
+  margin: 0 0 4px;
+  color: var(--primary);
+  font-size: 11px;
+  font-weight: 900;
+
+----- styles.css lines 907-954 around .topbar at 919 -----
+
+  .dashboard-actions {
+    justify-content: flex-start;
+  }
+
+  .progress-card,
+  .final-submit-card {
+    min-width: 0;
+  }
+}
+
+@media (max-width: 560px) {
+  .topbar,
+  .brand-block,
+  .candidate-head {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  h1 {
+    font-size: 24px;
+  }
+
+  h2,
+  .hero-card h2 {
+    font-size: 23px;
+  }
+
+  .btn {
+    width: 100%;
+  }
+
+  .site-footer,
+  .developer-grid article,
+  .footer-dev-grid article {
+    text-align: left;
+  }
+}
+
+/* Compact low-left footer override */
+
+.compact-footer {
+  margin-top: 18px;
+  padding: 14px 18px;
+  display: block;
+  border-radius: 16px;
+  background: rgba(24, 16, 39, 0.94);
+  color: white;
+
+----- styles.css lines 1519-1566 around .topbar at 1531 -----
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(rgba(255,255,255,0.18) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.16) 1px, transparent 1px);
+  background-size: 42px 42px;
+  opacity: 0.5;
+  mask-image: radial-gradient(circle at 50% 20%, black, transparent 72%);
+}
+
+.topbar,
+.panel,
+.hero-card,
+.info-panel,
+.candidate-card,
+.leader-card,
+.login-card,
+.table-panel,
+.criteria-overview,
+.developer-feature,
+.compact-footer,
+.site-footer {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.48)),
+    radial-gradient(circle at 100% 0%, rgba(124, 58, 237, 0.08), transparent 34%);
+  border: 1px solid rgba(255, 255, 255, 0.54);
+  box-shadow:
+    0 18px 54px rgba(56, 29, 91, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(22px) saturate(1.25);
+  -webkit-backdrop-filter: blur(22px) saturate(1.25);
+}
+
+.topbar {
+  position: sticky;
+  top: 12px;
+  z-index: 20;
+}
+
+.hero-card {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.70), rgba(248, 242, 255, 0.50)),
+    radial-gradient(circle at 8% 0%, rgba(124, 58, 237, 0.11), transparent 34%),
+    radial-gradient(circle at 100% 80%, rgba(245, 158, 11, 0.11), transparent 32%);
+}
+
+
+----- styles.css lines 1542-1589 around .topbar at 1554 -----
+.site-footer {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.48)),
+    radial-gradient(circle at 100% 0%, rgba(124, 58, 237, 0.08), transparent 34%);
+  border: 1px solid rgba(255, 255, 255, 0.54);
+  box-shadow:
+    0 18px 54px rgba(56, 29, 91, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(22px) saturate(1.25);
+  -webkit-backdrop-filter: blur(22px) saturate(1.25);
+}
+
+.topbar {
+  position: sticky;
+  top: 12px;
+  z-index: 20;
+}
+
+.hero-card {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.70), rgba(248, 242, 255, 0.50)),
+    radial-gradient(circle at 8% 0%, rgba(124, 58, 237, 0.11), transparent 34%),
+    radial-gradient(circle at 100% 80%, rgba(245, 158, 11, 0.11), transparent 32%);
+}
+
+.info-panel {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.62), rgba(255, 255, 255, 0.42)),
+    radial-gradient(circle at 100% 0%, rgba(124, 58, 237, 0.10), transparent 35%);
+}
+
+.role-card,
+.mini-stat,
+.score-field,
+.progress-card,
+.final-submit-card,
+.subtotal,
+.developer-grid article,
+.footer-dev-grid article,
+.criteria-overview article {
+  background: rgba(255, 255, 255, 0.54);
+  border: 1px solid rgba(255, 255, 255, 0.62);
+  box-shadow:
+    0 12px 34px rgba(56, 29, 91, 0.10),
+    inset 0 1px 0 rgba(255, 255, 255, 0.74);
+  backdrop-filter: blur(18px) saturate(1.18);
+  -webkit-backdrop-filter: blur(18px) saturate(1.18);
+}
+
+----- styles.css lines 1638-1685 around .topbar at 1650 -----
+}
+
+.compact-footer,
+.site-footer {
+  color: white;
+  background:
+    linear-gradient(135deg, rgba(23, 16, 34, 0.88), rgba(76, 29, 149, 0.62)),
+    radial-gradient(circle at 100% 0%, rgba(245, 158, 11, 0.14), transparent 35%);
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+@media (max-width: 720px) {
+  .topbar {
+    position: static;
+  }
+
+  body::before {
+    opacity: 0.32;
+  }
+}
+/* ===== KIRCH GLASS ACCENT PASS END ===== */
+
+/* ===== KIRCH GLASS BORDER FIX START ===== */
+/* More visible card edges while keeping the glass/acrylic style. */
+
+:root {
+  --line: rgba(76, 29, 149, 0.28);
+  --shadow: 0 18px 52px rgba(52, 24, 88, 0.20);
+}
+
+.topbar,
+.panel,
+.hero-card,
+.info-panel,
+.candidate-card,
+.leader-card,
+.login-card,
+.table-panel,
+.criteria-overview,
+.developer-feature,
+.compact-footer,
+.site-footer {
+  border: 1px solid rgba(76, 29, 149, 0.28) !important;
+  box-shadow:
+    0 20px 54px rgba(52, 24, 88, 0.18),
+    0 0 0 1px rgba(255, 255, 255, 0.58) inset,
+    0 1px 0 rgba(255, 255, 255, 0.78) inset !important;
+}
+
+----- styles.css lines 1656-1703 around .topbar at 1668 -----
+  }
+}
+/* ===== KIRCH GLASS ACCENT PASS END ===== */
+
+/* ===== KIRCH GLASS BORDER FIX START ===== */
+/* More visible card edges while keeping the glass/acrylic style. */
+
+:root {
+  --line: rgba(76, 29, 149, 0.28);
+  --shadow: 0 18px 52px rgba(52, 24, 88, 0.20);
+}
+
+.topbar,
+.panel,
+.hero-card,
+.info-panel,
+.candidate-card,
+.leader-card,
+.login-card,
+.table-panel,
+.criteria-overview,
+.developer-feature,
+.compact-footer,
+.site-footer {
+  border: 1px solid rgba(76, 29, 149, 0.28) !important;
+  box-shadow:
+    0 20px 54px rgba(52, 24, 88, 0.18),
+    0 0 0 1px rgba(255, 255, 255, 0.58) inset,
+    0 1px 0 rgba(255, 255, 255, 0.78) inset !important;
+}
+
+.hero-card {
+  border-color: rgba(76, 29, 149, 0.34) !important;
+  box-shadow:
+    0 24px 62px rgba(52, 24, 88, 0.20),
+    0 0 0 1px rgba(255, 255, 255, 0.68) inset,
+    0 0 0 2px rgba(124, 58, 237, 0.07) inset !important;
+}
+
+.topbar {
+  border-color: rgba(76, 29, 149, 0.30) !important;
+}
+
+.role-card,
+.mini-stat,
+.score-field,
+.progress-card,
+.final-submit-card,
+
+----- styles.css lines 1683-1730 around .topbar at 1695 -----
+    0 0 0 1px rgba(255, 255, 255, 0.58) inset,
+    0 1px 0 rgba(255, 255, 255, 0.78) inset !important;
+}
+
+.hero-card {
+  border-color: rgba(76, 29, 149, 0.34) !important;
+  box-shadow:
+    0 24px 62px rgba(52, 24, 88, 0.20),
+    0 0 0 1px rgba(255, 255, 255, 0.68) inset,
+    0 0 0 2px rgba(124, 58, 237, 0.07) inset !important;
+}
+
+.topbar {
+  border-color: rgba(76, 29, 149, 0.30) !important;
+}
+
+.role-card,
+.mini-stat,
+.score-field,
+.progress-card,
+.final-submit-card,
+.subtotal,
+.developer-grid article,
+.footer-dev-grid article,
+.criteria-overview article {
+  border: 1px solid rgba(76, 29, 149, 0.24) !important;
+  box-shadow:
+    0 12px 30px rgba(52, 24, 88, 0.11),
+    0 0 0 1px rgba(255, 255, 255, 0.66) inset !important;
+}
+
+.role-card.dark,
+.collab-banner,
+.btn-primary {
+  border: 1px solid rgba(255, 255, 255, 0.32) !important;
+  box-shadow:
+    0 14px 34px rgba(76, 29, 149, 0.24),
+    0 0 0 1px rgba(255, 255, 255, 0.18) inset !important;
+}
+
+.criteria-overview {
+  border-color: rgba(76, 29, 149, 0.30) !important;
+}
+
+.criteria-overview summary {
+  border-bottom: 1px solid transparent;
+}
+
+
+----- styles.css lines 1744-1791 around .topbar at 1756 -----
+    0 0 0 1px rgba(255, 255, 255, 0.76) inset !important;
+}
+
+.table-wrap {
+  border: 1px solid rgba(76, 29, 149, 0.22) !important;
+}
+
+input {
+  border: 1px solid rgba(76, 29, 149, 0.24) !important;
+}
+
+@media (max-width: 720px) {
+  .topbar,
+  .hero-card,
+  .panel,
+  .info-panel,
+  .developer-feature {
+    border-color: rgba(76, 29, 149, 0.34) !important;
+  }
+}
+/* ===== KIRCH GLASS BORDER FIX END ===== */
+
+/* ===== KIRCH FINAL INTERVIEW UI START ===== */
+
+.final-round-panel,
+.final-results-panel {
+  display: grid;
+  gap: 14px;
+  border-color: rgba(76, 29, 149, 0.32) !important;
+}
+
+.final-round-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 14px;
+}
+
+.final-round-head h2 {
+  margin-bottom: 6px;
+}
+
+.final-progress-card {
+  min-width: 190px;
+}
+
+.final-candidate-grid {
+  display: grid;
+
+----- styles.css lines 2922-2969 around .topbar at 2934 -----
+  position: fixed;
+  right: 8vw;
+  top: 31vh;
+  color: rgba(91, 33, 182, 0.055);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(170px, 20vw, 360px);
+  line-height: 1;
+  transform: rotate(-8deg);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.admin-shell > .topbar,
+.admin-dashboard-view > .panel,
+.admin-dashboard-view > section.panel {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.88), rgba(255, 250, 253, 0.72)),
+    rgba(255, 255, 255, 0.76);
+  border: 1px solid rgba(88, 56, 126, 0.13);
+  box-shadow:
+    0 18px 46px rgba(76, 29, 149, 0.10),
+    inset 0 1px 0 rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(18px);
+}
+
+.admin-shell > .topbar {
+  min-height: 110px;
+  margin-bottom: 6px;
+  padding: 16px 22px;
+  border-radius: 18px;
+}
+
+.admin-shell .brand-block {
+  gap: 18px;
+}
+
+.admin-shell .brand-logo {
+  width: 78px;
+  height: 78px;
+  padding: 7px;
+  box-shadow: 0 14px 30px rgba(76, 29, 149, 0.13);
+}
+
+.admin-shell h1 {
+  margin-bottom: 4px;
+  color: #221045;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(31px, 3vw, 44px);
+
+----- styles.css lines 2935-2982 around .topbar at 2947 -----
+.admin-dashboard-view > .panel,
+.admin-dashboard-view > section.panel {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.88), rgba(255, 250, 253, 0.72)),
+    rgba(255, 255, 255, 0.76);
+  border: 1px solid rgba(88, 56, 126, 0.13);
+  box-shadow:
+    0 18px 46px rgba(76, 29, 149, 0.10),
+    inset 0 1px 0 rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(18px);
+}
+
+.admin-shell > .topbar {
+  min-height: 110px;
+  margin-bottom: 6px;
+  padding: 16px 22px;
+  border-radius: 18px;
+}
+
+.admin-shell .brand-block {
+  gap: 18px;
+}
+
+.admin-shell .brand-logo {
+  width: 78px;
+  height: 78px;
+  padding: 7px;
+  box-shadow: 0 14px 30px rgba(76, 29, 149, 0.13);
+}
+
+.admin-shell h1 {
+  margin-bottom: 4px;
+  color: #221045;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(31px, 3vw, 44px);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+}
+
+.admin-shell .subtitle {
+  color: #d94c86;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+}
+
+.admin-shell > .topbar .btn-light {
+
+----- styles.css lines 2970-3017 around .topbar at 2982 -----
+  font-weight: 500;
+  letter-spacing: -0.035em;
+}
+
+.admin-shell .subtitle {
+  color: #d94c86;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+}
+
+.admin-shell > .topbar .btn-light {
+  min-width: 118px;
+  color: #d83c78;
+  border-color: rgba(216, 60, 120, 0.22);
+  background: rgba(255, 255, 255, 0.56);
+  box-shadow: none;
+}
+
+.admin-dashboard-view {
+  display: grid;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.admin-dashboard-view > .dashboard-hero {
+  order: 0;
+}
+
+.admin-dashboard-view > .final-round-leader-card {
+  order: 1;
+}
+
+.admin-dashboard-view > .final-results-panel:not(.final-round-locked) {
+  order: 2;
+}
+
+.admin-dashboard-view > .top3-finalists-panel {
+  order: 3;
+}
+
+.admin-dashboard-view > .prelim-ranking-panel {
+  order: 4;
+}
+
+.admin-dashboard-view > .final-status-panel {
+  order: 5;
+
+----- styles.css lines 3454-3501 around .topbar at 3466 -----
+  .final-round-leader-card {
+    grid-template-columns: 56px 1fr;
+  }
+
+  .final-round-leader-card > strong {
+    grid-column: 1 / -1;
+    justify-self: start;
+    margin-left: 72px;
+  }
+}
+
+@media (max-width: 560px) {
+  .admin-shell > .topbar {
+    min-height: 0;
+  }
+
+  .admin-shell .brand-logo {
+    width: 66px;
+    height: 66px;
+  }
+
+  .top3-finalist-card {
+    padding-left: 82px;
+  }
+}
+
+/* ===== KIRCH ADMIN PREMIUM MOCKUP POLISH END ===== */
+
+/* ===== KIRCH ADMIN SCROLL HEADER QA FIX START ===== */
+
+/*
+  QA fix:
+  The admin brand header must not float/reappear over lower sections.
+  Keep TV footer/header untouched.
+*/
+
+.admin-shell > .topbar {
+  position: static !important;
+  top: auto !important;
+  z-index: auto !important;
+  transform: none !important;
+}
+
+.admin-shell .topbar {
+  position: static !important;
+}
+
+.admin-dashboard-view {
+
+----- styles.css lines 3478-3525 around .topbar at 3490 -----
+}
+
+/* ===== KIRCH ADMIN PREMIUM MOCKUP POLISH END ===== */
+
+/* ===== KIRCH ADMIN SCROLL HEADER QA FIX START ===== */
+
+/*
+  QA fix:
+  The admin brand header must not float/reappear over lower sections.
+  Keep TV footer/header untouched.
+*/
+
+.admin-shell > .topbar {
+  position: static !important;
+  top: auto !important;
+  z-index: auto !important;
+  transform: none !important;
+}
+
+.admin-shell .topbar {
+  position: static !important;
+}
+
+.admin-dashboard-view {
+  position: relative;
+  z-index: 1;
+}
+
+.admin-dashboard-view > .panel {
+  position: relative;
+  z-index: 1;
+}
+
+.admin-shell::after {
+  z-index: 0;
+}
+
+.admin-shell::before {
+  z-index: -1;
+}
+
+/* ===== KIRCH ADMIN SCROLL HEADER QA FIX END ===== */
+
+/* ===== KIRCH TV PREMIUM BANNER POLISH START ===== */
+
+/*
+  TV/TC display polish only.
+  Keeps TV footer as its own developer-credit context.
+
+----- styles.css lines 3485-3532 around .topbar at 3497 -----
+  QA fix:
+  The admin brand header must not float/reappear over lower sections.
+  Keep TV footer/header untouched.
+*/
+
+.admin-shell > .topbar {
+  position: static !important;
+  top: auto !important;
+  z-index: auto !important;
+  transform: none !important;
+}
+
+.admin-shell .topbar {
+  position: static !important;
+}
+
+.admin-dashboard-view {
+  position: relative;
+  z-index: 1;
+}
+
+.admin-dashboard-view > .panel {
+  position: relative;
+  z-index: 1;
+}
+
+.admin-shell::after {
+  z-index: 0;
+}
+
+.admin-shell::before {
+  z-index: -1;
+}
+
+/* ===== KIRCH ADMIN SCROLL HEADER QA FIX END ===== */
+
+/* ===== KIRCH TV PREMIUM BANNER POLISH START ===== */
+
+/*
+  TV/TC display polish only.
+  Keeps TV footer as its own developer-credit context.
+  Does not touch scoring, API routes, formulas, or admin footer content.
+*/
+
+body:has(.tv-stage) {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 15% 14%, rgba(124, 58, 237, 0.26), transparent 30%),
+
+===== CSS AROUND APP-SHELL / BODY PSEUDO =====
+
+----- body::before at lines 4757-4802 -----
+.app-shell::before,
+.app-shell::after,
+.page-shell::before,
+.page-shell::after,
+main::before,
+main::after {
+  display: none !important;
+  opacity: 0 !important;
+}
+
+body::before {
+  content: "PROPOSAL PREVIEW ONLY · MISS TYCA 2026 POWERED BY SCORYN";
+  position: fixed;
+  top: 10px;
+  left: 50%;
+  z-index: 9999;
+  transform: translateX(-50%);
+  padding: 0.42rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid var(--scoryn-line-strong);
+  background: rgba(0,0,0,0.82);
+  color: var(--scoryn-champagne);
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+}
+
+#root {
+  padding-top: 2.65rem;
+}
+
+.panel,
+.login-card,
+.summary-print-panel,
+.final-round-panel,
+.admin-control-card,
+.dashboard-card,
+.hero-card,
+.candidate-card,
+.score-field,
+.details-panel,
+.finalist-card,
+.table-card,
+.proposal-banner,
+
+----- body::after at lines 4746-4791 -----
+
+html,
+body {
+  color: var(--scoryn-text) !important;
+  background:
+    radial-gradient(circle at 18% 10%, rgba(214,180,84,0.14), transparent 24%),
+    linear-gradient(135deg, #000 0%, #080706 52%, #18130a 100%) !important;
+}
+
+/* kill old oversized decorative rings/overlays */
+body::after,
+.app-shell::before,
+.app-shell::after,
+.page-shell::before,
+.page-shell::after,
+main::before,
+main::after {
+  display: none !important;
+  opacity: 0 !important;
+}
+
+body::before {
+  content: "PROPOSAL PREVIEW ONLY · MISS TYCA 2026 POWERED BY SCORYN";
+  position: fixed;
+  top: 10px;
+  left: 50%;
+  z-index: 9999;
+  transform: translateX(-50%);
+  padding: 0.42rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid var(--scoryn-line-strong);
+  background: rgba(0,0,0,0.82);
+  color: var(--scoryn-champagne);
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+}
+
+#root {
+  padding-top: 2.65rem;
+}
+
+.panel,
+.login-card,
+
+----- .app-shell::before at lines 4747-4792 -----
+html,
+body {
+  color: var(--scoryn-text) !important;
+  background:
+    radial-gradient(circle at 18% 10%, rgba(214,180,84,0.14), transparent 24%),
+    linear-gradient(135deg, #000 0%, #080706 52%, #18130a 100%) !important;
+}
+
+/* kill old oversized decorative rings/overlays */
+body::after,
+.app-shell::before,
+.app-shell::after,
+.page-shell::before,
+.page-shell::after,
+main::before,
+main::after {
+  display: none !important;
+  opacity: 0 !important;
+}
+
+body::before {
+  content: "PROPOSAL PREVIEW ONLY · MISS TYCA 2026 POWERED BY SCORYN";
+  position: fixed;
+  top: 10px;
+  left: 50%;
+  z-index: 9999;
+  transform: translateX(-50%);
+  padding: 0.42rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid var(--scoryn-line-strong);
+  background: rgba(0,0,0,0.82);
+  color: var(--scoryn-champagne);
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+}
+
+#root {
+  padding-top: 2.65rem;
+}
+
+.panel,
+.login-card,
+.summary-print-panel,
+
+----- .app-shell::after at lines 4748-4793 -----
+body {
+  color: var(--scoryn-text) !important;
+  background:
+    radial-gradient(circle at 18% 10%, rgba(214,180,84,0.14), transparent 24%),
+    linear-gradient(135deg, #000 0%, #080706 52%, #18130a 100%) !important;
+}
+
+/* kill old oversized decorative rings/overlays */
+body::after,
+.app-shell::before,
+.app-shell::after,
+.page-shell::before,
+.page-shell::after,
+main::before,
+main::after {
+  display: none !important;
+  opacity: 0 !important;
+}
+
+body::before {
+  content: "PROPOSAL PREVIEW ONLY · MISS TYCA 2026 POWERED BY SCORYN";
+  position: fixed;
+  top: 10px;
+  left: 50%;
+  z-index: 9999;
+  transform: translateX(-50%);
+  padding: 0.42rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid var(--scoryn-line-strong);
+  background: rgba(0,0,0,0.82);
+  color: var(--scoryn-champagne);
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+}
+
+#root {
+  padding-top: 2.65rem;
+}
+
+.panel,
+.login-card,
+.summary-print-panel,
+.final-round-panel,
+
+===== BUILD CHECK =====
+
+> pageant-judging@1.0.0 build
+> vite build
+
+vite v5.4.21 building for production...
+transforming...
+✓ 34 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.42 kB │ gzip:  0.28 kB
+dist/assets/index-CpipBHjA.css   80.36 kB │ gzip: 14.55 kB
+dist/assets/index-BjW-LBuI.js   244.99 kB │ gzip: 72.57 kB
+✓ built in 1.15s
+
+===== AUDIT DONE =====

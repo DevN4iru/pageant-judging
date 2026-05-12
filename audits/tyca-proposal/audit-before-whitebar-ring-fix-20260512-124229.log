@@ -1,0 +1,26 @@
+## miss-tyca-scoryn-clean-preview
+?? .safety/
+?? audits/tyca-proposal/audit-before-whitebar-ring-fix-20260512-124229.log
+?? audits/tyca-proposal/white-bar-ring-audit-20260512-124102.log
+
+Topbar definitions:
+52:.topbar {
+919:  .topbar,
+1517:body::before {
+1531:.topbar,
+1554:.topbar {
+1650:  .topbar {
+1654:  body::before {
+1668:.topbar,
+1695:.topbar {
+1756:  .topbar,
+2934:.admin-shell > .topbar,
+2947:.admin-shell > .topbar {
+2982:.admin-shell > .topbar .btn-light {
+3466:  .admin-shell > .topbar {
+3490:.admin-shell > .topbar {
+3497:.admin-shell .topbar {
+4756:body::after,
+4757:.app-shell::before,
+4758:.app-shell::after,
+4767:body::before {
