@@ -302,6 +302,98 @@ async function api(path, options = {}) {
 
 
 
+
+function AdminSummaryPrintButtons(props = {}) {
+  const runPrint =
+    props.onPrint ||
+    props.onPrintSummary ||
+    props.onPrintPreliminary ||
+    props.printPreliminary ||
+    (() => window.print());
+
+  const runFinals =
+    props.onPrintFinals ||
+    props.printFinals ||
+    runPrint;
+
+  const runFull =
+    props.onPrintFullProgram ||
+    props.printFullProgram ||
+    runPrint;
+
+  return (
+    <div className="admin-summary-print-buttons">
+      <button type="button" className="btn secondary" onClick={runPrint}>
+        Print Preliminary PDF
+      </button>
+      <button type="button" className="btn secondary" onClick={runFinals}>
+        Print Finals PDF
+      </button>
+      <button type="button" className="btn primary" onClick={runFull}>
+        Print Full Program PDF
+      </button>
+    </div>
+  );
+}
+
+
+function CriteriaLeadersPanel({ results = [], criteria = [] }) {
+  const rows = Array.isArray(criteria)
+    ? criteria.map((criterion) => {
+        const name = criterion?.name || 'Criteria';
+        const weight = criterion?.weight ?? criterion?.percentage;
+        const ranked = Array.isArray(results)
+          ? [...results].sort((a, b) => {
+              const av = Number(a?.criteria_breakdown?.[name] ?? a?.[name] ?? 0);
+              const bv = Number(b?.criteria_breakdown?.[name] ?? b?.[name] ?? 0);
+              return bv - av;
+            })
+          : [];
+
+        const leader = ranked[0];
+        const score = Number(leader?.criteria_breakdown?.[name] ?? leader?.[name] ?? 0);
+
+        return {
+          id: criterion?.id || name,
+          name,
+          weight,
+          leader,
+          score,
+        };
+      })
+    : [];
+
+  return (
+    <section className="criteria-leaders-panel">
+      <div className="section-heading">
+        <p className="eyebrow">Automatic Insights</p>
+        <h3>Current Criteria Leaders</h3>
+        <p>Admin-only preview of who is leading per criterion.</p>
+      </div>
+
+      <div className="criteria-leader-grid">
+        {rows.length ? (
+          rows.map((row) => (
+            <article className="criteria-leader-card" key={row.id}>
+              <span>{row.name}{row.weight ? ` · ${row.weight}%` : ''}</span>
+              <strong>
+                {row.leader && row.score > 0
+                  ? `#${row.leader.number || row.leader.id} ${row.leader.name || 'Candidate'} ${row.score.toFixed(2)}`
+                  : 'Waiting for scores'}
+              </strong>
+            </article>
+          ))
+        ) : (
+          <article className="criteria-leader-card">
+            <span>Preview</span>
+            <strong>Waiting for criteria setup</strong>
+          </article>
+        )}
+      </div>
+    </section>
+  );
+}
+
 function ScorynProposalBanner({ children }) {
   return (
     <section className="scoryn-proposal-banner">
