@@ -6654,3 +6654,331 @@ main::after,
 }
 
 /* ===== SCORYN EXACT ADMIN JUDGE OVERRIDE END ===== */
+
+/* ===== SCORYN FINAL MICRO POLISH START ===== */
+/* Last-mile visual fixes only. No scoring/API/math changes. */
+
+/* Global logged-in width and calmer spacing */
+.app-shell.admin-shell,
+.app-shell:has(.judge-panel),
+.app-shell:has(.finals-judge-panel) {
+  width: min(1180px, calc(100% - 28px)) !important;
+  max-width: 1180px !important;
+}
+
+.admin-dashboard-view,
+.judge-panel {
+  gap: 0.85rem !important;
+}
+
+/* Header: smaller, cleaner, less heavy */
+.app-shell.admin-shell .topbar,
+.app-shell:has(.judge-panel) .topbar,
+.app-shell:has(.finals-judge-panel) .topbar {
+  min-height: 0 !important;
+  padding: 12px 16px !important;
+  border-radius: 18px !important;
+}
+
+.app-shell.admin-shell .brand-logo,
+.app-shell:has(.judge-panel) .brand-logo,
+.app-shell:has(.finals-judge-panel) .brand-logo {
+  width: 56px !important;
+  height: 56px !important;
+}
+
+.app-shell.admin-shell h1,
+.app-shell:has(.judge-panel) h1,
+.app-shell:has(.finals-judge-panel) h1 {
+  font-size: clamp(1.35rem, 2.1vw, 2.1rem) !important;
+  line-height: 1 !important;
+}
+
+/* Judge hero/header should not feel huge */
+.judge-panel .judge-hero,
+.judge-panel > .panel.judge-hero {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) 150px 170px !important;
+  align-items: center !important;
+  gap: 0.8rem !important;
+  padding: 0.85rem !important;
+  border-radius: 20px !important;
+  background: linear-gradient(135deg, rgba(12, 10, 7, 0.98), rgba(22, 17, 9, 0.96)) !important;
+}
+
+.judge-panel .judge-hero h2 {
+  font-size: clamp(1.25rem, 2vw, 1.8rem) !important;
+  margin: 0.1rem 0 0.2rem !important;
+}
+
+.judge-panel .judge-hero p {
+  font-size: 0.82rem !important;
+  line-height: 1.35 !important;
+}
+
+/* Candidate list: cleaner vertical rhythm */
+.judge-panel .candidate-list {
+  display: grid !important;
+  gap: 0.85rem !important;
+}
+
+.judge-panel .candidate-card {
+  padding: 0.9rem !important;
+  border-radius: 20px !important;
+  background:
+    linear-gradient(135deg, rgba(9, 8, 6, 0.98), rgba(19, 15, 9, 0.96)) !important;
+}
+
+.judge-panel .candidate-head {
+  margin-bottom: 0.75rem !important;
+}
+
+.judge-panel .candidate-number,
+.finals-judge-panel .candidate-number {
+  font-size: 0.66rem !important;
+  padding: 0.25rem 0.48rem !important;
+  color: #f7d774 !important;
+  background: rgba(247, 215, 116, 0.10) !important;
+}
+
+.judge-panel .candidate-card h3,
+.finals-judge-panel .candidate-card h3 {
+  font-size: 1rem !important;
+  margin-top: 0.25rem !important;
+}
+
+/* Smaller subtotal badge */
+.judge-panel .subtotal,
+.finals-judge-panel .subtotal {
+  min-width: 78px !important;
+  padding: 0.45rem 0.55rem !important;
+  border-radius: 14px !important;
+  background: rgba(247, 215, 116, 0.10) !important;
+}
+
+.judge-panel .subtotal span,
+.finals-judge-panel .subtotal span {
+  font-size: 0.62rem !important;
+}
+
+.judge-panel .subtotal strong,
+.finals-judge-panel .subtotal strong {
+  font-size: 1.05rem !important;
+  color: #f8e6a8 !important;
+}
+
+/* Score cards: less cramped, less blinding */
+.judge-panel .score-grid,
+.finals-judge-panel .score-grid,
+.finals-judge-panel .final-score-grid {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)) !important;
+  gap: 0.65rem !important;
+}
+
+.judge-panel .score-field,
+.finals-judge-panel .score-field {
+  min-height: auto !important;
+  padding: 0.72rem !important;
+  gap: 0.35rem !important;
+  border-radius: 16px !important;
+  background: rgba(0, 0, 0, 0.28) !important;
+}
+
+.judge-panel .score-field > span,
+.finals-judge-panel .score-field > span {
+  font-size: 0.78rem !important;
+  line-height: 1.2 !important;
+}
+
+.judge-panel .score-field small,
+.finals-judge-panel .score-field small {
+  font-size: 0.64rem !important;
+  color: rgba(255, 248, 231, 0.54) !important;
+}
+
+.judge-panel input,
+.finals-judge-panel input {
+  height: 38px !important;
+  padding: 0.48rem 0.62rem !important;
+  border-radius: 11px !important;
+  background: #eadbb7 !important;
+  color: #151006 !important;
+  font-size: 0.86rem !important;
+}
+
+.judge-panel input:disabled,
+.finals-judge-panel input:disabled {
+  background: #cfc4ad !important;
+  color: #241b0c !important;
+}
+
+/* Notes: tiny, not purple-heavy */
+.judge-panel summary,
+.finals-judge-panel summary {
+  font-size: 0.6rem !important;
+  padding: 0.2rem 0.42rem !important;
+  color: #e9ca68 !important;
+  background: rgba(247, 215, 116, 0.09) !important;
+  border-color: rgba(247, 215, 116, 0.18) !important;
+}
+
+/* Finals judge panel: remove the pale gray block feeling */
+.finals-judge-panel .final-round-head {
+  padding: 0.9rem !important;
+  border-radius: 20px !important;
+  background:
+    linear-gradient(135deg, rgba(12, 10, 7, 0.98), rgba(22, 17, 9, 0.96)) !important;
+  border: 1px solid rgba(214, 180, 84, 0.28) !important;
+}
+
+.finals-judge-panel .final-round-head h2 {
+  font-size: clamp(1.25rem, 2vw, 1.85rem) !important;
+}
+
+/* Admin: reduce visual noise */
+.admin-dashboard-view > .panel,
+.admin-dashboard-view > section.panel {
+  padding: 0.85rem !important;
+  border-radius: 20px !important;
+}
+
+.admin-dashboard-view .table-title {
+  margin-bottom: 0.65rem !important;
+}
+
+.admin-dashboard-view .table-title h3,
+.admin-dashboard-view h3 {
+  font-size: 1rem !important;
+  line-height: 1.2 !important;
+}
+
+.admin-dashboard-view .table-title p,
+.admin-dashboard-view p {
+  font-size: 0.75rem !important;
+  line-height: 1.35 !important;
+}
+
+.admin-dashboard-view .eyebrow {
+  font-size: 0.62rem !important;
+  letter-spacing: 0.13em !important;
+}
+
+/* Admin hero buttons tighter */
+.admin-shell .dashboard-actions {
+  gap: 0.45rem !important;
+}
+
+.admin-shell .dashboard-actions .btn,
+.admin-shell .dashboard-actions button {
+  min-height: 34px !important;
+  padding: 0.48rem 0.72rem !important;
+  font-size: 0.72rem !important;
+  border-radius: 11px !important;
+}
+
+/* Criteria leaders: make numbers readable */
+.criteria-leaders-grid,
+.criteria-leaders-panel .criteria-leaders-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(175px, 1fr)) !important;
+  gap: 0.55rem !important;
+}
+
+.criteria-leader-card {
+  padding: 0.62rem !important;
+  border-radius: 14px !important;
+}
+
+.criteria-leader-card span,
+.criteria-leader-card strong {
+  color: #fff1bd !important;
+}
+
+/* Top 3 cards: cleaner */
+.top3-finalists-grid,
+.admin-shell .top3-finalists-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)) !important;
+  gap: 0.65rem !important;
+}
+
+.admin-shell .top3-finalist-card {
+  padding: 0.75rem !important;
+  border-radius: 16px !important;
+}
+
+.admin-shell .top3-finalist-card span {
+  font-size: 0.62rem !important;
+  color: #d9bb62 !important;
+}
+
+.admin-shell .top3-finalist-card h4 {
+  font-size: 0.92rem !important;
+  margin: 0.2rem 0 !important;
+}
+
+.admin-shell .top3-finalist-card strong {
+  font-size: 1.2rem !important;
+}
+
+/* Admin tables: easier eye tracking */
+.admin-shell .table-wrap {
+  border-radius: 15px !important;
+}
+
+.admin-shell table {
+  font-size: 0.72rem !important;
+}
+
+.admin-shell table th {
+  padding: 0.52rem 0.6rem !important;
+  font-size: 0.62rem !important;
+  color: #f2d373 !important;
+}
+
+.admin-shell table td {
+  padding: 0.5rem 0.6rem !important;
+  font-size: 0.72rem !important;
+  line-height: 1.25 !important;
+}
+
+.admin-shell table tbody tr:hover td {
+  background: rgba(247, 215, 116, 0.045) !important;
+}
+
+/* Status sections smaller */
+.admin-shell .judge-status-panel,
+.admin-shell .final-status-panel {
+  opacity: 0.94 !important;
+}
+
+.admin-shell .submitted-pill,
+.admin-shell .rank-pill,
+.judge-panel .submitted-pill,
+.judge-panel .rank-pill {
+  font-size: 0.62rem !important;
+  padding: 0.2rem 0.42rem !important;
+}
+
+/* Footer: smaller, keep it */
+.site-footer.compact-footer,
+.compact-footer {
+  padding: 0.75rem 0.9rem !important;
+  border-radius: 16px !important;
+  font-size: 0.72rem !important;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .judge-panel .judge-hero {
+    grid-template-columns: 1fr !important;
+  }
+
+  .judge-panel .score-grid,
+  .finals-judge-panel .score-grid,
+  .finals-judge-panel .final-score-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ===== SCORYN FINAL MICRO POLISH END ===== */
