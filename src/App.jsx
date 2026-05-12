@@ -299,6 +299,42 @@ async function api(path, options = {}) {
   return res.json();
 }
 
+
+function getSavedJudge() {
+  try {
+    const raw = localStorage.getItem('judge');
+    if (!raw) return null;
+
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== 'object' || !parsed.id) {
+      localStorage.removeItem('judge');
+      return null;
+    }
+
+    return parsed;
+  } catch {
+    localStorage.removeItem('judge');
+    return null;
+  }
+}
+
+function getSavedAdmin() {
+  try {
+    const raw = localStorage.getItem('admin');
+    return raw === '1' || raw === 'true' || raw === 'yes';
+  } catch {
+    return false;
+  }
+}
+
+function getSavedMode() {
+  try {
+    return localStorage.getItem('mode') || 'home';
+  } catch {
+    return 'home';
+  }
+}
+
 export default function App() {
   const [mode, setMode] = useState(localStorage.getItem('mode') || 'home');
   const [judge, setJudge] = useState(getSavedJudge());
