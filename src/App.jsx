@@ -808,39 +808,32 @@ function Home({ setMode }) {
 
             <div>
               <p className="eyebrow">Powered by Scoryn</p>
-              <h2>Premium real-time tabulation for Miss TYCA 2026.</h2>
+              <h2>Fast, clean, and reliable pageant tabulation.</h2>
             </div>
           </div>
 
           <p className="scoryn-lead">
-            Scoryn is a modern online tabulation platform designed for pageants,
-            competitions, and judged events. This clickable proposal preview shows
-            judge scoring, live rankings, locked submissions, TV displays, and
-            PDF-ready summaries. It can be tailored per client: criteria, weights,
-            judge list, judge passwords/PINs, contestant list, finalist flow, and branding.
+            A clickable proposal preview for Miss TYCA 2026 showing judge scoring,
+            live rankings, locked submissions, TV display, and PDF-ready summaries.
           </p>
 
           <div className="scoryn-action-grid">
             <button className="scoryn-action-card" onClick={() => setMode('judge-login')}>
               <span>Judge</span>
               <strong>Open Judge Panel</strong>
-              <small>Score 12 candidate placeholders and submit locked scores.</small>
+              <small>Try the scoring flow.</small>
             </button>
 
             <button className="scoryn-action-card primary" onClick={() => setMode('admin-login')}>
               <span>Admin</span>
               <strong>Open Live Dashboard</strong>
-              <small>Monitor rankings, submissions, criteria leaders, and PDF summaries.</small>
+              <small>See live results and reports.</small>
             </button>
           </div>
 
           <div className="scoryn-demo-note">
-            <span>Demo scope</span>
-            <p>
-              This is a proposal preview, not official TYCA results. Criteria names,
-              score weights, judge accounts, judge PINs, contestant list, rounds, and
-              branding can be customized to match the client&apos;s exact event mechanics.
-            </p>
+            <span>Preview only</span>
+            <p>Not official TYCA results. Built to show how the system works before deployment.</p>
           </div>
         </div>
 
@@ -872,10 +865,10 @@ function Home({ setMode }) {
       </section>
 
       <section className="scoryn-microbar">
-        <span>Custom criteria & weights</span>
-        <span>Editable judges & PINs</span>
-        <span>Editable contestant list</span>
-        <span>Proven by Miss Poblacion Occidental 2026</span>
+        <span>Custom criteria</span>
+        <span>Editable judges</span>
+        <span>Editable contestants</span>
+        <span>Field-tested workflow</span>
       </section>
 
       <ScorynCredibilityPanel />
@@ -889,11 +882,9 @@ function ScorynCredibilityPanel() {
     <section className="scoryn-credibility-panel">
       <div className="credibility-copy">
         <p className="eyebrow">Client-ready customization</p>
-        <h3>Built to match the actual mechanics of the event.</h3>
+        <h3>Customizable for the client’s final mechanics.</h3>
         <p>
-          Scoryn is not limited to fixed contestants, fixed judges, or fixed criteria.
-          The criteria, scoring weights, judge list, judge passwords/PINs, contestant list,
-          finalist rules, round names, and event branding can be modified to fit the client&apos;s needs.
+          Criteria, weights, judges, PINs, contestants, rounds, and branding can be adjusted before deployment.
         </p>
       </div>
 
@@ -901,19 +892,19 @@ function ScorynCredibilityPanel() {
         <article>
           <span>01</span>
           <strong>Configurable scoring</strong>
-          <p>Criteria names, weights, and rounds can be adjusted for the pageant mechanics.</p>
+          <p>Criteria, weights, and rounds can be adjusted.</p>
         </article>
 
         <article>
           <span>02</span>
           <strong>Editable people list</strong>
-          <p>Judges and contestants can be prepared based on the final official lineup.</p>
+          <p>Judges, PINs, and contestants can be prepared per event.</p>
         </article>
 
         <article>
           <span>03</span>
           <strong>Field-tested workflow</strong>
-          <p>Proven effective through the Miss Poblacion Occidental 2026 judging deployment.</p>
+          <p>Based on a proven pageant judging deployment workflow.</p>
         </article>
       </div>
     </section>
