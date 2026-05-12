@@ -21,235 +21,261 @@ const previewJudges = Array.from({ length: 5 }, (_, index) => ({
   name: `Judge ${index + 1}`,
 }));
 
-const previewPrelimScores = [70, 74, 78, 82, 86, 91, 95, 99, 0, 0, 0, 0];
-
-const previewResults = previewContestants
-  .map((candidate, index) => {
-    const total = previewPrelimScores[index] || 0;
-    return {
-      ...candidate,
-      total_score: total,
-      judges_submitted: total > 0 ? 5 : 0,
-      criteria_breakdown: Object.fromEntries(
-        previewCriteria.map((criterion) => [
-          criterion.name,
-          Number(((total * criterion.weight) / 100).toFixed(2)),
-        ])
-      ),
-    };
-  })
-  .sort((a, b) => b.total_score - a.total_score);
-
-const previewTopThree = previewResults.slice(0, 3).map((candidate) => ({
-  id: candidate.id,
-  number: candidate.number,
-  name: candidate.name,
-  pre_final_score: candidate.total_score,
-  total_score: candidate.total_score,
-}));
-
-const previewFinalResults = [
-  {
-    id: 6,
-    number: 6,
-    name: 'Candidate 6',
-    beauty_and_poise: 60,
-    qa: 40,
-    final_score: 100,
-    preliminary_score: 91,
-    judges_submitted: 5,
-    rank_label: 'Winner',
-  },
-  {
-    id: 7,
-    number: 7,
-    name: 'Candidate 7',
-    beauty_and_poise: 55.2,
-    qa: 36,
-    final_score: 91.2,
-    preliminary_score: 95,
-    judges_submitted: 5,
-    rank_label: '1st Runner-Up',
-  },
-  {
-    id: 8,
-    number: 8,
-    name: 'Candidate 8',
-    beauty_and_poise: 52.8,
-    qa: 34.4,
-    final_score: 87.2,
-    preliminary_score: 99,
-    judges_submitted: 5,
-    rank_label: '2nd Runner-Up',
-  },
+const previewFinalCriteria = [
+  { id: 1, name: 'Beauty and Poise', weight: 60 },
+  { id: 2, name: 'Wit, Intelligence, and Quality of Answer', weight: 40 },
 ];
 
-function previewJudgeScores() {
-  return previewContestants.flatMap((candidate, index) => {
-    const raw = previewPrelimScores[index] || '';
-    return previewCriteria.map((criterion) => ({
-      contestant_id: candidate.id,
-      criterion_id: criterion.id,
-      raw_score: raw,
-      score: raw,
-    }));
-  });
+function parsePreviewBody(options = {}) {
+  try {
+    return options.body ? JSON.parse(options.body) : {};
+  } catch {
+    return {};
+  }
 }
 
-function previewFinalScores() {
-  return previewFinalResults.flatMap((candidate) => [
-    {
+function cleanPath(path) {
+  return String(path || '').split('?')[0];
+}
+
+function previewJudgeFromPin(pinValue) {
+  const pin = String(pinValue || '').trim().toLowerCase();
+
+  if (!pin) {
+    return null;
+  }
+
+  const judgeWord = pin.match(/^judge\s*([1-5])$/i);
+  if (judgeWord) {
+    const id = Number(judgeWord[1]);
+    return { id, name: `Judge ${id}` };
+  }
+
+  const numberOnly = pin.match(/^([1-5])$/);
+  if (numberOnly) {
+    const id = Number(numberOnly[1]);
+    return { id, name: `Judge ${id}` };
+  }
+
+  const fourSame = pin.match(/^([1-5])\1\1\1$/);
+  if (fourSame) {
+    const id = Number(fourSame[1]);
+    return { id, name: `Judge ${id}` };
+  }
+
+  return null;
+}
+
+function blankPrelimResults() {
+  return previewContestants.map((candidate) => ({
+    ...candidate,
+    total_score: 0,
+    judges_submitted: 0,
+    criteria_breakdown: Object.fromEntries(
+      previewCriteria.map((criterion) => [criterion.name, 0])
+    ),
+  }));
+}
+
+function blankJudgeScores() {
+  return previewContestants.flatMap((candidate) =>
+    previewCriteria.map((criterion) => ({
       contestant_id: candidate.id,
-      criterion_id: 1,
-      raw_score: Number((candidate.beauty_and_poise / 0.6).toFixed(2)),
-      score: Number(candidate.beauty_and_poise.toFixed(2)),
-    },
-    {
-      contestant_id: candidate.id,
-      criterion_id: 2,
-      raw_score: Number((candidate.qa / 0.4).toFixed(2)),
-      score: Number(candidate.qa.toFixed(2)),
-    },
-  ]);
+      criterion_id: criterion.id,
+      raw_score: '',
+      score: 0,
+    }))
+  );
+}
+
+function blankFinalScores() {
+  return [];
 }
 
 async function previewApi(path, options = {}) {
+  const route = cleanPath(path);
   const method = String(options.method || 'GET').toUpperCase();
+  const body = parsePreviewBody(options);
 
   if (method !== 'GET') {
-    if (path === '/api/judge/login') {
-      const body = options.body ? JSON.parse(options.body) : {};
-      const pinText = String(body.pin || body.password || '').trim();
-      const judgeNumber = Math.max(1, Math.min(5, Number(pinText[0]) || 1));
-      return { id: judgeNumber, name: `Judge ${judgeNumber}` };
+    if (/login/i.test(route)) {
+      const possiblePin =
+        body.pin ||
+        body.password ||
+        body.code ||
+        body.judgePin ||
+        body.adminPin ||
+        body.pass ||
+        '';
+
+      const isAdminRoute = /admin/i.test(route) || /admin/i.test(String(body.role || ''));
+      const isJudgeRoute = /judge/i.test(route) || /judge/i.test(String(body.role || ''));
+
+      if (isAdminRoute) {
+        return {
+          ok: true,
+          role: 'admin',
+          admin: true,
+          user: { role: 'admin', name: 'Admin Preview' },
+        };
+      }
+
+      const judge = previewJudgeFromPin(possiblePin);
+
+      if (isJudgeRoute || judge) {
+        if (!judge) {
+          throw new Error('Use judge1, judge2, judge3, judge4, or judge5 for preview.');
+        }
+
+        return {
+          ok: true,
+          ...judge,
+          judge,
+          role: 'judge',
+          user: { ...judge, role: 'judge' },
+        };
+      }
+
+      return {
+        ok: true,
+        role: 'admin',
+        admin: true,
+        user: { role: 'admin', name: 'Admin Preview' },
+      };
     }
 
-    if (path === '/api/admin/login') {
-      return { ok: true, role: 'admin' };
+    if (/submit/i.test(route)) {
+      return {
+        ok: true,
+        preview: true,
+        submitted: true,
+        locked: true,
+        message: 'Preview submit accepted. No real data was saved on Vercel.',
+      };
     }
 
-    if (path.includes('/submit')) {
-      return { ok: true, locked: true, submitted: true };
+    if (/winner|declare|clear/i.test(route)) {
+      return {
+        ok: true,
+        preview: true,
+        winner_name: null,
+        declared_at: null,
+        message: 'Preview only. Winner state is not persisted on Vercel.',
+      };
     }
 
-    if (path === '/api/winner') {
-      return { ok: true, winner_name: 'Candidate 6', declared_at: new Date().toISOString() };
-    }
-
-    return { ok: true };
+    return {
+      ok: true,
+      preview: true,
+    };
   }
 
-  if (path === '/api/health') {
-    return { ok: true, app: 'Scoryn Preview Demo API' };
+  if (route === '/api/health') {
+    return { ok: true, app: 'Scoryn Preview Demo API', preview: true };
   }
 
-  if (path === '/api/setup') {
+  if (route === '/api/setup') {
     return {
       contestants: previewContestants,
       criteria: previewCriteria,
       judges: previewJudges,
+      preview: true,
     };
   }
 
-  if (path === '/api/results') {
-    return previewResults;
+  if (route === '/api/results' || route === '/api/results/details') {
+    return blankPrelimResults();
   }
 
-  if (path === '/api/results/details') {
-    return previewResults;
-  }
-
-  if (path === '/api/history') {
+  if (route === '/api/history') {
     return [];
   }
 
-  if (path === '/api/judges/status') {
+  if (route === '/api/judges/status') {
     return previewJudges.map((judge) => ({
       ...judge,
-      status: 'Locked',
-      score_entries: 60,
-      submitted_at: 'Preview mode',
-      submitted: true,
+      submitted: false,
+      locked: false,
+      status: 'Open',
+      score_entries: 0,
+      submitted_at: null,
     }));
   }
 
-  if (path === '/api/winner') {
-    return {
-      winner_name: 'Candidate 6',
-      declared_at: 'Preview mode',
-    };
+  if (/^\/api\/judge\/\d+\/scores$/.test(route)) {
+    return blankJudgeScores();
   }
 
-  if (path.match(/^\/api\/judge\/\d+\/scores$/)) {
-    return previewJudgeScores();
-  }
-
-  if (path.match(/^\/api\/judge\/\d+\/status$/)) {
+  if (/^\/api\/judge\/\d+\/status$/.test(route)) {
     return {
-      submitted: true,
-      locked: true,
-      score_entries: 60,
+      submitted: false,
+      locked: false,
+      score_entries: 0,
       total_fields: 60,
-      filled_fields: 40,
-      submitted_at: 'Preview mode',
+      filled_fields: 0,
+      submitted_at: null,
     };
   }
 
-  if (path === '/api/final/readiness') {
+  if (route === '/api/winner') {
     return {
-      ready: true,
+      winner_name: null,
+      declared_at: null,
+      preview: true,
+    };
+  }
+
+  if (route === '/api/final/readiness') {
+    return {
+      ready: false,
       total_judges: 5,
-      submitted_judges: 5,
-      top_three_count: 3,
-      top_three: previewTopThree,
+      submitted_judges: 0,
+      top_three_count: 0,
+      top_three: [],
+      preview: true,
     };
   }
 
-  if (path === '/api/final/setup') {
+  if (route === '/api/final/setup') {
     return {
-      contestants: previewTopThree,
-      criteria: [
-        { id: 1, name: 'Beauty and Poise', weight: 60 },
-        { id: 2, name: 'Wit, Intelligence, and Quality of Answer', weight: 40 },
-      ],
+      contestants: [],
+      criteria: previewFinalCriteria,
+      preview: true,
     };
   }
 
-  if (path === '/api/final/results') {
-    return previewFinalResults;
+  if (route === '/api/final/results' || route === '/api/final/details') {
+    return [];
   }
 
-  if (path === '/api/final/details') {
-    return previewFinalResults;
-  }
-
-  if (path === '/api/final/judges/status') {
+  if (route === '/api/final/judges/status') {
     return previewJudges.map((judge) => ({
       ...judge,
-      status: 'Locked',
-      score_entries: 6,
-      submitted_at: 'Preview mode',
-      submitted: true,
+      submitted: false,
+      locked: false,
+      status: 'Open',
+      score_entries: 0,
+      submitted_at: null,
     }));
   }
 
-  if (path.match(/^\/api\/final\/judge\/\d+\/scores$/)) {
-    return previewFinalScores();
+  if (/^\/api\/final\/judge\/\d+\/scores$/.test(route)) {
+    return blankFinalScores();
   }
 
-  if (path.match(/^\/api\/final\/judge\/\d+\/status$/)) {
+  if (/^\/api\/final\/judge\/\d+\/status$/.test(route)) {
     return {
-      submitted: true,
-      locked: true,
-      score_entries: 6,
-      total_fields: 6,
-      filled_fields: 6,
-      submitted_at: 'Preview mode',
+      submitted: false,
+      locked: false,
+      score_entries: 0,
+      total_fields: 0,
+      filled_fields: 0,
+      submitted_at: null,
     };
   }
 
-  console.warn('[Scoryn preview] Unhandled mock API path:', path);
-  return {};
+  console.warn('[Scoryn preview] Unhandled mock API path:', route);
+  return { ok: true, preview: true };
 }
 
 async function api(path, options = {}) {
@@ -271,680 +297,6 @@ async function api(path, options = {}) {
   }
 
   return res.json();
-}
-
-function getSavedJudge() {
-  try {
-    return JSON.parse(localStorage.getItem('judge') || 'null');
-  } catch {
-    return null;
-  }
-}
-
-function formatDateTime(value) {
-  if (!value) return '—';
-
-  return new Date(value).toLocaleString([], {
-    year: 'numeric',
-    month: 'short',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit'
-  });
-}
-
-const CRITERIA_GUIDE = {
-  'Production Number': {
-    segmentWeight: '10% of Top 3 score',
-    note: 'Opening production number. Judges evaluate stage energy, performance, projection, and overall impact.',
-    items: [
-      'Stage Presence and Projection — 40%',
-      'Execution of Choreography — 30%',
-      'Confidence and Poise — 20%',
-      'Overall Impact — 10%'
-    ]
-  },
-  'Fun Wear': {
-    segmentWeight: '15% of Top 3 score',
-    note: 'Showcases creativity, personality, confidence, and expressive style through fun wear attire.',
-    items: [
-      'Creativity and Style — 30%',
-      'Confidence and Carriage — 30%',
-      'Stage Presence — 20%',
-      'Overall Appeal — 20%'
-    ]
-  },
-  'Preliminary Interview': {
-    segmentWeight: '20% of Top 3 score',
-    note: 'Live interview during coronation night.',
-    items: [
-      'Communication Skills and Clarity of Thought — 30%',
-      'Confidence and Stage Presence — 25%',
-      'Intelligence and Substance of Answer — 25%',
-      'Overall Impression — 20%'
-    ]
-  },
-  'Advocacy Interview': {
-    segmentWeight: '25% of Top 3 score',
-    note: 'Closed-door advocacy interview conducted before coronation night.',
-    items: [
-      'Depth and Relevance of Advocacy — 30%',
-      'Knowledge and Understanding — 25%',
-      'Communication Skills and Clarity — 25%',
-      'Sincerity and Impact — 20%'
-    ]
-  },
-  'Long Gown': {
-    segmentWeight: '30% of Top 3 score',
-    note: 'Highlights elegance, grace, confidence, sophistication, and gown suitability.',
-    items: [
-      'Elegance and Poise — 35%',
-      'Stage Presence and Confidence — 35%',
-      'Gown Selection and Suitability — 20%',
-      'Overall Impact — 10%'
-    ]
-  }
-};
-
-function getCriteriaGuide(name) {
-  return CRITERIA_GUIDE[name] || {
-    segmentWeight: 'Official judging criterion',
-    note: 'Use the approved scoring standard set by the pageant committee.',
-    items: ['Score fairly based on candidate performance.']
-  };
-}
-
-function CriteriaNote({ name }) {
-  const guide = getCriteriaGuide(name);
-
-  return (
-    <details className="criteria-note-box">
-      <summary>View notes</summary>
-      <div className="criteria-note-content">
-        <strong>{name}</strong>
-        <em>{guide.segmentWeight}</em>
-        <p>{guide.note}</p>
-        <ul>
-          {guide.items.map((item) => (
-            <li key={item}>{item}</li>
-          ))}
-        </ul>
-      </div>
-    </details>
-  );
-}
-
-function CriteriaOverview() {
-  return (
-    <details className="criteria-overview">
-      <summary>View Judging Criteria / Notes</summary>
-
-      <div className="criteria-overview-grid">
-        {Object.entries(CRITERIA_GUIDE).map(([name, guide]) => (
-          <article key={name}>
-            <div>
-              <h4>{name}</h4>
-              <span>{guide.segmentWeight}</span>
-            </div>
-            <p>{guide.note}</p>
-            <ul>
-              {guide.items.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-          </article>
-        ))}
-      </div>
-
-      <div className="final-interview-note">
-        <strong>Finals for Top 3:</strong>
-        <span> Beauty and Poise — 60% · Wit, Intelligence, and Quality of Answer — 40%</span>
-      </div>
-    </details>
-  );
-}
-
-
-
-function ScorynProposalBanner() {
-  return (
-    <section className="proposal-banner">
-      <div>
-        <p className="eyebrow">Proposal Preview Only</p>
-        <h3>Miss TYCA 2026 powered by Scoryn</h3>
-        <p>
-          Scoryn is a modern online tabulation platform designed for pageants, competitions, and judged events.
-          This clickable preview demonstrates scoring, ranking, result computation, TV display, and PDF-ready summaries. Criteria, judges, PINs, contestants, and event rules can be customized to match the client&apos;s final mechanics. Proven effective through Miss Poblacion Occidental 2026.
-        </p>
-      </div>
-      <strong>Not official results</strong>
-    </section>
-  );
-}
-
-function CriteriaLeadersPanel() {
-  const [results, setResults] = useState([]);
-  const [setup, setSetup] = useState({ criteria: [] });
-
-  useEffect(() => {
-    let active = true;
-
-    async function load() {
-      try {
-        const [resultRows, setupData] = await Promise.all([
-          api('/api/results'),
-          api('/api/setup')
-        ]);
-
-        if (active) {
-          setResults(Array.isArray(resultRows) ? resultRows : []);
-          setSetup(setupData || { criteria: [] });
-        }
-      } catch {
-        if (active) setResults([]);
-      }
-    }
-
-    load();
-    const timer = setInterval(load, 5000);
-    return () => {
-      active = false;
-      clearInterval(timer);
-    };
-  }, []);
-
-  const leaders = (setup.criteria || []).map((criterion) => {
-    const name = criterion.name;
-    const ranked = [...results].sort((a, b) => {
-      const av = Number(a.criteria_breakdown?.[name] || 0);
-      const bv = Number(b.criteria_breakdown?.[name] || 0);
-      return bv - av;
-    });
-    const top = ranked[0];
-
-    return {
-      name,
-      weight: Math.round(Number(criterion.weight || 0) * 100),
-      candidate: top ? `#${top.number} ${top.name}` : 'Waiting for scores',
-      score: top ? Number(top.criteria_breakdown?.[name] || 0).toFixed(2) : '0.00'
-    };
-  });
-
-  return (
-    <section className="panel criteria-leaders-panel">
-      <div className="criteria-leaders-head">
-        <div>
-          <p className="eyebrow">Automatic Insights</p>
-          <h3>Current Criteria Leaders</h3>
-          <p>Admin-only live view of who is leading per criterion.</p>
-        </div>
-        <span>Auto-refresh</span>
-      </div>
-
-      <div className="criteria-leaders-grid">
-        {leaders.map((leader) => (
-          <article className="criteria-leader-card" key={leader.name}>
-            <small>{leader.name} · {leader.weight}%</small>
-            <strong>{leader.candidate}</strong>
-            <span>{leader.score}</span>
-          </article>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function AdminSummaryPrintButtons() {
-  const [busy, setBusy] = useState('');
-
-  function esc(value) {
-    return String(value ?? '—').replace(/[&<>"']/g, (char) => ({
-      '&': '&amp;',
-      '<': '&lt;',
-      '>': '&gt;',
-      '"': '&quot;',
-      "'": '&#39;'
-    }[char]));
-  }
-
-  function score(value) {
-    const num = Number(value || 0);
-    return Number.isFinite(num) ? num.toFixed(2) : '0.00';
-  }
-
-  function percent(value) {
-    const num = Number(value || 0) * 100;
-    return Number.isFinite(num) ? `${num.toFixed(0)}%` : '0%';
-  }
-
-  function table(headers, rows) {
-    return `
-      <table>
-        <thead>
-          <tr>${headers.map((item) => `<th>${esc(item)}</th>`).join('')}</tr>
-        </thead>
-        <tbody>
-          ${rows.length
-            ? rows.map((row) => `<tr>${row.map((item) => `<td>${esc(item)}</td>`).join('')}</tr>`).join('')
-            : `<tr><td colspan="${headers.length}">No data available yet.</td></tr>`}
-        </tbody>
-      </table>
-    `;
-  }
-
-  async function safeApi(path, fallback) {
-    try {
-      return await api(path);
-    } catch {
-      return fallback;
-    }
-  }
-
-  async function loadSummaryData() {
-    const [setup, prelim, prelimJudges, finalReadiness, finalResults, finalJudges, winner] =
-      await Promise.all([
-        safeApi('/api/setup', { contestants: [], criteria: [] }),
-        safeApi('/api/results', []),
-        safeApi('/api/judges/status', []),
-        safeApi('/api/final/readiness', { ready: false, top_three: [], submitted_judges: 0, total_judges: 0 }),
-        safeApi('/api/final/results', []),
-        safeApi('/api/final/judges/status', []),
-        safeApi('/api/winner', { winner_name: '', declared_at: null })
-      ]);
-
-    return { setup, prelim, prelimJudges, finalReadiness, finalResults, finalJudges, winner };
-  }
-
-  function preliminarySection(data) {
-    const criteria = data.setup.criteria || [];
-    const criteriaNames = criteria.map((item) => item.name);
-
-    const mathRows = criteria.map((item) => [
-      item.name,
-      percent(item.weight),
-      `Average judge score × ${Number(item.weight || 0).toFixed(2)}`
-    ]);
-
-    const resultHeaders = [
-      'Rank',
-      'Candidate',
-      ...criteriaNames,
-      'Preliminary Total',
-      'Judges'
-    ];
-
-    const resultRows = (data.prelim || []).map((item, index) => [
-      index + 1,
-      `#${item.number} ${item.name}`,
-      ...criteriaNames.map((name) => score(item.criteria_breakdown?.[name])),
-      score(item.total_score),
-      item.judges_submitted
-    ]);
-
-    const judgeRows = (data.prelimJudges || []).map((judge) => [
-      judge.name,
-      judge.submitted_at ? 'Submitted / Locked' : 'Editing',
-      judge.score_count,
-      judge.submitted_at ? formatDateTime(judge.submitted_at) : '—'
-    ]);
-
-    return `
-      <section>
-        <h2>Preliminary Round Summary</h2>
-        <p>
-          The Preliminary Round ranks all candidates and determines the official Top 3 finalists.
-          Each criterion is averaged across judges, multiplied by its official weight, then summed.
-        </p>
-
-        <h3>Preliminary Round Formula</h3>
-        <p class="formula">
-          Preliminary Total = Production Number 10% + Fun Wear 15% + Preliminary Interview 20% +
-          Advocacy Interview 25% + Long Gown 30%.
-        </p>
-        ${table(['Criterion', 'Weight', 'Formula'], mathRows)}
-
-        <h3>Preliminary Ranking</h3>
-        ${table(resultHeaders, resultRows)}
-
-        <h3>Preliminary Judge Submission Status</h3>
-        ${table(['Judge', 'Status', 'Score Entries', 'Submitted Time'], judgeRows)}
-      </section>
-    `;
-  }
-
-  function finalsSection(data) {
-    const finalRows = (data.finalResults || []).map((item, index) => [
-      index + 1,
-      `#${item.number} ${item.name}`,
-      score(item.criteria_breakdown?.['Beauty and Poise']),
-      score(item.criteria_breakdown?.['Wit, Intelligence, and Quality of Answer']),
-      score(item.final_score),
-      score(item.pre_final_score),
-      item.judges_submitted
-    ]);
-
-    const topThreeRows = (data.finalReadiness.top_three || []).map((item, index) => [
-      index + 1,
-      `#${item.number} ${item.name}`,
-      score(item.pre_final_score)
-    ]);
-
-    const judgeRows = (data.finalJudges || []).map((judge) => [
-      judge.name,
-      judge.submitted_at ? 'Submitted / Locked' : 'Editing',
-      judge.score_count,
-      judge.submitted_at ? formatDateTime(judge.submitted_at) : '—'
-    ]);
-
-    return `
-      <section>
-        <h2>Finals Summary</h2>
-        <p>
-          The Top 3 candidates from the Preliminary Round proceed to the Finals.
-          Winners are ranked by Finals score.
-        </p>
-
-        <h3>Official Top 3 Finalists</h3>
-        ${table(['Preliminary Rank', 'Candidate', 'Preliminary Score'], topThreeRows)}
-
-        <h3>Finals Formula</h3>
-        <p class="formula">
-          Finals Score = Beauty and Poise 60% + Wit, Intelligence, and Quality of Answer 40%.
-        </p>
-        ${table(['Finals Criterion', 'Weight', 'Formula'], [
-          ['Beauty and Poise', '60%', 'Average judge score × 0.60'],
-          ['Wit, Intelligence, and Quality of Answer', '40%', 'Average judge score × 0.40']
-        ])}
-
-        <h3>Finals Ranking</h3>
-        ${table(
-          ['Final Rank', 'Candidate', 'Beauty & Poise', 'Q&A', 'Finals Score', 'Preliminary Reference', 'Judges'],
-          finalRows
-        )}
-
-        <h3>Finals Judge Submission Status</h3>
-        ${table(['Judge', 'Status', 'Final Entries', 'Submitted Time'], judgeRows)}
-      </section>
-    `;
-  }
-
-  function programSection(data) {
-    const prelimTop = (data.prelim || []).slice(0, 3).map((item, index) => [
-      index + 1,
-      `#${item.number} ${item.name}`,
-      score(item.total_score)
-    ]);
-
-    const finalWinners = (data.finalResults || []).map((item, index) => [
-      index + 1,
-      index === 0 ? 'Winner' : index === 1 ? '1st Runner-Up' : index === 2 ? '2nd Runner-Up' : `Rank ${index + 1}`,
-      `#${item.number} ${item.name}`,
-      score(item.final_score)
-    ]);
-
-    return `
-      <section>
-        <h2>Whole Program Summary</h2>
-        <p>
-          This document summarizes the automated judging flow, scoring mechanics, lock status,
-          Top 3 progression, Finals ranking, and official result computation.
-        </p>
-
-        <h3>Program Flow</h3>
-        ${table(['Step', 'Description'], [
-          ['1', 'Judges score all candidates in the Preliminary Round.'],
-          ['2', 'Judges final-submit their Preliminary Round scores. Scores become locked.'],
-          ['3', 'The system ranks candidates by Preliminary Total and identifies the official Top 3.'],
-          ['4', 'Only the Top 3 proceed to the Finals.'],
-          ['5', 'Judges score the Top 3 using Beauty and Poise 60% and Q&A 40%.'],
-          ['6', 'Judges final-submit Finals scores. Scores become locked.'],
-          ['7', 'The system ranks the Top 3 by Finals Score to determine Winner, 1st Runner-Up, and 2nd Runner-Up.']
-        ])}
-
-        <h3>Top 3 from Preliminary Round</h3>
-        ${table(['Rank', 'Candidate', 'Preliminary Score'], prelimTop)}
-
-        <h3>Official Finals Winners</h3>
-        ${table(['Final Rank', 'Placement', 'Candidate', 'Finals Score'], finalWinners)}
-
-        <h3>Declared Winner Record</h3>
-        ${table(['Winner Name', 'Declared Time'], [[
-          data.winner.winner_name || 'Not manually declared',
-          data.winner.declared_at ? formatDateTime(data.winner.declared_at) : '—'
-        ]])}
-      </section>
-    `;
-  }
-
-  function buildPrintableHtml(kind, data) {
-    const title =
-      kind === 'prelim'
-        ? 'Preliminary Round Summary'
-        : kind === 'finals'
-          ? 'Finals Summary'
-          : 'Whole Program Summary';
-
-    const sections = [
-      kind === 'prelim' || kind === 'full' ? preliminarySection(data) : '',
-      kind === 'finals' || kind === 'full' ? finalsSection(data) : '',
-      kind === 'full' ? programSection(data) : ''
-    ].join('');
-
-    return `
-      <!doctype html>
-      <html>
-        <head>
-          <meta charset="utf-8" />
-          <title>${esc(title)}</title>
-          <style>
-            @page {
-              size: A4 landscape;
-              margin: 8mm;
-            }
-
-            * {
-              box-sizing: border-box;
-            }
-
-            html,
-            body {
-              margin: 0;
-              padding: 0;
-              font-family: Arial, Helvetica, sans-serif;
-              color: #1f1235;
-              background: #ffffff;
-              font-size: 9px;
-              line-height: 1.22;
-            }
-
-            body {
-              -webkit-print-color-adjust: exact;
-              print-color-adjust: exact;
-            }
-
-            .cover {
-              border: 1.4px solid #6d28d9;
-              border-radius: 8px;
-              padding: 7px 10px;
-              margin: 0 0 6px;
-              background: #f7f2ff;
-            }
-
-            .eyebrow {
-              margin: 0 0 2px;
-              color: #6d28d9;
-              font-weight: 800;
-              letter-spacing: 0.12em;
-              text-transform: uppercase;
-              font-size: 7px;
-            }
-
-            h1 {
-              margin: 0 0 2px;
-              font-size: 16px;
-              line-height: 1.05;
-              letter-spacing: -0.02em;
-            }
-
-            h2 {
-              margin: 7px 0 3px;
-              font-size: 11px;
-              color: #4c1d95;
-              border-bottom: 0.6px solid #ddd6fe;
-              padding-bottom: 2px;
-            }
-
-            h3 {
-              margin: 5px 0 2px;
-              font-size: 9px;
-              color: #581c87;
-            }
-
-            p {
-              margin: 0 0 3px;
-            }
-
-            .formula {
-              padding: 4px 5px;
-              border-radius: 5px;
-              border: 0.6px solid #fde68a;
-              background: #fffbeb;
-              font-weight: 700;
-              color: #78350f;
-              margin-bottom: 4px;
-            }
-
-            table {
-              width: 100%;
-              border-collapse: collapse;
-              margin: 3px 0 5px;
-              page-break-inside: auto;
-            }
-
-            thead {
-              display: table-header-group;
-            }
-
-            tr {
-              page-break-inside: avoid;
-              page-break-after: auto;
-            }
-
-            th,
-            td {
-              border: 0.5px solid #d8b4fe;
-              padding: 2.2px 3px;
-              vertical-align: top;
-              text-align: left;
-            }
-
-            th {
-              background: #ede9fe;
-              color: #2e1065;
-              font-weight: 800;
-              text-transform: uppercase;
-              font-size: 6.6px;
-              letter-spacing: 0.03em;
-            }
-
-            td {
-              font-size: 7.4px;
-            }
-
-            section {
-              margin: 0;
-              padding: 0;
-              page-break-inside: auto;
-            }
-
-            .footer {
-              margin-top: 6px;
-              padding-top: 4px;
-              border-top: 0.6px solid #ddd6fe;
-              color: #6b5875;
-              font-size: 7px;
-            }
-
-            @media screen {
-              body {
-                padding: 10px;
-                background: #f4f0f7;
-              }
-            }
-          </style>
-        </head>
-        <body>
-          <div class="cover">
-            <p class="eyebrow">Miss TYCA 2026 powered by Scoryn</p>
-            <h1>${esc(title)}</h1>
-            <p>Official scoring summary for verification and filing.</p>
-          </div>
-
-          ${sections}
-
-          <div class="footer">
-            <strong>Prepared by Kirjane Labs × Dev Siris</strong><br />
-            Kirch automated judging, tabulation, locking, and audit history system.
-          </div>
-
-          <script>
-            window.onload = () => {
-              setTimeout(() => window.print(), 350);
-            };
-          </script>
-        </body>
-      </html>
-    `;
-  }
-
-  async function printSummary(kind) {
-    setBusy(kind);
-
-    try {
-      const data = await loadSummaryData();
-      const printableHtml = buildPrintableHtml(kind, data);
-      const win = window.open('', '_blank', 'width=1200,height=800');
-
-      if (!win) {
-        alert('Print window was blocked. Allow popups, then try again.');
-        return;
-      }
-
-      win.document.open();
-      win.document.write(printableHtml);
-      win.document.close();
-      win.focus();
-    } catch (err) {
-      alert(`Unable to generate summary: ${err.message}`);
-    } finally {
-      setBusy('');
-    }
-  }
-
-  return (
-    <section className="panel summary-print-panel">
-      <div>
-        <p className="eyebrow">PDF Summary Maker</p>
-        <h3>Print Round Summaries</h3>
-        <p>
-          Opens a clean print-ready summary. In the print dialog, choose <strong>Save to PDF</strong>.
-        </p>
-      </div>
-
-      <div className="summary-print-actions">
-        <button className="btn btn-light" onClick={() => printSummary('prelim')} disabled={Boolean(busy)}>
-          {busy === 'prelim' ? 'Preparing...' : 'Print Preliminary PDF'}
-        </button>
-        <button className="btn btn-light" onClick={() => printSummary('finals')} disabled={Boolean(busy)}>
-          {busy === 'finals' ? 'Preparing...' : 'Print Finals PDF'}
-        </button>
-        <button className="btn btn-primary" onClick={() => printSummary('full')} disabled={Boolean(busy)}>
-          {busy === 'full' ? 'Preparing...' : 'Print Full Program PDF'}
-        </button>
-      </div>
-    </section>
-  );
 }
 
 export default function App() {
