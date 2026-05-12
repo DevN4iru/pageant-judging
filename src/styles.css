@@ -8022,3 +8022,218 @@ Final admin reading order:
 }
 
 /* ===== SCORYN CREDIBILITY / CUSTOMIZATION NOTE END ===== */
+
+/* ===== SCORYN NO PURPLE FINAL OVERRIDE START ===== */
+/* Removes legacy purple/magenta from judge/admin UI only. No scoring/API/database changes. */
+
+:root {
+  --scoryn-black: #050402;
+  --scoryn-panel: #120d05;
+  --scoryn-panel-soft: #1b1307;
+  --scoryn-gold: #d6b454;
+  --scoryn-gold-soft: #f6d77a;
+  --scoryn-cream: #fff4c7;
+  --scoryn-muted: rgba(255, 248, 231, 0.62);
+}
+
+/* Replace purple badges/pills with gold */
+.admin-shell .pill,
+.admin-shell .rank-pill,
+.admin-shell .candidate-number,
+.admin-shell .submitted-pill,
+.admin-shell .locked-badge,
+.admin-shell .status-badge,
+.judge-panel .pill,
+.judge-panel .rank-pill,
+.judge-panel .candidate-number,
+.judge-panel .submitted-pill,
+.judge-panel .locked-badge,
+.judge-panel .status-badge,
+.finals-judge-panel .pill,
+.finals-judge-panel .rank-pill,
+.finals-judge-panel .candidate-number,
+.finals-judge-panel .submitted-pill,
+.finals-judge-panel .locked-badge,
+.finals-judge-panel .status-badge,
+.candidate-number,
+.rank-pill,
+.submitted-pill,
+.locked-badge,
+.status-badge {
+  color: var(--scoryn-gold-soft) !important;
+  background: rgba(214, 180, 84, 0.12) !important;
+  border: 1px solid rgba(214, 180, 84, 0.30) !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+/* Candidate number text specifically */
+.judge-panel .candidate-number,
+.finals-judge-panel .candidate-number,
+.admin-shell .candidate-number {
+  color: var(--scoryn-gold-soft) !important;
+  background: rgba(214, 180, 84, 0.14) !important;
+}
+
+/* Remove purple from progress bars */
+.admin-shell .progress-bar,
+.judge-panel .progress-bar,
+.finals-judge-panel .progress-bar,
+.progress-bar {
+  background: rgba(255, 244, 199, 0.10) !important;
+  border: 1px solid rgba(214, 180, 84, 0.22) !important;
+  box-shadow: none !important;
+}
+
+.admin-shell .progress-bar span,
+.judge-panel .progress-bar span,
+.finals-judge-panel .progress-bar span,
+.admin-shell .progress-fill,
+.judge-panel .progress-fill,
+.finals-judge-panel .progress-fill,
+.progress-bar > span,
+.progress-fill {
+  background: linear-gradient(90deg, #765414, #d6b454, #fff4c7) !important;
+  box-shadow: none !important;
+}
+
+/* Notes buttons must be gold, not purple */
+.admin-shell summary,
+.judge-panel summary,
+.finals-judge-panel summary,
+.admin-shell button[class*="note"],
+.judge-panel button[class*="note"],
+.finals-judge-panel button[class*="note"],
+.admin-shell .note-toggle,
+.judge-panel .note-toggle,
+.finals-judge-panel .note-toggle,
+.admin-shell .notes-toggle,
+.judge-panel .notes-toggle,
+.finals-judge-panel .notes-toggle {
+  color: var(--scoryn-gold-soft) !important;
+  background: rgba(214, 180, 84, 0.12) !important;
+  border: 1px solid rgba(214, 180, 84, 0.26) !important;
+  box-shadow: none !important;
+}
+
+/* Final score and subtotal numbers must not be violet */
+.admin-shell .subtotal strong,
+.judge-panel .subtotal strong,
+.finals-judge-panel .subtotal strong,
+.admin-shell .final-score,
+.judge-panel .final-score,
+.finals-judge-panel .final-score,
+.admin-shell [class*="score"] strong,
+.judge-panel [class*="score"] strong,
+.finals-judge-panel [class*="score"] strong {
+  color: var(--scoryn-cream) !important;
+  text-shadow: none !important;
+}
+
+/* Inputs: darker warm-gold, no purple focus */
+.judge-panel input,
+.finals-judge-panel input,
+.admin-shell input {
+  background: #c7b68b !important;
+  color: #120d04 !important;
+  border: 1px solid rgba(246, 215, 122, 0.42) !important;
+  caret-color: #120d04 !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
+}
+
+.judge-panel input:focus,
+.finals-judge-panel input:focus,
+.admin-shell input:focus {
+  outline: none !important;
+  border-color: rgba(255, 231, 157, 0.92) !important;
+  box-shadow:
+    0 0 0 3px rgba(214, 180, 84, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
+}
+
+/* Buttons: remove purple defaults */
+.admin-shell .btn,
+.admin-shell button,
+.judge-panel .btn,
+.judge-panel button,
+.finals-judge-panel .btn,
+.finals-judge-panel button {
+  color: var(--scoryn-cream) !important;
+  background: rgba(214, 180, 84, 0.10) !important;
+  border: 1px solid rgba(214, 180, 84, 0.28) !important;
+  box-shadow: none !important;
+}
+
+.admin-shell .btn-primary,
+.admin-shell .btn-winner,
+.admin-shell button[type="submit"],
+.judge-panel .btn-primary,
+.judge-panel button[type="submit"],
+.finals-judge-panel .btn-primary,
+.finals-judge-panel button[type="submit"] {
+  color: #161005 !important;
+  background: linear-gradient(135deg, #765414, #d6b454, #fff4c7) !important;
+  border: 1px solid rgba(246, 215, 122, 0.48) !important;
+}
+
+/* Links/emphasis: gold only */
+.admin-shell a,
+.judge-panel a,
+.finals-judge-panel a,
+.admin-shell .eyebrow,
+.judge-panel .eyebrow,
+.finals-judge-panel .eyebrow {
+  color: var(--scoryn-gold-soft) !important;
+}
+
+/* Remove purple from details open panels */
+.judge-panel details[open],
+.finals-judge-panel details[open],
+.admin-shell details[open] {
+  background: rgba(12, 9, 4, 0.96) !important;
+  border: 1px solid rgba(214, 180, 84, 0.22) !important;
+}
+
+/* Any old purple text inside logged-in app gets forced to readable gold/cream */
+.admin-shell [style*="purple"],
+.admin-shell [style*="violet"],
+.admin-shell [style*="magenta"],
+.admin-shell [style*="pink"],
+.judge-panel [style*="purple"],
+.judge-panel [style*="violet"],
+.judge-panel [style*="magenta"],
+.judge-panel [style*="pink"],
+.finals-judge-panel [style*="purple"],
+.finals-judge-panel [style*="violet"],
+.finals-judge-panel [style*="magenta"],
+.finals-judge-panel [style*="pink"] {
+  color: var(--scoryn-gold-soft) !important;
+  background-color: rgba(214, 180, 84, 0.12) !important;
+  border-color: rgba(214, 180, 84, 0.28) !important;
+}
+
+/* Specifically neutralize common Tailwind-like purple class remnants if any exist */
+.admin-shell [class*="purple"],
+.admin-shell [class*="violet"],
+.admin-shell [class*="pink"],
+.judge-panel [class*="purple"],
+.judge-panel [class*="violet"],
+.judge-panel [class*="pink"],
+.finals-judge-panel [class*="purple"],
+.finals-judge-panel [class*="violet"],
+.finals-judge-panel [class*="pink"] {
+  color: var(--scoryn-gold-soft) !important;
+  background-color: rgba(214, 180, 84, 0.12) !important;
+  border-color: rgba(214, 180, 84, 0.28) !important;
+}
+
+/* Final cards: no purple labels */
+.finals-judge-panel .candidate-card .rank-pill,
+.finals-judge-panel .final-candidate-card .rank-pill,
+.finals-judge-panel .candidate-card .candidate-number,
+.finals-judge-panel .final-candidate-card .candidate-number {
+  color: var(--scoryn-gold-soft) !important;
+  background: rgba(214, 180, 84, 0.14) !important;
+}
+
+/* ===== SCORYN NO PURPLE FINAL OVERRIDE END ===== */
