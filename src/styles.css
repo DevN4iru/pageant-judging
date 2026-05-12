@@ -8566,3 +8566,165 @@ progress::-moz-progress-bar {
 }
 
 /* ===== SCORYN HARD PROGRESS PURPLE FIX END ===== */
+
+/* ===== SCORYN FINAL SCORE BADGE + FOOTER CLEANUP START ===== */
+/* Fix remaining purple score badges and nested footer box. Visual only. */
+
+/* Final score badges: remove white/purple look */
+.judge-panel .final-score,
+.finals-judge-panel .final-score,
+.admin-shell .final-score,
+.final-score,
+.score-badge,
+.score-pill,
+[class*="final-score"],
+[class*="score-badge"],
+[class*="score-pill"] {
+  color: #fff4c7 !important;
+  background:
+    linear-gradient(135deg, rgba(14, 10, 4, 0.98), rgba(42, 30, 10, 0.96)) !important;
+  border: 1px solid rgba(246, 215, 122, 0.42) !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+/* Text inside final score badges */
+.judge-panel .final-score *,
+.finals-judge-panel .final-score *,
+.admin-shell .final-score *,
+.final-score *,
+.score-badge *,
+.score-pill *,
+[class*="final-score"] *,
+[class*="score-badge"] *,
+[class*="score-pill"] * {
+  color: #fff4c7 !important;
+  text-shadow: none !important;
+}
+
+/* The tiny label saying Final */
+.judge-panel .final-score span,
+.finals-judge-panel .final-score span,
+.admin-shell .final-score span,
+.final-score span {
+  color: rgba(255, 248, 231, 0.68) !important;
+}
+
+/* The number itself */
+.judge-panel .final-score strong,
+.finals-judge-panel .final-score strong,
+.admin-shell .final-score strong,
+.final-score strong {
+  color: #f6d77a !important;
+  font-weight: 950 !important;
+}
+
+/* Subtotal badges also must stay gold/black */
+.judge-panel .subtotal,
+.finals-judge-panel .subtotal,
+.admin-shell .subtotal,
+.subtotal {
+  color: #fff4c7 !important;
+  background:
+    linear-gradient(135deg, rgba(14, 10, 4, 0.98), rgba(42, 30, 10, 0.92)) !important;
+  border: 1px solid rgba(246, 215, 122, 0.36) !important;
+  box-shadow: none !important;
+}
+
+.judge-panel .subtotal *,
+.finals-judge-panel .subtotal *,
+.admin-shell .subtotal *,
+.subtotal * {
+  color: #fff4c7 !important;
+}
+
+/* Footer should be one clean card only, not nested black boxes */
+.site-footer,
+.compact-footer,
+.tv-credit-footer,
+footer {
+  overflow: hidden !important;
+  color: #fff4c7 !important;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(246, 215, 122, 0.08), transparent 30%),
+    linear-gradient(135deg, rgba(8, 7, 5, 0.98), rgba(30, 24, 14, 0.94)) !important;
+  border: 1px solid rgba(214, 180, 84, 0.30) !important;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.28) !important;
+}
+
+/* Stop previous broad credit selectors from boxing inner children */
+.site-footer > *,
+.compact-footer > *,
+.tv-credit-footer > *,
+footer > *,
+.site-footer [class*="credit"],
+.compact-footer [class*="credit"],
+.tv-credit-footer [class*="credit"],
+footer [class*="credit"],
+.site-footer [class*="footer"],
+.compact-footer [class*="footer"],
+.tv-credit-footer [class*="footer"],
+footer [class*="footer"] {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Footer text colors */
+.site-footer *,
+.compact-footer *,
+.tv-credit-footer *,
+footer * {
+  color: rgba(255, 248, 231, 0.82) !important;
+}
+
+.site-footer strong,
+.compact-footer strong,
+.tv-credit-footer strong,
+footer strong,
+.site-footer a,
+.compact-footer a,
+.tv-credit-footer a,
+footer a {
+  color: #f6d77a !important;
+}
+
+/* TV footer should not turn purple or boxed */
+.tv-credit-footer {
+  border-radius: 22px !important;
+  padding: 1rem !important;
+}
+
+.tv-credit-footer::before,
+.tv-credit-footer::after,
+.site-footer::before,
+.site-footer::after,
+.compact-footer::before,
+.compact-footer::after {
+  background: transparent !important;
+  border: 0 !important;
+}
+
+/* Remaining purple inline class fallback, only for score/footer zones */
+.final-score [class*="purple"],
+.final-score [class*="violet"],
+.final-score [class*="pink"],
+.subtotal [class*="purple"],
+.subtotal [class*="violet"],
+.subtotal [class*="pink"],
+.site-footer [class*="purple"],
+.compact-footer [class*="purple"],
+.tv-credit-footer [class*="purple"],
+.site-footer [class*="violet"],
+.compact-footer [class*="violet"],
+.tv-credit-footer [class*="violet"],
+.site-footer [class*="pink"],
+.compact-footer [class*="pink"],
+.tv-credit-footer [class*="pink"] {
+  color: #f6d77a !important;
+  background: transparent !important;
+  border: 0 !important;
+}
+
+/* ===== SCORYN FINAL SCORE BADGE + FOOTER CLEANUP END ===== */
