@@ -988,7 +988,7 @@ function JudgePanel({ judge }) {
                   <label className="score-field" key={cr.id}>
                     <span>{cr.name}</span>
                     <small>
-                      {formatCriterionMeta(criterion)}
+                      {formatCriterionMeta(cr)}
                     </small>
 
                     <CriteriaNote name={cr.name} />
@@ -1236,7 +1236,7 @@ function FinalInterviewJudgePanel({ judge }) {
                   <label className="score-field" key={cr.key}>
                     <span>{cr.name}</span>
                     <small>
-                      {formatCriterionMeta(criterion)}
+                      {formatCriterionMeta(cr)}
                     </small>
 
                     <input
