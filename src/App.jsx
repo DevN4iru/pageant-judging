@@ -1100,7 +1100,7 @@ function JudgePanel({ judge }) {
 
   return (
     <main className="content-grid judge-panel">
-      <section className="panel judge-hero">
+      <section className="panel judge-hero judge-head">
         <div>
           <p className="eyebrow">Judge Panel</p>
           <h2>{judge.name}</h2>
