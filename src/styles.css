@@ -1425,3 +1425,46 @@ body:has(.tv-stage) {
   }
 }
 /* ===== SCORYN LANDING LESS TEXT FIX END ===== */
+
+/* ===== CriteriaNote runtime safety + readable notes ===== */
+.criteria-note {
+  margin-top: 0.45rem;
+  color: #f7e6a3;
+}
+
+.criteria-note summary {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  cursor: pointer;
+  border: 1px solid rgba(230, 190, 90, 0.35);
+  border-radius: 999px;
+  padding: 0.28rem 0.65rem;
+  background: rgba(230, 190, 90, 0.11);
+  color: #f8df84;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.criteria-note-body {
+  margin-top: 0.55rem;
+  border: 1px solid rgba(230, 190, 90, 0.22);
+  border-radius: 0.9rem;
+  background: rgba(8, 7, 3, 0.92);
+  padding: 0.75rem;
+  color: rgba(255, 247, 218, 0.82);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.criteria-note-body strong {
+  display: block;
+  color: #fff0b8;
+  margin-bottom: 0.25rem;
+}
+
+.criteria-note-body p {
+  margin: 0;
+}

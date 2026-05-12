@@ -300,6 +300,28 @@ async function api(path, options = {}) {
 }
 
 
+
+function CriteriaNote({ criterion, children }) {
+  const name = criterion?.name || 'Criteria';
+  const weight = criterion?.weight ?? criterion?.percentage;
+  const description =
+    criterion?.description ||
+    criterion?.notes ||
+    criterion?.note ||
+    'Use this area as scoring guidance. Criteria details can be customized based on the client’s final pageant mechanics.';
+
+  return (
+    <details className="criteria-note">
+      <summary>View notes</summary>
+      <div className="criteria-note-body">
+        <strong>{name}{weight ? ` • ${weight}%` : ''}</strong>
+        <p>{description}</p>
+        {children}
+      </div>
+    </details>
+  );
+}
+
 function getSavedJudge() {
   try {
     const raw = localStorage.getItem('judge');
