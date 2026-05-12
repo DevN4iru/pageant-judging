@@ -1,5 +1,24 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
+
+const formatDateTime = (value) => {
+  if (!value) return "—";
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return String(value);
+  }
+
+  return date.toLocaleString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "2-digit",
+    hour: "numeric",
+    minute: "2-digit",
+  });
+};
+
+
 const SCORYN_PREVIEW_ONLY = import.meta.env.VITE_SCORYN_PREVIEW_ONLY === '1';
 
 const previewCriteria = [
