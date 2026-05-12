@@ -5733,3 +5733,499 @@ main::after,
 }
 
 /* ===== SCORYN JUDGE ADMIN PREMIUM UI END ===== */
+
+/* ===== SCORYN ADMIN JUDGE READABILITY FINAL FIX START ===== */
+/* Final targeted readability pass. Visual only. No scoring/math/API changes. */
+
+/* ---------- logged-in shared base ---------- */
+
+.app-shell.admin-shell,
+.app-shell:has(.judge-panel),
+.app-shell:has(.finals-judge-panel) {
+  width: min(1280px, calc(100% - 32px)) !important;
+  max-width: 1280px !important;
+}
+
+.admin-shell .topbar,
+.app-shell:has(.judge-panel) .topbar,
+.app-shell:has(.finals-judge-panel) .topbar {
+  margin-bottom: 18px !important;
+}
+
+/* Kill remaining gray/purple glass on admin + judge cards */
+.admin-shell .panel,
+.admin-shell section.panel,
+.admin-shell .dashboard-hero,
+.admin-shell .summary-print-panel,
+.admin-shell .admin-control-card,
+.admin-shell .leader-card,
+.admin-shell .table-panel,
+.admin-shell .final-results-panel,
+.admin-shell .top3-finalists-panel,
+.admin-shell .prelim-ranking-panel,
+.admin-shell .final-status-panel,
+.admin-shell .judge-status-panel,
+.admin-shell .final-round-leader-card,
+.judge-panel,
+.finals-judge-panel,
+.judge-panel .candidate-card,
+.finals-judge-panel .candidate-card,
+.judge-panel .score-field,
+.finals-judge-panel .score-field,
+.judge-panel .progress-card,
+.finals-judge-panel .progress-card,
+.judge-panel .final-submit-card,
+.finals-judge-panel .final-submit-card {
+  color: #fff8e7 !important;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(246, 215, 122, 0.055), transparent 30%),
+    linear-gradient(135deg, rgba(10, 9, 7, 0.98), rgba(20, 17, 11, 0.96)) !important;
+  border: 1px solid rgba(214, 180, 84, 0.28) !important;
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.30) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Text must stay readable */
+.admin-shell h1,
+.admin-shell h2,
+.admin-shell h3,
+.admin-shell h4,
+.admin-shell strong,
+.admin-shell th,
+.admin-shell td,
+.judge-panel h1,
+.judge-panel h2,
+.judge-panel h3,
+.judge-panel h4,
+.judge-panel strong,
+.finals-judge-panel h1,
+.finals-judge-panel h2,
+.finals-judge-panel h3,
+.finals-judge-panel h4,
+.finals-judge-panel strong {
+  color: #fff8e7 !important;
+  text-shadow: none !important;
+}
+
+.admin-shell p,
+.admin-shell small,
+.admin-shell .table-title p,
+.judge-panel p,
+.judge-panel small,
+.finals-judge-panel p,
+.finals-judge-panel small {
+  color: rgba(255, 248, 231, 0.68) !important;
+}
+
+/* ---------- judge screen readability ---------- */
+
+.judge-panel,
+.finals-judge-panel {
+  padding: 1rem !important;
+  border-radius: 26px !important;
+  display: grid !important;
+  gap: 1rem !important;
+}
+
+.judge-panel > .judge-head,
+.judge-panel > .round-head,
+.judge-panel > .final-round-head,
+.finals-judge-panel > .final-round-head {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto auto !important;
+  align-items: center !important;
+  gap: 1rem !important;
+  padding: 1rem !important;
+  border-radius: 22px !important;
+  background: rgba(0, 0, 0, 0.24) !important;
+  border: 1px solid rgba(214, 180, 84, 0.20) !important;
+}
+
+.judge-panel .candidate-card,
+.finals-judge-panel .candidate-card {
+  border-radius: 24px !important;
+  padding: 1rem !important;
+  margin-bottom: 1rem !important;
+  overflow: visible !important;
+}
+
+.judge-panel .candidate-head,
+.finals-judge-panel .candidate-head {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 1rem !important;
+  margin-bottom: 0.85rem !important;
+}
+
+.judge-panel .candidate-head h3,
+.finals-judge-panel .candidate-head h3 {
+  font-size: 1.05rem !important;
+  line-height: 1.2 !important;
+}
+
+.judge-panel .candidate-number,
+.finals-judge-panel .candidate-number,
+.judge-panel .rank-pill,
+.finals-judge-panel .rank-pill {
+  color: #f6d77a !important;
+  background: rgba(214, 180, 84, 0.12) !important;
+  border: 1px solid rgba(214, 180, 84, 0.30) !important;
+  border-radius: 999px !important;
+}
+
+/* Make score cards breathe */
+.judge-panel .score-grid,
+.finals-judge-panel .score-grid,
+.finals-judge-panel .final-score-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)) !important;
+  gap: 0.85rem !important;
+  align-items: start !important;
+}
+
+.judge-panel .score-field,
+.finals-judge-panel .score-field {
+  display: grid !important;
+  gap: 0.45rem !important;
+  min-height: auto !important;
+  border-radius: 18px !important;
+  padding: 0.9rem !important;
+  background: rgba(0, 0, 0, 0.30) !important;
+  border-color: rgba(214, 180, 84, 0.24) !important;
+}
+
+.judge-panel .score-field span,
+.finals-judge-panel .score-field span {
+  color: #fff8e7 !important;
+  font-size: 0.86rem !important;
+  line-height: 1.25 !important;
+  font-weight: 900 !important;
+}
+
+.judge-panel .score-field small,
+.finals-judge-panel .score-field small {
+  color: rgba(255, 248, 231, 0.56) !important;
+  font-size: 0.72rem !important;
+  line-height: 1.3 !important;
+}
+
+/* Notes should not overlap */
+.judge-panel details,
+.finals-judge-panel details,
+.judge-panel .criteria-note,
+.finals-judge-panel .criteria-note {
+  position: static !important;
+  display: block !important;
+  width: 100% !important;
+  margin: 0.2rem 0 0.35rem !important;
+  overflow: visible !important;
+  z-index: auto !important;
+}
+
+.judge-panel summary,
+.finals-judge-panel summary,
+.judge-panel .criteria-note summary,
+.finals-judge-panel .criteria-note summary,
+.judge-panel button[class*="note"],
+.finals-judge-panel button[class*="note"] {
+  display: inline-flex !important;
+  width: fit-content !important;
+  max-width: 100% !important;
+  min-height: 24px !important;
+  padding: 0.26rem 0.48rem !important;
+  border-radius: 999px !important;
+  background: rgba(214, 180, 84, 0.12) !important;
+  color: #f6d77a !important;
+  border: 1px solid rgba(214, 180, 84, 0.22) !important;
+  font-size: 0.66rem !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.04em !important;
+}
+
+.judge-panel details[open],
+.finals-judge-panel details[open],
+.judge-panel .criteria-note[open],
+.finals-judge-panel .criteria-note[open] {
+  padding: 0.65rem !important;
+  border-radius: 14px !important;
+  background: rgba(0, 0, 0, 0.34) !important;
+  border: 1px solid rgba(214, 180, 84, 0.18) !important;
+}
+
+.judge-panel details[open] *,
+.finals-judge-panel details[open] * {
+  color: rgba(255, 248, 231, 0.76) !important;
+  font-size: 0.72rem !important;
+  line-height: 1.35 !important;
+}
+
+/* Inputs: warm but not blinding */
+.judge-panel input,
+.finals-judge-panel input {
+  height: 42px !important;
+  border-radius: 13px !important;
+  padding: 0.55rem 0.7rem !important;
+  background: #f1e2bd !important;
+  color: #1a1204 !important;
+  border: 1px solid rgba(246, 215, 122, 0.42) !important;
+  font-size: 0.92rem !important;
+  font-weight: 900 !important;
+}
+
+.judge-panel input:disabled,
+.finals-judge-panel input:disabled {
+  opacity: 0.82 !important;
+  background: #d8ccb4 !important;
+  color: #2b2110 !important;
+}
+
+.judge-panel .subtotal,
+.finals-judge-panel .subtotal {
+  background: rgba(214, 180, 84, 0.10) !important;
+  border: 1px solid rgba(214, 180, 84, 0.24) !important;
+  color: #fff8e7 !important;
+}
+
+/* ---------- admin dashboard readability ---------- */
+
+.admin-dashboard-view {
+  display: grid !important;
+  gap: 1rem !important;
+}
+
+.admin-shell .dashboard-hero,
+.admin-shell .summary-print-panel,
+.admin-shell .admin-control-card {
+  padding: 1rem !important;
+  border-radius: 24px !important;
+}
+
+.admin-shell .dashboard-actions {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 0.6rem !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+}
+
+.admin-shell .dashboard-actions .last-updated {
+  margin-left: auto !important;
+  color: rgba(255, 248, 231, 0.58) !important;
+}
+
+/* Fix broken finals leader card */
+.admin-shell .final-round-leader-card {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  gap: 0.75rem !important;
+  align-items: center !important;
+  min-height: auto !important;
+  padding: 1rem !important;
+  overflow: hidden !important;
+}
+
+.admin-shell .final-round-leader-card::before,
+.admin-shell .final-round-leader-card::after {
+  content: none !important;
+  display: none !important;
+}
+
+.admin-shell .final-round-leader-card h2 {
+  font-size: clamp(1.1rem, 2.2vw, 1.7rem) !important;
+  line-height: 1.05 !important;
+  word-break: break-word !important;
+}
+
+.admin-shell .final-round-leader-card > strong {
+  position: static !important;
+  justify-self: end !important;
+  align-self: center !important;
+  margin: 0 !important;
+  font-size: clamp(1.8rem, 4vw, 3rem) !important;
+  line-height: 1 !important;
+  color: #fff3c4 !important;
+}
+
+/* Remove weird circles on Top 3 cards */
+.admin-shell .top3-finalist-card::before,
+.admin-shell .top3-finalist-card::after,
+.admin-shell .finalist-card::before,
+.admin-shell .finalist-card::after {
+  content: none !important;
+  display: none !important;
+}
+
+.admin-shell .top3-finalist-card {
+  display: grid !important;
+  grid-template-columns: auto minmax(0, 1fr) !important;
+  gap: 0.75rem !important;
+  align-items: center !important;
+  padding: 0.9rem !important;
+  border-radius: 18px !important;
+  background: rgba(0, 0, 0, 0.30) !important;
+  border: 1px solid rgba(214, 180, 84, 0.22) !important;
+}
+
+/* Dark readable tables */
+.admin-shell .table-wrap,
+.admin-shell .final-results-panel .table-wrap,
+.admin-shell .prelim-ranking-panel .table-wrap,
+.admin-shell .judge-status-panel .table-wrap,
+.admin-shell .final-status-panel .table-wrap {
+  background: #0b0906 !important;
+  border: 1px solid rgba(214, 180, 84, 0.24) !important;
+  border-radius: 18px !important;
+  overflow: auto !important;
+}
+
+.admin-shell table {
+  background: #0b0906 !important;
+  color: #fff8e7 !important;
+  border-collapse: collapse !important;
+}
+
+.admin-shell table thead,
+.admin-shell table thead tr,
+.admin-shell table thead th {
+  background: #1e180d !important;
+  color: #f6d77a !important;
+  border-color: rgba(214, 180, 84, 0.20) !important;
+  font-size: 0.68rem !important;
+  letter-spacing: 0.08em !important;
+}
+
+.admin-shell table tbody tr,
+.admin-shell table tbody tr:nth-child(1),
+.admin-shell table tbody tr:nth-child(2),
+.admin-shell table tbody tr:nth-child(3),
+.admin-shell table tbody tr:nth-child(even),
+.admin-shell .final-results-panel table tbody tr:first-child,
+.admin-shell .final-results-panel table tbody tr:nth-child(2),
+.admin-shell .final-results-panel table tbody tr:nth-child(3),
+.admin-shell .prelim-ranking-panel table tbody tr:nth-child(1),
+.admin-shell .prelim-ranking-panel table tbody tr:nth-child(2),
+.admin-shell .prelim-ranking-panel table tbody tr:nth-child(3),
+.admin-shell .prelim-ranking-panel table tbody tr:nth-child(n+4),
+.admin-shell .prelim-ranking-panel table tbody tr:nth-child(n+4):nth-child(even) {
+  background: #100d08 !important;
+}
+
+.admin-shell table tbody td,
+.admin-shell .final-results-panel table tbody tr:first-child td,
+.admin-shell .final-results-panel table tbody tr:nth-child(2) td,
+.admin-shell .final-results-panel table tbody tr:nth-child(3) td,
+.admin-shell .prelim-ranking-panel table tbody tr:nth-child(1) td,
+.admin-shell .prelim-ranking-panel table tbody tr:nth-child(2) td,
+.admin-shell .prelim-ranking-panel table tbody tr:nth-child(3) td,
+.admin-shell .prelim-ranking-panel table tbody tr:nth-child(n+4) td,
+.admin-shell .prelim-ranking-panel table tbody tr:nth-child(n+4):nth-child(even) td {
+  background: transparent !important;
+  color: rgba(255, 248, 231, 0.86) !important;
+  border-color: rgba(214, 180, 84, 0.12) !important;
+  font-size: 0.76rem !important;
+}
+
+/* Pills and rank badges */
+.admin-shell .rank-pill,
+.admin-shell .submitted-pill,
+.admin-shell .locked-badge,
+.admin-shell .status-badge,
+.admin-shell .pill {
+  color: #fff3c4 !important;
+  background: rgba(214, 180, 84, 0.12) !important;
+  border: 1px solid rgba(214, 180, 84, 0.28) !important;
+  box-shadow: none !important;
+}
+
+/* Kill purple buttons on admin */
+.admin-shell .btn,
+.admin-shell button,
+.judge-panel .btn,
+.judge-panel button,
+.finals-judge-panel .btn,
+.finals-judge-panel button {
+  border-radius: 13px !important;
+  box-shadow: none !important;
+}
+
+.admin-shell .btn-dark,
+.admin-shell .btn-primary,
+.admin-shell .btn-winner,
+.admin-shell button[type="submit"],
+.judge-panel .btn-primary,
+.judge-panel button[type="submit"],
+.finals-judge-panel .btn-primary,
+.finals-judge-panel button[type="submit"] {
+  background: linear-gradient(135deg, #765414, #d6b454, #fff3c4) !important;
+  color: #161005 !important;
+  border: 1px solid rgba(246, 215, 122, 0.42) !important;
+  font-weight: 950 !important;
+}
+
+.admin-shell .btn-light,
+.admin-shell .btn-secondary,
+.admin-shell button:not(.btn-primary):not(.btn-winner):not([type="submit"]),
+.judge-panel .btn-light,
+.finals-judge-panel .btn-light {
+  background: rgba(255, 243, 196, 0.08) !important;
+  color: #fff8e7 !important;
+  border: 1px solid rgba(214, 180, 84, 0.24) !important;
+}
+
+/* Progress cards */
+.admin-shell .progress-card,
+.judge-panel .progress-card,
+.finals-judge-panel .progress-card {
+  min-width: 150px !important;
+}
+
+.progress-bar {
+  height: 8px !important;
+  background: rgba(255, 243, 196, 0.12) !important;
+  border-radius: 999px !important;
+  overflow: hidden !important;
+}
+
+.progress-bar span,
+.progress-fill {
+  display: block !important;
+  height: 100% !important;
+  background: linear-gradient(90deg, #765414, #d6b454, #fff3c4) !important;
+}
+
+/* Admin/footer not purple */
+.admin-shell .site-footer,
+.admin-shell .compact-footer,
+.admin-shell footer:not(.tv-credit-footer) {
+  background: linear-gradient(135deg, #050505, #18130a 62%, #090806) !important;
+  border: 1px solid rgba(246, 215, 122, 0.30) !important;
+  color: #fff8e7 !important;
+}
+
+/* Responsive */
+@media (max-width: 820px) {
+  .judge-panel > .judge-head,
+  .judge-panel > .round-head,
+  .judge-panel > .final-round-head,
+  .finals-judge-panel > .final-round-head,
+  .admin-shell .final-round-leader-card {
+    grid-template-columns: 1fr !important;
+  }
+
+  .admin-shell .final-round-leader-card > strong {
+    justify-self: start !important;
+  }
+
+  .admin-shell .dashboard-actions {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  .admin-shell .dashboard-actions .last-updated {
+    margin-left: 0 !important;
+  }
+}
+
+/* ===== SCORYN ADMIN JUDGE READABILITY FINAL FIX END ===== */
