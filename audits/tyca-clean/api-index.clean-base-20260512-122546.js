@@ -13,7 +13,7 @@ app.use(express.json());
 app.get('/api/health', async (req, res) => {
   res.json({
     ok: true,
-    app: 'Scoryn Judging API'
+    app: 'Miss Poblacion Occidental Judging API'
   });
 });
 

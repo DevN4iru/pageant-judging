@@ -148,95 +148,6 @@ function CriteriaOverview() {
 }
 
 
-
-function ScorynProposalBanner() {
-  return (
-    <section className="proposal-banner">
-      <div>
-        <p className="eyebrow">Proposal Preview Only</p>
-        <h3>Miss TYCA 2026 powered by Scoryn</h3>
-        <p>
-          Scoryn is a modern online tabulation platform designed for pageants, competitions, and judged events.
-          This clickable preview demonstrates scoring, ranking, result computation, TV display, and PDF-ready summaries.
-        </p>
-      </div>
-      <strong>Not official results</strong>
-    </section>
-  );
-}
-
-function CriteriaLeadersPanel() {
-  const [results, setResults] = useState([]);
-  const [setup, setSetup] = useState({ criteria: [] });
-
-  useEffect(() => {
-    let active = true;
-
-    async function load() {
-      try {
-        const [resultRows, setupData] = await Promise.all([
-          api('/api/results'),
-          api('/api/setup')
-        ]);
-
-        if (active) {
-          setResults(Array.isArray(resultRows) ? resultRows : []);
-          setSetup(setupData || { criteria: [] });
-        }
-      } catch {
-        if (active) setResults([]);
-      }
-    }
-
-    load();
-    const timer = setInterval(load, 5000);
-    return () => {
-      active = false;
-      clearInterval(timer);
-    };
-  }, []);
-
-  const leaders = (setup.criteria || []).map((criterion) => {
-    const name = criterion.name;
-    const ranked = [...results].sort((a, b) => {
-      const av = Number(a.criteria_breakdown?.[name] || 0);
-      const bv = Number(b.criteria_breakdown?.[name] || 0);
-      return bv - av;
-    });
-    const top = ranked[0];
-
-    return {
-      name,
-      weight: Math.round(Number(criterion.weight || 0) * 100),
-      candidate: top ? `#${top.number} ${top.name}` : 'Waiting for scores',
-      score: top ? Number(top.criteria_breakdown?.[name] || 0).toFixed(2) : '0.00'
-    };
-  });
-
-  return (
-    <section className="panel criteria-leaders-panel">
-      <div className="criteria-leaders-head">
-        <div>
-          <p className="eyebrow">Automatic Insights</p>
-          <h3>Current Criteria Leaders</h3>
-          <p>Admin-only live view of who is leading per criterion.</p>
-        </div>
-        <span>Auto-refresh</span>
-      </div>
-
-      <div className="criteria-leaders-grid">
-        {leaders.map((leader) => (
-          <article className="criteria-leader-card" key={leader.name}>
-            <small>{leader.name} · {leader.weight}%</small>
-            <strong>{leader.candidate}</strong>
-            <span>{leader.score}</span>
-          </article>
-        ))}
-      </div>
-    </section>
-  );
-}
-
 function AdminSummaryPrintButtons() {
   const [busy, setBusy] = useState('');
 
@@ -618,7 +529,7 @@ function AdminSummaryPrintButtons() {
         </head>
         <body>
           <div class="cover">
-            <p class="eyebrow">Miss TYCA 2026 powered by Scoryn</p>
+            <p class="eyebrow">Miss Poblacion Occidental Automated Judging System</p>
             <h1>${esc(title)}</h1>
             <p>Official scoring summary for verification and filing.</p>
           </div>
@@ -717,15 +628,15 @@ export default function App() {
       <header className="topbar">
         <div className="brand-block">
           <img
-            src="/tyca.jpg"
-            alt="Miss TYCA 2026 Logo"
+            src="/pageant-logo.jpg"
+            alt="Miss Poblacion Occidental 2026 Logo"
             className="brand-logo"
           />
 
           <div>
-            <p className="eyebrow">Proposal Preview</p>
-            <h1>Miss TYCA 2026 <span className="powered-text">powered by Scoryn</span></h1>
-            <p className="subtitle">Scoryn online tabulation for pageants, competitions, and judged events</p>
+            <p className="eyebrow">Official Scoring System</p>
+            <h1>Miss Poblacion Occidental</h1>
+            <p className="subtitle">Automated judging, tabulation, locking, and audit history</p>
           </div>
         </div>
 
@@ -779,8 +690,6 @@ export default function App() {
       )}
 
       {judge && <JudgePanel judge={judge} />}
-      {admin && <ScorynProposalBanner />}
-      {admin && <CriteriaLeadersPanel />}
       {admin && <AdminSummaryPrintButtons />}
       {admin && <AdminPanel />}
 
@@ -794,8 +703,8 @@ function Home({ setMode }) {
     <main className="hero-grid">
       <section className="hero-card">
         <img
-          src="/tyca.jpg"
-          alt="Miss TYCA 2026 Logo"
+          src="/pageant-logo.jpg"
+          alt="Miss Poblacion Occidental 2026 Logo"
           className="hero-logo"
         />
 
@@ -2020,7 +1929,7 @@ function WinnerAnnouncement({ winnerName, declaredAt }) {
       <p className="winner-message">
         Warmest congratulations from <strong>Kirjane Labs</strong> and <strong>Dev Siris</strong>.
         Your grace, confidence, and excellence shine brightly as part of
-        <strong> Miss TYCA 2026</strong>.
+        <strong> Miss Poblacion Occidental 2026</strong>.
       </p>
 
       <div className="winner-dev-note">
@@ -2038,21 +1947,52 @@ function WinnerAnnouncement({ winnerName, declaredAt }) {
 
 function DeveloperCredits() {
   return (
-    <section className="proposal-mini-credit">
-      <span>Proposal preview by Kirjane Labs × Dev Siris</span>
-      <strong>Scoryn for Miss TYCA 2026</strong>
+    <section className="developer-feature balanced-credits">
+      <p className="eyebrow">Happy Fiesta from us!</p>
+      <h3>Made for Miss Poblacion Occidental</h3>
+      <p className="credit-intro">
+        This automated judging and tabulation system is proudly developed as a
+        collaboration between <strong> Kirjane Labs</strong> and <strong> Dev Siris</strong>,
+        built for faster, cleaner, transparent, and traceable pageant scoring.
+      </p>
+
+      <div className="collab-banner">
+        <div>
+          <span>Project Collaboration</span>
+          <strong>Kirjane Labs × Dev Siris</strong>
+        </div>
+      </div>
+
+      <div className="developer-grid equal-dev-grid">
+        <article className="developer-card">
+          <span className="developer-label">Full-Stack Developer</span>
+          <strong>Kirch Ivan A. Balite</strong>
+          <p>Kirjane Labs</p>
+          <a href="tel:09486328353">09486328353</a>
+          <a href="mailto:kirchbalite.careers@gmail.com">kirchbalite.careers@gmail.com</a>
+          <span className="facebook-line">Facebook: Kirch Ivan</span>
+        </article>
+
+        <article className="developer-card">
+          <span className="developer-label">Full-Stack Developer</span>
+          <strong>Osiris Kedigadash Palac</strong>
+          <p>Dev Siris</p>
+          <a href="tel:09694213824">09694213824</a>
+          <a href="mailto:palac.osiriskedigadash@gmail.com">palac.osiriskedigadash@gmail.com</a>
+          <span className="facebook-line">Facebook: Siris Palac</span>
+        </article>
+      </div>
     </section>
   );
 }
-
 
 
 function TVCreditFooter() {
   return (
     <footer className="tv-credit-footer site-footer compact-footer">
       <div className="compact-footer-inner">
-        <strong>Miss TYCA 2026 powered by Scoryn</strong>
-        <p>© 2026 All rights reserved. Proposal preview by Kirjane Labs × Dev Siris.</p>
+        <strong>Miss Poblacion Occidental Automated Judging System</strong>
+        <p>© 2026 All rights reserved. Happy Fiesta from Kirjane Labs × Dev Siris.</p>
 
         <div className="compact-dev-lines">
           <p>
@@ -2120,10 +2060,10 @@ function TVWinnersDisplay() {
     return (
       <main className="tv-stage tv-waiting">
         <section className="tv-header">
-          <img src="/tyca.jpg" alt="Miss TYCA 2026 Logo" />
+          <img src="/pageant-logo.jpg" alt="Miss Poblacion Occidental 2026 Logo" />
           <div>
             <p className="eyebrow">Official Final Results</p>
-            <h1>Miss TYCA 2026</h1>
+            <h1>Miss Poblacion Occidental 2026</h1>
             <p>Coronation results will appear once all Finals scores are locked.</p>
           </div>
         </section>
@@ -2144,10 +2084,10 @@ function TVWinnersDisplay() {
   return (
     <main className="tv-stage">
       <section className="tv-header">
-        <img src="/tyca.jpg" alt="Miss TYCA 2026 Logo" />
+        <img src="/pageant-logo.jpg" alt="Miss Poblacion Occidental 2026 Logo" />
         <div>
           <p className="eyebrow">Official Final Results</p>
-          <h1>Miss TYCA 2026</h1>
+          <h1>Miss Poblacion Occidental 2026</h1>
           <p>Official coronation results.</p>
         </div>
       </section>
@@ -2158,7 +2098,7 @@ function TVWinnersDisplay() {
       </section>
 
       <section className="tv-winner-card">
-        <p>👑 Miss TYCA 2026</p>
+        <p>👑 Miss Poblacion Occidental 2026</p>
         <h2>#{winner.number} {winner.name}</h2>
       </section>
 
@@ -2235,10 +2175,10 @@ function TVTop3Display() {
     return (
       <main className="tv-stage tv-waiting">
         <section className="tv-header">
-          <img src="/tyca.jpg" alt="Miss TYCA 2026 Logo" />
+          <img src="/pageant-logo.jpg" alt="Miss Poblacion Occidental 2026 Logo" />
           <div>
             <p className="eyebrow">Official Top 3 Finalists</p>
-            <h1>Miss TYCA 2026</h1>
+            <h1>Miss Poblacion Occidental 2026</h1>
             <p>Official display for the candidates advancing to Finals.</p>
           </div>
         </section>
@@ -2259,10 +2199,10 @@ function TVTop3Display() {
   return (
     <main className="tv-stage">
       <section className="tv-header">
-        <img src="/tyca.jpg" alt="Miss TYCA 2026 Logo" />
+        <img src="/pageant-logo.jpg" alt="Miss Poblacion Occidental 2026 Logo" />
         <div>
           <p className="eyebrow">Official Top 3 Finalists</p>
-          <h1>Miss TYCA 2026</h1>
+          <h1>Miss Poblacion Occidental 2026</h1>
           <p>These candidates advance to Finals.</p>
         </div>
       </section>
@@ -2303,8 +2243,8 @@ function SiteFooter() {
   return (
     <footer className="site-footer compact-footer">
       <div className="compact-footer-inner">
-        <strong>Miss TYCA 2026 powered by Scoryn</strong>
-        <p>© {year} All rights reserved. Proposal preview by Kirjane Labs × Dev Siris.</p>
+        <strong>Miss Poblacion Occidental Automated Judging System</strong>
+        <p>© {year} All rights reserved. Happy Fiesta from Kirjane Labs × Dev Siris.</p>
 
         <div className="compact-dev-lines">
           <p>
