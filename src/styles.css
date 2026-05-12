@@ -7273,3 +7273,182 @@ body {
 }
 
 /* ===== SCORYN FINAL SMALL TWEAKS END ===== */
+
+/* ===== SCORYN ADMIN HIERARCHY FIX START ===== */
+/* Visual order only. No scoring/API/database changes. */
+
+/*
+Admin hierarchy:
+1 Finals leader
+2 Finals winners/results
+3 Admin controls
+4 PDF summaries
+5 Criteria leaders
+6 Official Top 3 finalists
+7 Preliminary ranking/results
+8 Submission status
+9 Proposal note
+*/
+
+.admin-dashboard-view {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 0.9rem !important;
+}
+
+/* Put operational results first */
+.admin-dashboard-view > .final-round-leader-card,
+.admin-shell .admin-dashboard-view > .final-round-leader-card {
+  order: 1 !important;
+}
+
+.admin-dashboard-view > .final-results-panel,
+.admin-shell .admin-dashboard-view > .final-results-panel {
+  order: 2 !important;
+}
+
+/* Then controls/actions */
+.admin-dashboard-view > .dashboard-hero,
+.admin-dashboard-view > .admin-control-card,
+.admin-shell .admin-dashboard-view > .dashboard-hero,
+.admin-shell .admin-dashboard-view > .admin-control-card {
+  order: 3 !important;
+}
+
+/* Then print/PDF tools */
+.admin-dashboard-view > .summary-print-panel,
+.admin-shell .admin-dashboard-view > .summary-print-panel {
+  order: 4 !important;
+}
+
+/* Criteria leaders must sit right before Top 3 */
+.admin-dashboard-view > .criteria-leaders-panel,
+.admin-shell .admin-dashboard-view > .criteria-leaders-panel {
+  order: 5 !important;
+}
+
+/* Then preliminary finalist context */
+.admin-dashboard-view > .top3-finalists-panel,
+.admin-shell .admin-dashboard-view > .top3-finalists-panel {
+  order: 6 !important;
+}
+
+.admin-dashboard-view > .prelim-ranking-panel,
+.admin-shell .admin-dashboard-view > .prelim-ranking-panel {
+  order: 7 !important;
+}
+
+/* Status/completion checks lower */
+.admin-dashboard-view > .final-status-panel,
+.admin-shell .admin-dashboard-view > .final-status-panel {
+  order: 8 !important;
+}
+
+.admin-dashboard-view > .judge-status-panel,
+.admin-shell .admin-dashboard-view > .judge-status-panel {
+  order: 9 !important;
+}
+
+/* Marketing/proposal note should not lead the admin page */
+.admin-dashboard-view > .proposal-banner,
+.admin-shell .admin-dashboard-view > .proposal-banner {
+  order: 99 !important;
+  opacity: 0.78 !important;
+  padding: 0.75rem 0.85rem !important;
+  border-style: dashed !important;
+}
+
+.admin-dashboard-view > .proposal-banner h3,
+.admin-shell .admin-dashboard-view > .proposal-banner h3 {
+  font-size: 0.9rem !important;
+}
+
+.admin-dashboard-view > .proposal-banner p,
+.admin-shell .admin-dashboard-view > .proposal-banner p {
+  font-size: 0.72rem !important;
+  line-height: 1.35 !important;
+}
+
+/* Finals at top should feel like the main output */
+.admin-shell .final-round-leader-card {
+  padding: 1rem 1.05rem !important;
+  border-radius: 20px !important;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(246, 215, 122, 0.10), transparent 26%),
+    linear-gradient(135deg, rgba(16, 12, 5, 0.99), rgba(31, 23, 9, 0.97)) !important;
+  border-color: rgba(246, 215, 122, 0.42) !important;
+}
+
+.admin-shell .final-round-leader-card .eyebrow,
+.admin-shell .final-results-panel .eyebrow {
+  color: #f7d774 !important;
+}
+
+.admin-shell .final-round-leader-card h2 {
+  font-size: clamp(1.35rem, 2.5vw, 2rem) !important;
+}
+
+.admin-shell .final-round-leader-card > strong {
+  font-size: clamp(2.1rem, 4.2vw, 3.25rem) !important;
+  color: #fff2bd !important;
+}
+
+/* Final results table should look like the primary table */
+.admin-shell .final-results-panel {
+  border-color: rgba(246, 215, 122, 0.38) !important;
+  background:
+    linear-gradient(135deg, rgba(13, 10, 5, 0.99), rgba(24, 18, 8, 0.96)) !important;
+}
+
+/* Criteria leaders directly before Top 3 */
+.admin-shell .criteria-leaders-panel {
+  border-color: rgba(246, 215, 122, 0.34) !important;
+  background:
+    linear-gradient(135deg, rgba(10, 8, 5, 0.99), rgba(18, 13, 7, 0.96)) !important;
+}
+
+.admin-shell .criteria-leaders-panel::before {
+  content: "PRELIMINARY CRITERIA INSIGHTS";
+  display: block;
+  margin-bottom: 0.35rem;
+  color: #f7d774;
+  font-size: 0.62rem;
+  font-weight: 950;
+  letter-spacing: 0.14em;
+}
+
+/* Top 3 context */
+.admin-shell .top3-finalists-panel::before {
+  content: "PRELIMINARY TOP 3";
+  display: block;
+  margin-bottom: 0.35rem;
+  color: #f7d774;
+  font-size: 0.62rem;
+  font-weight: 950;
+  letter-spacing: 0.14em;
+}
+
+/* Admin controls should no longer compete with results */
+.admin-shell .dashboard-hero,
+.admin-shell .admin-control-card {
+  opacity: 0.94 !important;
+}
+
+/* PDF maker lower priority than result display */
+.admin-shell .summary-print-panel {
+  opacity: 0.94 !important;
+}
+
+/* Tighten the first view so hierarchy is obvious */
+.admin-shell .final-round-leader-card,
+.admin-shell .final-results-panel,
+.admin-shell .dashboard-hero,
+.admin-shell .admin-control-card,
+.admin-shell .summary-print-panel,
+.admin-shell .criteria-leaders-panel,
+.admin-shell .top3-finalists-panel,
+.admin-shell .prelim-ranking-panel {
+  margin-top: 0 !important;
+}
+
+/* ===== SCORYN ADMIN HIERARCHY FIX END ===== */
