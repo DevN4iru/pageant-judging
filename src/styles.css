@@ -7876,3 +7876,63 @@ Final admin reading order:
 }
 
 /* ===== SCORYN ADMIN RESULTS FIRST HARD FIX END ===== */
+
+/* ===== SCORYN ADMIN CARD SPACING FIX START ===== */
+/* Fix cards visually touching each other in admin dashboard. */
+
+.admin-dashboard-view {
+  gap: 1.45rem !important;
+  row-gap: 1.45rem !important;
+}
+
+/* Hard spacing for the stacked admin cards */
+.admin-shell .proposal-banner,
+.admin-shell .criteria-leaders-panel,
+.admin-shell .summary-print-panel,
+.admin-shell .dashboard-hero,
+.admin-shell .admin-control-card,
+.admin-shell .final-round-leader-card,
+.admin-shell .final-results-panel,
+.admin-shell .top3-finalists-panel,
+.admin-shell .prelim-ranking-panel,
+.admin-shell .final-status-panel,
+.admin-shell .judge-status-panel {
+  margin-top: 0 !important;
+  margin-bottom: 1.15rem !important;
+}
+
+/* If these cards are adjacent siblings, force visible separation */
+.admin-shell .proposal-banner + .criteria-leaders-panel,
+.admin-shell .criteria-leaders-panel + .summary-print-panel,
+.admin-shell .summary-print-panel + .dashboard-hero,
+.admin-shell .summary-print-panel + .admin-control-card,
+.admin-shell .dashboard-hero + .final-round-leader-card,
+.admin-shell .admin-control-card + .final-round-leader-card,
+.admin-shell .final-round-leader-card + .final-results-panel {
+  margin-top: 1.15rem !important;
+}
+
+/* Make each card edge breathe instead of looking glued */
+.admin-shell .proposal-banner,
+.admin-shell .criteria-leaders-panel,
+.admin-shell .summary-print-panel {
+  border-radius: 22px !important;
+  overflow: hidden !important;
+}
+
+/* Proposal note should look secondary, not like the main section */
+.admin-shell .proposal-banner {
+  opacity: 0.68 !important;
+  margin-bottom: 1.25rem !important;
+}
+
+/* Criteria and PDF are separate tools, not one merged block */
+.admin-shell .criteria-leaders-panel {
+  margin-bottom: 1.25rem !important;
+}
+
+.admin-shell .summary-print-panel {
+  margin-bottom: 1.35rem !important;
+}
+
+/* ===== SCORYN ADMIN CARD SPACING FIX END ===== */
