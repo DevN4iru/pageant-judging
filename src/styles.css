@@ -7555,3 +7555,324 @@ Admin hierarchy:
 }
 
 /* ===== SCORYN ADMIN JSX HIERARCHY CLEANUP END ===== */
+
+/* ===== SCORYN ADMIN RESULTS FIRST HARD FIX START ===== */
+/* Visual hierarchy fix only. No scoring/API/database changes. */
+
+/*
+Final admin reading order:
+1. Finals winner / leader
+2. Finals winners table
+3. Admin command actions
+4. PDF export
+5. Preliminary support: criteria leaders + top 3
+6. Full preliminary ranking
+7. Submission status
+8. Proposal note
+*/
+
+/* Make the dashboard behave like a command center, not a long report */
+.admin-dashboard-view {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 1.35rem !important;
+  align-items: stretch !important;
+}
+
+/* Force visual order even if JSX/source order is messy */
+.admin-dashboard-view > .final-round-leader-card,
+.admin-dashboard-view > *:has(.final-round-leader-card) {
+  order: -100 !important;
+}
+
+.admin-dashboard-view > .final-results-panel,
+.admin-dashboard-view > *:has(.final-results-panel) {
+  order: -90 !important;
+}
+
+.admin-dashboard-view > .dashboard-hero,
+.admin-dashboard-view > .admin-control-card,
+.admin-dashboard-view > *:has(.dashboard-hero),
+.admin-dashboard-view > *:has(.admin-control-card) {
+  order: -80 !important;
+}
+
+.admin-dashboard-view > .summary-print-panel,
+.admin-dashboard-view > *:has(.summary-print-panel) {
+  order: -70 !important;
+}
+
+.admin-dashboard-view > .criteria-leaders-panel,
+.admin-dashboard-view > *:has(.criteria-leaders-panel) {
+  order: -60 !important;
+}
+
+.admin-dashboard-view > .top3-finalists-panel,
+.admin-dashboard-view > *:has(.top3-finalists-panel) {
+  order: -50 !important;
+}
+
+.admin-dashboard-view > .prelim-ranking-panel,
+.admin-dashboard-view > *:has(.prelim-ranking-panel) {
+  order: -40 !important;
+}
+
+.admin-dashboard-view > .final-status-panel,
+.admin-dashboard-view > *:has(.final-status-panel) {
+  order: -30 !important;
+}
+
+.admin-dashboard-view > .judge-status-panel,
+.admin-dashboard-view > *:has(.judge-status-panel) {
+  order: -20 !important;
+}
+
+.admin-dashboard-view > .proposal-banner,
+.admin-dashboard-view > *:has(.proposal-banner) {
+  order: 999 !important;
+}
+
+/* Add real breathing room. No stuck cards. */
+.admin-dashboard-view > section,
+.admin-dashboard-view > .panel,
+.admin-dashboard-view > article,
+.admin-dashboard-view > div {
+  margin: 0 !important;
+}
+
+.admin-shell .panel,
+.admin-shell section.panel,
+.admin-shell .final-round-leader-card,
+.admin-shell .final-results-panel,
+.admin-shell .dashboard-hero,
+.admin-shell .admin-control-card,
+.admin-shell .summary-print-panel,
+.admin-shell .criteria-leaders-panel,
+.admin-shell .top3-finalists-panel,
+.admin-shell .prelim-ranking-panel,
+.admin-shell .final-status-panel,
+.admin-shell .judge-status-panel,
+.admin-shell .proposal-banner {
+  border-radius: 24px !important;
+}
+
+/* Make final winner impossible to miss */
+.admin-shell .final-round-leader-card {
+  position: relative !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: 1.5rem !important;
+  min-height: 140px !important;
+  padding: 1.35rem 1.5rem !important;
+  border: 1.5px solid rgba(255, 222, 128, 0.62) !important;
+  background:
+    radial-gradient(circle at 88% 40%, rgba(255, 222, 128, 0.20), transparent 26%),
+    linear-gradient(135deg, rgba(30, 20, 5, 0.99), rgba(10, 8, 4, 0.99)) !important;
+  box-shadow:
+    0 22px 60px rgba(0, 0, 0, 0.38),
+    0 0 38px rgba(214, 180, 84, 0.12) !important;
+}
+
+.admin-shell .final-round-leader-card::before {
+  content: "FINAL RESULT";
+  display: inline-flex !important;
+  position: absolute !important;
+  top: 1rem !important;
+  left: 1.35rem !important;
+  color: #f7d774 !important;
+  font-size: 0.68rem !important;
+  font-weight: 950 !important;
+  letter-spacing: 0.18em !important;
+}
+
+.admin-shell .final-round-leader-card .eyebrow {
+  margin-top: 1.2rem !important;
+  color: rgba(247, 215, 116, 0.88) !important;
+}
+
+.admin-shell .final-round-leader-card h2 {
+  margin-top: 0.15rem !important;
+  font-size: clamp(2rem, 4vw, 3.4rem) !important;
+  line-height: 0.95 !important;
+  letter-spacing: -0.04em !important;
+  color: #fff4c7 !important;
+}
+
+.admin-shell .final-round-leader-card p,
+.admin-shell .final-round-leader-card small {
+  font-size: 0.86rem !important;
+  color: rgba(255, 248, 231, 0.72) !important;
+}
+
+.admin-shell .final-round-leader-card > strong {
+  padding: 0.35rem 0.2rem !important;
+  min-width: 180px !important;
+  text-align: right !important;
+  font-size: clamp(3.2rem, 6vw, 5.4rem) !important;
+  line-height: 0.9 !important;
+  color: #fff0b8 !important;
+  text-shadow: 0 0 30px rgba(255, 222, 128, 0.20) !important;
+}
+
+/* Final results table becomes the second main block */
+.admin-shell .final-results-panel {
+  padding: 1.15rem 1.25rem !important;
+  border: 1.5px solid rgba(255, 222, 128, 0.44) !important;
+  background:
+    linear-gradient(135deg, rgba(18, 12, 4, 0.99), rgba(8, 7, 4, 0.99)) !important;
+}
+
+.admin-shell .final-results-panel::before {
+  content: "WINNERS TABLE";
+  display: block !important;
+  margin-bottom: 0.55rem !important;
+  color: #f7d774 !important;
+  font-size: 0.68rem !important;
+  font-weight: 950 !important;
+  letter-spacing: 0.18em !important;
+}
+
+.admin-shell .final-results-panel h3 {
+  font-size: 1.35rem !important;
+  margin-bottom: 0.2rem !important;
+  color: #fff4c7 !important;
+}
+
+.admin-shell .final-results-panel .table-wrap {
+  margin-top: 0.9rem !important;
+  border-color: rgba(255, 222, 128, 0.30) !important;
+}
+
+.admin-shell .final-results-panel table th {
+  font-size: 0.68rem !important;
+  color: #f7d774 !important;
+}
+
+.admin-shell .final-results-panel table td {
+  font-size: 0.82rem !important;
+  padding: 0.72rem 0.7rem !important;
+}
+
+.admin-shell .final-results-panel table tbody tr:first-child td {
+  color: #fff4c7 !important;
+  font-weight: 950 !important;
+  background: rgba(255, 222, 128, 0.07) !important;
+}
+
+/* Command actions should look like a toolbar */
+.admin-shell .dashboard-hero,
+.admin-shell .admin-control-card {
+  padding: 1rem 1.15rem !important;
+  border: 1px solid rgba(214, 180, 84, 0.34) !important;
+  background:
+    linear-gradient(135deg, rgba(10, 8, 5, 0.98), rgba(18, 13, 7, 0.96)) !important;
+}
+
+.admin-shell .dashboard-hero::before,
+.admin-shell .admin-control-card::before {
+  content: "COMMAND BAR";
+  display: block !important;
+  margin-bottom: 0.4rem !important;
+  color: #d9bb62 !important;
+  font-size: 0.62rem !important;
+  font-weight: 950 !important;
+  letter-spacing: 0.16em !important;
+}
+
+.admin-shell .dashboard-actions {
+  margin-top: 0.8rem !important;
+  padding-top: 0.75rem !important;
+  border-top: 1px solid rgba(214, 180, 84, 0.16) !important;
+}
+
+/* PDF section should not compete with winner result */
+.admin-shell .summary-print-panel {
+  padding: 0.95rem 1.1rem !important;
+  border-color: rgba(214, 180, 84, 0.28) !important;
+  opacity: 0.94 !important;
+}
+
+/* Preliminary sections are support context */
+.admin-shell .criteria-leaders-panel,
+.admin-shell .top3-finalists-panel,
+.admin-shell .prelim-ranking-panel {
+  padding: 1rem 1.1rem !important;
+  border-color: rgba(214, 180, 84, 0.26) !important;
+}
+
+.admin-shell .criteria-leaders-panel::before {
+  content: "PRELIMINARY CRITERIA LEADERS";
+  display: block !important;
+  margin-bottom: 0.5rem !important;
+  color: #d9bb62 !important;
+  font-size: 0.62rem !important;
+  font-weight: 950 !important;
+  letter-spacing: 0.16em !important;
+}
+
+.admin-shell .top3-finalists-panel::before {
+  content: "FINALISTS FROM PRELIMINARY ROUND";
+  display: block !important;
+  margin-bottom: 0.5rem !important;
+  color: #d9bb62 !important;
+  font-size: 0.62rem !important;
+  font-weight: 950 !important;
+  letter-spacing: 0.16em !important;
+}
+
+.admin-shell .prelim-ranking-panel::before {
+  content: "FULL PRELIMINARY RANKING";
+  display: block !important;
+  margin-bottom: 0.5rem !important;
+  color: #d9bb62 !important;
+  font-size: 0.62rem !important;
+  font-weight: 950 !important;
+  letter-spacing: 0.16em !important;
+}
+
+/* Proposal banner must not be at the top visually anymore */
+.admin-shell .proposal-banner {
+  opacity: 0.55 !important;
+  padding: 0.75rem 0.85rem !important;
+  border-style: dashed !important;
+  background: rgba(0, 0, 0, 0.25) !important;
+}
+
+.admin-shell .proposal-banner h3 {
+  font-size: 0.9rem !important;
+}
+
+.admin-shell .proposal-banner p {
+  font-size: 0.72rem !important;
+  line-height: 1.35 !important;
+}
+
+/* Status tables are audit information, not main result */
+.admin-shell .final-status-panel,
+.admin-shell .judge-status-panel {
+  opacity: 0.80 !important;
+  padding: 0.9rem 1rem !important;
+}
+
+/* Make spacing obvious even when zoomed out */
+@media (min-width: 900px) {
+  .admin-dashboard-view {
+    gap: 1.55rem !important;
+  }
+}
+
+/* Mobile/zoom-safe */
+@media (max-width: 900px) {
+  .admin-shell .final-round-leader-card {
+    grid-template-columns: 1fr !important;
+  }
+
+  .admin-shell .final-round-leader-card > strong {
+    text-align: left !important;
+    min-width: 0 !important;
+    font-size: 3.1rem !important;
+  }
+}
+
+/* ===== SCORYN ADMIN RESULTS FIRST HARD FIX END ===== */
