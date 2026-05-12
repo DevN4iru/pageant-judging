@@ -7452,3 +7452,106 @@ Admin hierarchy:
 }
 
 /* ===== SCORYN ADMIN HIERARCHY FIX END ===== */
+
+/* ===== SCORYN ADMIN JSX HIERARCHY CLEANUP START ===== */
+/* JSX order is now the source of truth. This removes old visual order confusion. */
+
+.admin-dashboard-view > * {
+  order: initial !important;
+}
+
+.admin-dashboard-view {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 0.9rem !important;
+}
+
+/* Admin should feel like command center, not landing page */
+.admin-dashboard-view > .proposal-banner {
+  opacity: 0.70 !important;
+  border-style: dashed !important;
+  margin-top: 0.2rem !important;
+}
+
+/* Final output is now the hero area */
+.admin-shell .final-round-leader-card,
+.admin-shell .final-results-panel {
+  border-color: rgba(246, 215, 122, 0.42) !important;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(246, 215, 122, 0.09), transparent 26%),
+    linear-gradient(135deg, rgba(13, 10, 5, 0.99), rgba(24, 18, 8, 0.97)) !important;
+}
+
+.admin-shell .final-round-leader-card {
+  min-height: 92px !important;
+}
+
+.admin-shell .final-round-leader-card .eyebrow::after {
+  content: " · OFFICIAL WINNER VIEW";
+  color: rgba(255, 248, 231, 0.55);
+}
+
+/* Controls should read as tools, not results */
+.admin-shell .dashboard-hero,
+.admin-shell .admin-control-card,
+.admin-shell .summary-print-panel {
+  background:
+    linear-gradient(135deg, rgba(10, 8, 5, 0.98), rgba(18, 13, 7, 0.95)) !important;
+  border-color: rgba(214, 180, 84, 0.26) !important;
+}
+
+/* Preliminary support group */
+.admin-shell .criteria-leaders-panel,
+.admin-shell .top3-finalists-panel,
+.admin-shell .prelim-ranking-panel {
+  background:
+    linear-gradient(135deg, rgba(8, 7, 5, 0.99), rgba(17, 12, 6, 0.96)) !important;
+}
+
+/* Status tables are audit/support, not main content */
+.admin-shell .final-status-panel,
+.admin-shell .judge-status-panel {
+  opacity: 0.88 !important;
+}
+
+/* Section labels to remove confusion */
+.admin-shell .final-results-panel::before {
+  content: "FINAL RESULTS";
+  display: block;
+  margin-bottom: 0.4rem;
+  color: #f7d774;
+  font-size: 0.62rem;
+  font-weight: 950;
+  letter-spacing: 0.14em;
+}
+
+.admin-shell .criteria-leaders-panel::before {
+  content: "PRELIMINARY INSIGHTS";
+  display: block;
+  margin-bottom: 0.4rem;
+  color: #f7d774;
+  font-size: 0.62rem;
+  font-weight: 950;
+  letter-spacing: 0.14em;
+}
+
+.admin-shell .top3-finalists-panel::before {
+  content: "QUALIFIED FINALISTS";
+  display: block;
+  margin-bottom: 0.4rem;
+  color: #f7d774;
+  font-size: 0.62rem;
+  font-weight: 950;
+  letter-spacing: 0.14em;
+}
+
+/* Keep first viewport from feeling cramped */
+.admin-shell .final-round-leader-card,
+.admin-shell .final-results-panel,
+.admin-shell .dashboard-hero,
+.admin-shell .summary-print-panel {
+  padding: 1rem !important;
+  border-radius: 20px !important;
+}
+
+/* ===== SCORYN ADMIN JSX HIERARCHY CLEANUP END ===== */
