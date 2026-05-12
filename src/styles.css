@@ -8237,3 +8237,249 @@ Final admin reading order:
 }
 
 /* ===== SCORYN NO PURPLE FINAL OVERRIDE END ===== */
+
+/* ===== SCORYN TV FOOTER NO PURPLE OVERRIDE START ===== */
+/* Removes legacy blue/purple/pink from TV displays and footer. No scoring/API changes. */
+
+:root {
+  --scoryn-bg: #030201;
+  --scoryn-card: #120d05;
+  --scoryn-card-2: #1d1508;
+  --scoryn-border: rgba(214, 180, 84, 0.34);
+  --scoryn-border-strong: rgba(246, 215, 122, 0.58);
+  --scoryn-gold: #d6b454;
+  --scoryn-gold-bright: #f6d77a;
+  --scoryn-cream: #fff4c7;
+  --scoryn-muted: rgba(255, 248, 231, 0.68);
+}
+
+/* TV route canvas */
+body:has(.tv-shell),
+body:has(.tv-page),
+body:has(.tv-display),
+body:has(.tv-stage),
+body:has(.tv-top3),
+body:has(.tv-finals),
+body:has(.tv-final),
+body:has([class*="tv-"]) {
+  background:
+    radial-gradient(circle at 15% 10%, rgba(214, 180, 84, 0.09), transparent 28%),
+    radial-gradient(circle at 86% 16%, rgba(246, 215, 122, 0.055), transparent 26%),
+    linear-gradient(135deg, #000 0%, #050402 58%, #120d05 100%) !important;
+}
+
+/* Generic TV display shells */
+.tv-shell,
+.tv-page,
+.tv-display,
+.tv-stage,
+.tv-board,
+.tv-top3,
+.tv-finals,
+.tv-final,
+[class*="tv-shell"],
+[class*="tv-page"],
+[class*="tv-display"],
+[class*="tv-stage"],
+[class*="tv-board"] {
+  color: var(--scoryn-cream) !important;
+  background:
+    radial-gradient(circle at 90% 12%, rgba(214, 180, 84, 0.10), transparent 30%),
+    linear-gradient(135deg, rgba(3, 2, 1, 0.99), rgba(18, 13, 5, 0.98)) !important;
+}
+
+/* TV header: remove pale pink/white bar */
+.tv-header,
+.tv-hero,
+.tv-title,
+.tv-banner,
+.tv-display-header,
+[class*="tv-header"],
+[class*="tv-hero"],
+[class*="tv-title"],
+[class*="tv-banner"] {
+  color: var(--scoryn-cream) !important;
+  background:
+    linear-gradient(135deg, rgba(10, 7, 3, 0.98), rgba(29, 21, 8, 0.94)) !important;
+  border: 1px solid var(--scoryn-border-strong) !important;
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.38),
+    0 0 36px rgba(214, 180, 84, 0.12) !important;
+}
+
+/* Remove purple/pink gradients from finalist cards */
+.tv-card,
+.tv-finalist-card,
+.tv-top3-card,
+.finalist-card,
+.top3-tv-card,
+.top3-display-card,
+[class*="tv-card"],
+[class*="finalist-card"],
+[class*="top3-card"],
+[class*="display-card"] {
+  color: var(--scoryn-cream) !important;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(246, 215, 122, 0.13), transparent 34%),
+    linear-gradient(135deg, rgba(12, 8, 3, 0.98), rgba(36, 25, 8, 0.95)) !important;
+  border: 1.5px solid rgba(246, 215, 122, 0.42) !important;
+  box-shadow:
+    0 22px 55px rgba(0, 0, 0, 0.38),
+    inset 0 1px 0 rgba(255, 244, 199, 0.06) !important;
+}
+
+/* Make the first/top finalist premium gold instead of blue/purple/pink */
+.tv-card:first-of-type,
+.tv-finalist-card:first-of-type,
+.tv-top3-card:first-of-type,
+.finalist-card:first-of-type,
+.top3-tv-card:first-of-type,
+.top3-display-card:first-of-type,
+[class*="finalist-card"]:first-of-type,
+[class*="top3-card"]:first-of-type {
+  background:
+    radial-gradient(circle at 90% 20%, rgba(255, 244, 199, 0.22), transparent 32%),
+    linear-gradient(135deg, #231705 0%, #8b681c 48%, #d6b454 100%) !important;
+  color: #fffaf0 !important;
+  border-color: rgba(255, 244, 199, 0.68) !important;
+}
+
+/* TV text */
+.tv-shell h1,
+.tv-shell h2,
+.tv-shell h3,
+.tv-page h1,
+.tv-page h2,
+.tv-page h3,
+.tv-display h1,
+.tv-display h2,
+.tv-display h3,
+.tv-stage h1,
+.tv-stage h2,
+.tv-stage h3,
+[class*="tv-"] h1,
+[class*="tv-"] h2,
+[class*="tv-"] h3,
+[class*="finalist"] h1,
+[class*="finalist"] h2,
+[class*="finalist"] h3 {
+  color: var(--scoryn-cream) !important;
+  text-shadow: 0 0 26px rgba(214, 180, 84, 0.18) !important;
+}
+
+.tv-shell p,
+.tv-shell span,
+.tv-page p,
+.tv-page span,
+.tv-display p,
+.tv-display span,
+.tv-stage p,
+.tv-stage span,
+[class*="tv-"] p,
+[class*="tv-"] span {
+  color: var(--scoryn-muted) !important;
+}
+
+/* Badges / labels */
+.tv-shell .pill,
+.tv-shell .badge,
+.tv-page .pill,
+.tv-page .badge,
+.tv-display .pill,
+.tv-display .badge,
+.tv-stage .pill,
+.tv-stage .badge,
+[class*="tv-"] .pill,
+[class*="tv-"] .badge,
+[class*="display"] .pill,
+[class*="display"] .badge {
+  color: var(--scoryn-gold-bright) !important;
+  background: rgba(214, 180, 84, 0.13) !important;
+  border: 1px solid rgba(214, 180, 84, 0.30) !important;
+  box-shadow: none !important;
+}
+
+/* Crown watermark should be subtle gold/cream, not purple */
+.tv-shell svg,
+.tv-page svg,
+.tv-display svg,
+.tv-stage svg,
+[class*="tv-"] svg,
+[class*="finalist"] svg {
+  color: rgba(255, 244, 199, 0.16) !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+/* Footer / credits: remove purple forever */
+.site-footer,
+.tv-credit-footer,
+.compact-footer,
+footer,
+[class*="footer"],
+[class*="credit"] {
+  color: var(--scoryn-cream) !important;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(246, 215, 122, 0.08), transparent 32%),
+    linear-gradient(135deg, #050402 0%, #181107 72%, #070503 100%) !important;
+  border: 1px solid rgba(214, 180, 84, 0.28) !important;
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.30) !important;
+}
+
+.site-footer *,
+.tv-credit-footer *,
+.compact-footer *,
+footer *,
+[class*="footer"] *,
+[class*="credit"] * {
+  color: inherit !important;
+}
+
+.site-footer strong,
+.tv-credit-footer strong,
+.compact-footer strong,
+footer strong,
+[class*="footer"] strong,
+[class*="credit"] strong,
+.site-footer a,
+.tv-credit-footer a,
+.compact-footer a,
+footer a,
+[class*="footer"] a,
+[class*="credit"] a {
+  color: var(--scoryn-gold-bright) !important;
+}
+
+/* Brutal neutralizer for remaining TV/footer inline purple/pink/blue class names */
+[class*="tv-"] [class*="purple"],
+[class*="tv-"] [class*="violet"],
+[class*="tv-"] [class*="pink"],
+[class*="tv-"] [class*="blue"],
+[class*="footer"] [class*="purple"],
+[class*="footer"] [class*="violet"],
+[class*="footer"] [class*="pink"],
+[class*="footer"] [class*="blue"],
+[class*="credit"] [class*="purple"],
+[class*="credit"] [class*="violet"],
+[class*="credit"] [class*="pink"],
+[class*="credit"] [class*="blue"] {
+  color: var(--scoryn-gold-bright) !important;
+  background-color: rgba(214, 180, 84, 0.12) !important;
+  border-color: rgba(214, 180, 84, 0.28) !important;
+}
+
+/* Keep top3/final display centered and not washed out */
+.tv-shell,
+.tv-page,
+.tv-display,
+.tv-stage,
+[class*="tv-shell"],
+[class*="tv-page"],
+[class*="tv-display"],
+[class*="tv-stage"] {
+  max-width: 1180px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* ===== SCORYN TV FOOTER NO PURPLE OVERRIDE END ===== */
