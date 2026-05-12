@@ -301,6 +301,25 @@ async function api(path, options = {}) {
 
 
 
+
+function ScorynProposalBanner({ children }) {
+  return (
+    <section className="scoryn-proposal-banner">
+      <div>
+        <p className="eyebrow">Proposal Preview Only</p>
+        <h2>Miss TYCA 2026 powered by Scoryn</h2>
+        <p>
+          This is a clickable preview for presentation only. Final criteria, judges,
+          contestants, PINs, rounds, scoring weights, and branding can still be customized
+          before the actual LAN-hosted event deployment.
+        </p>
+      </div>
+      <span className="preview-badge">Not official results</span>
+      {children}
+    </section>
+  );
+}
+
 function CriteriaNote({ criterion, children }) {
   const name = criterion?.name || 'Criteria';
   const weight = criterion?.weight ?? criterion?.percentage;
