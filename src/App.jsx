@@ -157,7 +157,7 @@ function ScorynProposalBanner() {
         <h3>Miss TYCA 2026 powered by Scoryn</h3>
         <p>
           Scoryn is a modern online tabulation platform designed for pageants, competitions, and judged events.
-          This clickable preview demonstrates scoring, ranking, result computation, TV display, and PDF-ready summaries.
+          This clickable preview demonstrates scoring, ranking, result computation, TV display, and PDF-ready summaries. Criteria, judges, PINs, contestants, and event rules can be customized to match the client&apos;s final mechanics. Proven effective through Miss Poblacion Occidental 2026.
         </p>
       </div>
       <strong>Not official results</strong>
@@ -816,7 +816,8 @@ function Home({ setMode }) {
             Scoryn is a modern online tabulation platform designed for pageants,
             competitions, and judged events. This clickable proposal preview shows
             judge scoring, live rankings, locked submissions, TV displays, and
-            PDF-ready summaries.
+            PDF-ready summaries. It can be tailored per client: criteria, weights,
+            judge list, judge passwords/PINs, contestant list, finalist flow, and branding.
           </p>
 
           <div className="scoryn-action-grid">
@@ -836,8 +837,9 @@ function Home({ setMode }) {
           <div className="scoryn-demo-note">
             <span>Demo scope</span>
             <p>
-              This is not official TYCA results. Final contestant names, judge count,
-              criteria, weights, and branding can still be customized before deployment.
+              This is a proposal preview, not official TYCA results. Criteria names,
+              score weights, judge accounts, judge PINs, contestant list, rounds, and
+              branding can be customized to match the client&apos;s exact event mechanics.
             </p>
           </div>
         </div>
@@ -870,14 +872,54 @@ function Home({ setMode }) {
       </section>
 
       <section className="scoryn-microbar">
-        <span>12 contestant placeholders</span>
-        <span>Default 5 judges</span>
-        <span>Top finalists + finals flow</span>
-        <span>Prepared by Kirjane Labs × Dev Siris</span>
+        <span>Custom criteria & weights</span>
+        <span>Editable judges & PINs</span>
+        <span>Editable contestant list</span>
+        <span>Proven by Miss Poblacion Occidental 2026</span>
       </section>
+
+      <ScorynCredibilityPanel />
     </main>
   );
 }
+
+
+function ScorynCredibilityPanel() {
+  return (
+    <section className="scoryn-credibility-panel">
+      <div className="credibility-copy">
+        <p className="eyebrow">Client-ready customization</p>
+        <h3>Built to match the actual mechanics of the event.</h3>
+        <p>
+          Scoryn is not limited to fixed contestants, fixed judges, or fixed criteria.
+          The criteria, scoring weights, judge list, judge passwords/PINs, contestant list,
+          finalist rules, round names, and event branding can be modified to fit the client&apos;s needs.
+        </p>
+      </div>
+
+      <div className="credibility-grid">
+        <article>
+          <span>01</span>
+          <strong>Configurable scoring</strong>
+          <p>Criteria names, weights, and rounds can be adjusted for the pageant mechanics.</p>
+        </article>
+
+        <article>
+          <span>02</span>
+          <strong>Editable people list</strong>
+          <p>Judges and contestants can be prepared based on the final official lineup.</p>
+        </article>
+
+        <article>
+          <span>03</span>
+          <strong>Field-tested workflow</strong>
+          <p>Proven effective through the Miss Poblacion Occidental 2026 judging deployment.</p>
+        </article>
+      </div>
+    </section>
+  );
+}
+
 
 function LoginCard({ title, description, placeholder, buttonText, onSubmit, onBack }) {
   const [pin, setPin] = useState('');

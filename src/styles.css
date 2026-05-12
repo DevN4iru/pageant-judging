@@ -7936,3 +7936,89 @@ Final admin reading order:
 }
 
 /* ===== SCORYN ADMIN CARD SPACING FIX END ===== */
+
+/* ===== SCORYN CREDIBILITY / CUSTOMIZATION NOTE START ===== */
+/* Proposal credibility copy only. No scoring/API/database changes. */
+
+.scoryn-credibility-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.35fr);
+  gap: 0.85rem;
+  margin-top: 0.9rem;
+  padding: 1rem;
+  border-radius: 24px;
+  border: 1px solid rgba(246, 215, 122, 0.28);
+  background:
+    radial-gradient(circle at 100% 0%, rgba(246, 215, 122, 0.08), transparent 30%),
+    linear-gradient(135deg, rgba(8, 7, 5, 0.96), rgba(22, 17, 9, 0.94));
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.32);
+}
+
+.scoryn-credibility-panel h3 {
+  margin: 0 0 0.45rem;
+  color: #fffaf0;
+  font-size: clamp(1.25rem, 2vw, 1.85rem);
+  line-height: 1.05;
+}
+
+.scoryn-credibility-panel p {
+  margin: 0;
+  color: rgba(255, 250, 240, 0.68);
+  line-height: 1.55;
+}
+
+.credibility-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.credibility-grid article {
+  padding: 0.85rem;
+  border-radius: 18px;
+  border: 1px solid rgba(246, 215, 122, 0.22);
+  background: rgba(0, 0, 0, 0.26);
+}
+
+.credibility-grid span {
+  display: inline-flex;
+  margin-bottom: 0.45rem;
+  color: #f6d77a;
+  font-size: 0.7rem;
+  font-weight: 950;
+  letter-spacing: 0.12em;
+}
+
+.credibility-grid strong {
+  display: block;
+  margin-bottom: 0.3rem;
+  color: #fff8e7;
+  font-size: 0.95rem;
+}
+
+.credibility-grid p {
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+/* Upgrade microbar from generic specs into sales proof points */
+.scoryn-microbar span {
+  border-color: rgba(246, 215, 122, 0.28) !important;
+  background:
+    linear-gradient(135deg, rgba(0, 0, 0, 0.34), rgba(33, 25, 11, 0.34)) !important;
+  color: rgba(255, 250, 240, 0.82) !important;
+}
+
+/* Admin proposal note should carry the credibility message but stay secondary */
+.admin-shell .proposal-banner p {
+  max-width: 920px !important;
+}
+
+@media (max-width: 920px) {
+  .scoryn-credibility-panel,
+  .credibility-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ===== SCORYN CREDIBILITY / CUSTOMIZATION NOTE END ===== */
