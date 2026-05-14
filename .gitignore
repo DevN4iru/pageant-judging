@@ -10,3 +10,4 @@ dist
 qa-localhost-logs/
 pageant-db-backups/
 *.dump
+.env*.local
