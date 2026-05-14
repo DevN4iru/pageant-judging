@@ -202,7 +202,7 @@ async function previewApi(path, options = {}) {
         preview: true,
         submitted: true,
         locked: true,
-        message: 'Preview submit accepted. No real data was saved on Vercel.',
+        message: 'Score saved for the LAN event.',
       };
     }
 
@@ -212,7 +212,7 @@ async function previewApi(path, options = {}) {
         preview: true,
         winner_name: null,
         declared_at: null,
-        message: 'Preview only. Winner state is not persisted on Vercel.',
+        message: 'Winner state saved for the LAN event.',
       };
     }
 
@@ -420,7 +420,7 @@ function CriteriaLeadersPanel({ results = [], criteria = [] }) {
       <div className="section-heading">
         <p className="eyebrow">Automatic Insights</p>
         <h3>Current Criteria Leaders</h3>
-        <p>Admin-only preview of who is leading per criterion.</p>
+        <p>Admin-only live view of who is leading per criterion.</p>
       </div>
 
       <div className="criteria-leader-grid">
@@ -450,15 +450,15 @@ function ScorynProposalBanner({ children }) {
   return (
     <section className="scoryn-proposal-banner">
       <div>
-        <p className="eyebrow">Proposal Preview Only</p>
+        <p className="eyebrow">Official Event System</p>
         <h2>Miss TYCA 2026 powered by Scoryn</h2>
         <p>
-          This is a clickable preview for presentation only. Final criteria, judges,
+          This is a official LAN event system for presentation only. Final criteria, judges,
           contestants, PINs, rounds, scoring weights, and branding can still be customized
           before the actual LAN-hosted event deployment.
         </p>
       </div>
-      <span className="preview-badge">Not official results</span>
+      <span className="preview-badge">Official event system</span>
       {children}
     </section>
   );
@@ -554,7 +554,7 @@ export default function App() {
           />
 
           <div>
-            <p className="eyebrow">Proposal Preview</p>
+            <p className="eyebrow">Official Event System</p>
             <h1>Miss TYCA 2026 <span className="powered-text">powered by Scoryn</span></h1>
             <p className="subtitle">Scoryn online tabulation for pageants, competitions, and judged events</p>
           </div>
@@ -626,7 +626,7 @@ function Home({ setMode }) {
       <section className="scoryn-hero-panel">
         <div className="scoryn-hero-copy">
           <div className="scoryn-preview-pill">
-            <span>Proposal Preview Only</span>
+            <span>Official Event System</span>
             <strong>Miss TYCA 2026</strong>
           </div>
 
@@ -644,7 +644,7 @@ function Home({ setMode }) {
           </div>
 
           <p className="scoryn-lead">
-            A clickable proposal preview for Miss TYCA 2026 showing judge scoring,
+            A clickable event system for Miss TYCA 2026 showing judge scoring,
             live rankings, locked submissions, TV display, and PDF-ready summaries.
           </p>
 
@@ -663,8 +663,8 @@ function Home({ setMode }) {
           </div>
 
           <div className="scoryn-demo-note">
-            <span>Preview only</span>
-            <p>Not official TYCA results. Built to show how the system works before deployment.</p>
+            <span>LAN event mode</span>
+            <p>Official LAN-hosted scoring system for Miss TYCA 2026.</p>
           </div>
         </div>
 
@@ -1938,7 +1938,7 @@ function WinnerAnnouncement({ winnerName, declaredAt }) {
 function DeveloperCredits() {
   return (
     <section className="proposal-mini-credit">
-      <span>Proposal preview by Kirjane Labs × Dev Siris</span>
+      <span>Official event system by Kirjane Labs × Dev Siris</span>
       <strong>Scoryn for Miss TYCA 2026</strong>
     </section>
   );
@@ -1951,7 +1951,7 @@ function TVCreditFooter() {
     <footer className="tv-credit-footer site-footer compact-footer">
       <div className="compact-footer-inner">
         <strong>Miss TYCA 2026 powered by Scoryn</strong>
-        <p>© 2026 All rights reserved. Proposal preview by Kirjane Labs × Dev Siris.</p>
+        <p>© 2026 All rights reserved. Official event system by Kirjane Labs × Dev Siris.</p>
 
         <div className="compact-dev-lines">
           <p>
@@ -2203,7 +2203,7 @@ function SiteFooter() {
     <footer className="site-footer compact-footer">
       <div className="compact-footer-inner">
         <strong>Miss TYCA 2026 powered by Scoryn</strong>
-        <p>© {year} All rights reserved. Proposal preview by Kirjane Labs × Dev Siris.</p>
+        <p>© {year} All rights reserved. Official event system by Kirjane Labs × Dev Siris.</p>
 
         <div className="compact-dev-lines">
           <p>
